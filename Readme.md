@@ -44,3 +44,25 @@ Basic CI/CD pipeline configuration
 
 
 ![project structure](images/Project%20structure.png)
+/gocart
+└── product-service
+    ├── cmd
+    │   └── main.go                # Entry point for the service
+    ├── internal
+    │   ├── models
+    │   │   └── product.go         # Product model definition
+    │   ├── handlers
+    │   │   └── product_handler.go  # HTTP handlers for product-related endpoints
+    │   ├── repository
+    │   │   └── product_repository.go # Database interactions for products
+    │   ├── services
+    │   │   └── product_service.go  # Business logic for product operations
+    │   └── middleware
+    │       └── auth_middleware.go  # Middleware for authentication/authorization
+    ├── config
+    │   └── config.go              # Configuration management (e.g., loading environment variables)
+    ├── Dockerfile                  # Dockerfile for building the service
+    ├── docker-compose.yml          # (Optional) If you want to run the service with other services
+    ├── go.mod                      # Go module file for dependency management
+    ├── go.sum                      # Go module checksum file
+    └── README.md                   # Documentation for the product service
