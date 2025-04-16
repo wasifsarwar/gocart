@@ -41,3 +41,6 @@ Stretch Goals
 Circuit breaker pattern
 Message queue integration (RabbitMQ or Kafka)
 Basic CI/CD pipeline configuration
+
+
+![project structure](images/Project%20structure.png)
