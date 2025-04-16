@@ -44,6 +44,7 @@ Basic CI/CD pipeline configuration
 
 
 ![project structure](images/Project%20structure.png)
+```
 /gocart
 └── product-service
     ├── cmd
@@ -66,3 +67,4 @@ Basic CI/CD pipeline configuration
     ├── go.mod                      # Go module file for dependency management
     ├── go.sum                      # Go module checksum file
     └── README.md                   # Documentation for the product service
+```
