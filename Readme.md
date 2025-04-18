@@ -68,3 +68,20 @@ Basic CI/CD pipeline configuration
     ├── go.sum                      # Go module checksum file
     └── README.md                   # Documentation for the product service
 ```
+
+
+```
+sql commands
+admin: psql -U wasifsmacbookpro -h localhost -p 5432 -d postgres
+
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,          -- Unique identifier for each product
+    name VARCHAR(255) NOT NULL,     -- Name of the product
+    description TEXT,                -- Description of the product
+    price NUMERIC(10, 2) NOT NULL,   -- Price of the product (up to 10 digits, 2 decimal places)
+    category VARCHAR(100),           -- Category of the product
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp for when the product was created
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Timestamp for when the product was last updated
+);
+```
+

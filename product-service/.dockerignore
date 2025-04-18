@@ -1,0 +1,21 @@
+# Git
+.git
+.gitignore
+
+# Docker
+.docker
+Dockerfile
+docker-compose.yml
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Binaries and build files
+/bin/
+/tmp/
+
+# Dependency directories (if stored locally)
+/vendor/ 
