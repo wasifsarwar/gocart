@@ -23,7 +23,8 @@ jobs:
 
       - name: Install dependencies
         run: go mod download
-
+      - name: Change to product-service directory
+        run: cd product-service
       - name: Build
         run: go build ./...
 
