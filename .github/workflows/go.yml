@@ -25,10 +25,13 @@ jobs:
         run: cd product-service
 
       - name: Install dependencies
+        working-directory: product-service
         run: go mod download
 
       - name: Build
+        working-directory: product-service
         run: go build ./...
 
       - name: Run tests
+        working-directory: product-service
         run: go test ./... -v
