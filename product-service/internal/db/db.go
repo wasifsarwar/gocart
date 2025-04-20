@@ -36,10 +36,13 @@ func Connect() {
 	log.Printf("Connected to PostgreSQL database at %s:%s", host, port)
 }
 
-func Migrate() {
-	err := DB.AutoMigrate(&models.Product{})
-	if err != nil {
-		log.Fatalf("failed to migrate database: %v", err)
+// Migrate runs database migrations
+// Pass the models you want to migrate as parameters
+func Migrate(models ...interface{}) {
+	for _, model := range models {
+		if err := DB.AutoMigrate(model); err != nil {
+			log.Fatalf("failed to migrate model: %v", err)
+		}
 	}
 	log.Println("Database migration completed successfully")
 }

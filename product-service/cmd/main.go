@@ -14,7 +14,7 @@ import (
 func main() {
 	// Initialize database connection
 	db.Connect()
-	db.Migrate()
+	db.Migrate(&models.Product{}) // Pass the product model to Migrate
 
 	// Create router
 	r := mux.NewRouter()

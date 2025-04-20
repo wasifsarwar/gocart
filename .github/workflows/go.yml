@@ -32,6 +32,13 @@ jobs:
         working-directory: product-service
         run: go build ./...
 
-      - name: Run tests
+      - name: Run tests with coverage
         working-directory: product-service
-        run: go test ./... -v
+        run: go test ./... -coverprofile=coverage.out
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1
+        with:
+          file: product-service/coverage.out
+          flags: unittests
+          name: codecov-umbrella
