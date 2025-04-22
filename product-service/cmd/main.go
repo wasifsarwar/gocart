@@ -1,19 +1,21 @@
 package main
 
 import (
+	"fmt"
+	db "gocart/shared/db"
 	"log"
 	"net/http"
-	"product-service/internal/db"
 	"product-service/internal/handler"
 	"product-service/internal/models"
 	"product-service/internal/repository"
+	"time"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
 	// Initialize database connection
-	db.Connect()
+	db.Connect(db.DefaultConfig())
 	db.Migrate(&models.Product{}) // Pass the product model to Migrate
 
 	// Create router
@@ -21,7 +23,7 @@ func main() {
 
 	// Test data insertion
 	inputProduct := models.Product{
-		ID:          "test-123", // Set an explicit ID
+		ID:          fmt.Sprintf("test-%d", time.Now().Unix()), // Set an explicit ID
 		Name:        "Test Product",
 		Description: "Test Description",
 		Price:       100.00,

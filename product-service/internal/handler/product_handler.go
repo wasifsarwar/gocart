@@ -8,6 +8,7 @@ import (
 	"product-service/internal/models"
 	"product-service/internal/repository"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
@@ -28,6 +29,10 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	// Generate and assign a new UUID
+	product.ID = uuid.New().String()
+
 	newProduct, err := repository.CreateProduct(product)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -38,8 +43,8 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // Set status to 201 Created
 
-	// Optionally, include the Location header
-	w.Header().Set("Location", "/products/"+newProduct.ID) // Assuming product.ID is the unique identifier
+	// Optionally, include the product header
+	w.Header().Set("Location", "/products/"+newProduct.ID)
 
 	// Return the created product
 	json.NewEncoder(w).Encode(newProduct)

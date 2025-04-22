@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"product-service/internal/db"
 	"product-service/internal/models"
+
+	db "gocart/shared/db"
 )
 
 type ProductRepository interface {
