@@ -2,9 +2,10 @@ package handler
 
 import (
 	"encoding/json"
-	"gocart/user-service/models"
-	"gocart/user-service/repository"
+	"log"
 	"net/http"
+	"user-service/models"
+	"user-service/repository"
 
 	"github.com/gorilla/mux"
 )
@@ -38,13 +39,23 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID := vars["user_id"]
 
-	var user models.User
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+	var updatedUser models.User
+	if err := json.NewDecoder(r.Body).Decode(&updatedUser); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	// First get the existing user to update
+	existingUser, err := repository.GetUserById(userID)
+	if err != nil {
+		log.Printf("Error fetching user with id: %v and error: %v", userID, err)
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
 
-	user, err := repository.UpdateUser(userID)
+	// Update fields
+	updatedUser.UserID = existingUser.UserID
+
+	user, err := repository.UpdateUser(updatedUser)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

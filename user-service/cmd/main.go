@@ -1,20 +1,23 @@
 package main
 
 import (
+	"fmt"
 	db "gocart/shared/db"
-	"user-service/handler"
-	"user-service/models"
 	"log"
 	"net/http"
+	"user-service/handler"
+	"user-service/models"
+	"user-service/repository"
 
-	"github.com/gorilla/mux"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 func main() {
 	db.Connect(db.DefaultConfig())
 	db.Migrate(&models.User{})
 
+	// TestCreateUser()
 	r := mux.NewRouter()
 
 	r.HandleFunc("/users", handler.CreateUser).Methods("POST")
@@ -38,4 +41,7 @@ func TestCreateUser() {
 	createdUser, err := repository.CreateUser(user)
 	if err != nil {
 		log.Printf("Error creating user: %v", err)
+	}
 
+	log.Printf("User created: %v", createdUser)
+}
