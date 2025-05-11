@@ -1,3 +1,5 @@
 .42c
 .vscode
 *.out
+.replit
+.git

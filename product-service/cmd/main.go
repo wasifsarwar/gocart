@@ -15,7 +15,12 @@ import (
 
 func main() {
 	// Initialize database connection
-	db.Connect(db.DefaultConfig())
+
+	//for local host testing
+	// db.Connect(db.DefaultConfig())
+
+	// for replit
+	db.ConnectWithReplitConfig()
 	db.Migrate(&models.Product{}) // Pass the product model to Migrate
 
 	// Create router

@@ -31,6 +31,18 @@ func DefaultConfig() Config {
 		DBName:   getEnv("DB_NAME", "gocart_db"),
 	}
 }
+
+func ConnectWithReplitConfig() (*gorm.DB, error) {
+	config := Config {
+		Host:     getEnv("REPLIT_DB_HOST", "localhost"),
+		Port:     getEnv("REPLIT_DB_PORT", "5432"),
+		User:     getEnv("REPLIT_DB_USER", "admin"),
+		Password: getEnv("REPLIT_DB_PASSWORD", "password"),
+		DBName:   getEnv("REPLIT_DB_NAME", "gocart_db"),
+	}
+	return Connect(config)
+}
+
 func Connect(config Config) (*gorm.DB, error) {
 	var err error
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
