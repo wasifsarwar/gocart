@@ -48,14 +48,14 @@ func GetProductById(id string) (models.Product, error) {
 }
 
 func UpdateProduct(product models.Product) (models.Product, error) {
-	if err := db.DB.Model(&models.Product{}).Where("id = ?", product.ID).Updates(&product).Error; err != nil {
+	if err := db.DB.Model(&models.Product{}).Where("id = ?", product.ProductID).Updates(&product).Error; err != nil {
 		return models.Product{}, err
 	}
 	return product, nil
 }
 
 func DeleteProduct(product models.Product) (models.Product, error) {
-	if err := db.DB.Where("id = ?", product.ID).Delete(&product).Error; err != nil {
+	if err := db.DB.Where("id = ?", product.ProductID).Delete(&product).Error; err != nil {
 		return models.Product{}, err
 	}
 	return product, nil

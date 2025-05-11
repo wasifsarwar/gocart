@@ -27,7 +27,7 @@ func TestCreateProduct(t *testing.T) {
 	}
 
 	product := models.Product{
-		ID:          "test-123",
+		ProductID:   "test-123",
 		Name:        "Test Product",
 		Description: "Test Description",
 		Price:       100.00,
@@ -38,8 +38,8 @@ func TestCreateProduct(t *testing.T) {
 		t.Fatalf("Failed to create product: %v", err)
 	}
 
-	if createdProduct.ID != product.ID {
-		t.Errorf("Expected product ID to be %s, but got %s", product.ID, createdProduct.ID)
+	if createdProduct.ProductID != product.ProductID {
+		t.Errorf("Expected product ID to be %s, but got %s", product.ProductID, createdProduct.ProductID)
 	}
 
 	if createdProduct.Name != product.Name {
@@ -63,7 +63,7 @@ func TestCreateProductError(t *testing.T) {
 	}
 
 	product := models.Product{
-		ID:          "test-123",
+		ProductID:   "test-123",
 		Name:        "Test Product",
 		Description: "Test Description",
 		Price:       100.00,
@@ -91,8 +91,8 @@ func TestGetProductById(t *testing.T) {
 		t.Fatalf("Failed to get product: %v", err)
 	}
 
-	if product.ID != "test-123" {
-		t.Errorf("Expected product ID to be 'test-123', but got '%s'", product.ID)
+	if product.ProductID != "test-123" {
+		t.Errorf("Expected product ID to be 'test-123', but got '%s'", product.ProductID)
 	}
 
 	if product.Name != "Test Product" {

@@ -33,7 +33,7 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Generate and assign a new UUID
-	product.ID = uuid.New().String()
+	product.ProductID = uuid.New().String()
 
 	newProduct, err := repository.CreateProduct(product)
 	if err != nil {
@@ -46,7 +46,7 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated) // Set status to 201 Created
 
 	// Optionally, include the product header
-	w.Header().Set("Location", "/products/"+newProduct.ID)
+	w.Header().Set("Location", "/products/"+newProduct.ProductID)
 
 	// Return the created product
 	json.NewEncoder(w).Encode(newProduct)
@@ -86,7 +86,7 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update fields
-	updatedProduct.ID = existingProduct.ID
+	updatedProduct.ProductID = existingProduct.ProductID
 
 	// Call repository function
 	result, err := repository.UpdateProduct(updatedProduct)

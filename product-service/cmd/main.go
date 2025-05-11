@@ -23,7 +23,7 @@ func main() {
 
 	// Test data insertion
 	inputProduct := models.Product{
-		ID:          fmt.Sprintf("test-%d", time.Now().Unix()), // Set an explicit ID
+		ProductID:   fmt.Sprintf("test-%d", time.Now().Unix()), // Set an explicit ID
 		Name:        "Test Product",
 		Description: "Test Description",
 		Price:       100.00,
@@ -35,10 +35,10 @@ func main() {
 	if err != nil {
 		log.Printf("Error creating product: %v", err)
 	} else {
-		log.Printf("Successfully created product with ID: %s", createdProduct.ID)
+		log.Printf("Successfully created product with ID: %s", createdProduct.ProductID)
 
 		// Retrieve the product to verify
-		product, err := repository.GetProductById(createdProduct.ID)
+		product, err := repository.GetProductById(createdProduct.ProductID)
 		if err != nil {
 			log.Printf("Error getting product: %v", err)
 		} else {
