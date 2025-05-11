@@ -3,10 +3,11 @@ package repository
 import (
 	"product-service/internal/models"
 
-	db "gocart/shared/db"
+	"gorm.io/gorm"
 )
 
 type ProductRepository interface {
+	ListAllProducts() ([]models.Product, error)
 	CreateProduct(product models.Product) (models.Product, error)
 	GetProductById(id string) (models.Product, error)
 	UpdateProduct(product models.Product) (models.Product, error)
@@ -24,38 +25,48 @@ Chaining:
 
 */
 
-func ListAllProducts() ([]models.Product, error) {
+type productRepository struct {
+	db *gorm.DB
+}
+
+func NewProductRepository(db *gorm.DB) ProductRepository {
+	return &productRepository{
+		db: db,
+	}
+}
+
+func (r *productRepository) ListAllProducts() ([]models.Product, error) {
 	var products []models.Product
-	if err := db.DB.Find(&products).Error; err != nil {
+	if err := r.db.Find(&products).Error; err != nil {
 		return nil, err
 	}
 	return products, nil
 }
 
-func CreateProduct(product models.Product) (models.Product, error) {
-	if err := db.DB.Create(&product).Error; err != nil {
+func (r *productRepository) CreateProduct(product models.Product) (models.Product, error) {
+	if err := r.db.Create(&product).Error; err != nil {
 		return models.Product{}, err
 	}
 	return product, nil
 }
 
-func GetProductById(id string) (models.Product, error) {
+func (r *productRepository) GetProductById(id string) (models.Product, error) {
 	var product models.Product
-	if err := db.DB.Where("id = ?", id).First(&product).Error; err != nil {
+	if err := r.db.Where("product_id = ?", id).First(&product).Error; err != nil {
 		return models.Product{}, err
 	}
 	return product, nil
 }
 
-func UpdateProduct(product models.Product) (models.Product, error) {
-	if err := db.DB.Model(&models.Product{}).Where("id = ?", product.ProductID).Updates(&product).Error; err != nil {
+func (r *productRepository) UpdateProduct(product models.Product) (models.Product, error) {
+	if err := r.db.Model(&models.Product{}).Where("product_id = ?", product.ProductID).Updates(&product).Error; err != nil {
 		return models.Product{}, err
 	}
 	return product, nil
 }
 
-func DeleteProduct(product models.Product) (models.Product, error) {
-	if err := db.DB.Where("id = ?", product.ProductID).Delete(&product).Error; err != nil {
+func (r *productRepository) DeleteProduct(product models.Product) (models.Product, error) {
+	if err := r.db.Where("product_id = ?", product.ProductID).Delete(&product).Error; err != nil {
 		return models.Product{}, err
 	}
 	return product, nil

@@ -4,31 +4,42 @@ import (
 	"fmt"
 	db "gocart/shared/db"
 	"log"
-	"net/http"
 	"product-service/internal/handler"
 	"product-service/internal/models"
 	"product-service/internal/repository"
+	"product-service/internal/server"
 	"time"
-
-	"github.com/gorilla/mux"
 )
 
 func main() {
 	// Initialize database connection
+	db.Connect(db.DefaultConfig())
+	db.Migrate(&models.Product{})
 
-	//for local host testing
-	// db.Connect(db.DefaultConfig())
+	// Initialize dependencies
+	productRepo := repository.NewProductRepository(db.DB)
+	productHandler := handler.NewProductHandler(productRepo)
+	srv := server.NewServer(productHandler)
 
-	// for replit
-	db.ConnectWithReplitConfig()
-	db.Migrate(&models.Product{}) // Pass the product model to Migrate
+	//Test grab current list of products
+	allProducts, err := productRepo.ListAllProducts()
+	if err != nil {
+		log.Printf("Error listing existing products %v", err)
+	} else {
+		log.Printf("Here's a list of products")
+		for _, product := range allProducts {
+			log.Printf("Product %s (ID: %s) - Price: %.2f, Category: %s",
+				product.Name,
+				product.ProductID,
+				product.Price,
+				product.Category)
+		}
 
-	// Create router
-	r := mux.NewRouter()
+	}
 
 	// Test data insertion
 	inputProduct := models.Product{
-		ProductID:   fmt.Sprintf("test-%d", time.Now().Unix()), // Set an explicit ID
+		ProductID:   fmt.Sprintf("test-%d", time.Now().Unix()),
 		Name:        "Test Product",
 		Description: "Test Description",
 		Price:       100.00,
@@ -36,14 +47,14 @@ func main() {
 	}
 
 	// Use repository for data operations
-	createdProduct, err := repository.CreateProduct(inputProduct)
+	createdProduct, err := productRepo.CreateProduct(inputProduct)
 	if err != nil {
 		log.Printf("Error creating product: %v", err)
 	} else {
 		log.Printf("Successfully created product with ID: %s", createdProduct.ProductID)
 
 		// Retrieve the product to verify
-		product, err := repository.GetProductById(createdProduct.ProductID)
+		product, err := productRepo.GetProductById(createdProduct.ProductID)
 		if err != nil {
 			log.Printf("Error getting product: %v", err)
 		} else {
@@ -51,16 +62,8 @@ func main() {
 		}
 	}
 
-	// Define routes
-	r.HandleFunc("/products", handler.ListAllProducts).Methods("GET")
-	r.HandleFunc("/products", handler.CreateProduct).Methods("POST")
-	r.HandleFunc("/products/{id}", handler.GetProductById).Methods("GET")
-	r.HandleFunc("/products/{id}", handler.UpdateProduct).Methods("PUT")
-	r.HandleFunc("/products/{id}", handler.DeleteProduct).Methods("DELETE")
-
 	// Start the server
-	log.Println("Starting server on :8080")
-	if err := http.ListenAndServe(":8080", r); err != nil {
+	if err := srv.Start(":8080"); err != nil {
 		log.Fatal(err)
 	}
 }

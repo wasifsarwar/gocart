@@ -12,54 +12,57 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func ListAllProducts(w http.ResponseWriter, r *http.Request) {
-	products, err := repository.ListAllProducts()
+type ProductHandler struct {
+	repo repository.ProductRepository
+}
+
+func NewProductHandler(repo repository.ProductRepository) *ProductHandler {
+	return &ProductHandler{
+		repo: repo,
+	}
+}
+
+func (h *ProductHandler) ListProducts(w http.ResponseWriter, r *http.Request) {
+	products, err := h.repo.ListAllProducts()
 	if err != nil {
-		log.Printf("Error fetching products with error: %v", err) // Log the error with context
+		log.Printf("Error fetching products with error: %v", err)
 		http.Error(w, "Unable to retrieve products. Please try again later.", http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(products)
 }
 
-func CreateProduct(w http.ResponseWriter, r *http.Request) {
+func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	var product models.Product
 	if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Generate and assign a new UUID
 	product.ProductID = uuid.New().String()
 
-	newProduct, err := repository.CreateProduct(product)
+	newProduct, err := h.repo.CreateProduct(product)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Set the response header and status code
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated) // Set status to 201 Created
-
-	// Optionally, include the product header
+	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Location", "/products/"+newProduct.ProductID)
-
-	// Return the created product
 	json.NewEncoder(w).Encode(newProduct)
 }
 
-func GetProductById(w http.ResponseWriter, r *http.Request) {
+func (h *ProductHandler) GetProductById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id := vars["id"]
+	id := vars["product_id"]
 
-	product, err := repository.GetProductById(id)
+	product, err := h.repo.GetProductById(id)
 	if err != nil {
-		log.Printf("Error fetching product with id: %v and error: %v", id, err) // Log the error with context
-		http.Error(w, fmt.Sprintf("Unable to retrieve product with id: %v. Please try again later.", id), http.StatusInternalServerError)
+		log.Printf("Error fetching product with id: %v and error: %v", id, err)
+		http.Error(w, fmt.Sprintf("Unable to retrieve product with id: %v.", id), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -67,9 +70,9 @@ func GetProductById(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(product)
 }
 
-func UpdateProduct(w http.ResponseWriter, r *http.Request) {
+func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id := vars["id"]
+	id := vars["product_id"]
 
 	var updatedProduct models.Product
 	if err := json.NewDecoder(r.Body).Decode(&updatedProduct); err != nil {
@@ -77,47 +80,39 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// First get the existing product to update
-	existingProduct, err := repository.GetProductById(id)
+	existingProduct, err := h.repo.GetProductById(id)
 	if err != nil {
 		log.Printf("Error fetching product with id: %v and error: %v", id, err)
 		http.Error(w, "Product not found", http.StatusNotFound)
 		return
 	}
 
-	// Update fields
 	updatedProduct.ProductID = existingProduct.ProductID
 
-	// Call repository function
-	result, err := repository.UpdateProduct(updatedProduct)
+	result, err := h.repo.UpdateProduct(updatedProduct)
 	if err != nil {
 		log.Printf("Error updating product with id: %v and error: %v", id, err)
 		http.Error(w, "Unable to update product", http.StatusInternalServerError)
 		return
 	}
 
-	// Set the response header and status code
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK) // Set status to 200 Created
-
-	// Return the updated product
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(result)
 }
 
-func DeleteProduct(w http.ResponseWriter, r *http.Request) {
+func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id := vars["id"]
+	id := vars["product_id"]
 
-	// First get the product to delete
-	product, err := repository.GetProductById(id)
+	product, err := h.repo.GetProductById(id)
 	if err != nil {
 		log.Printf("Error fetching product with id: %v and error: %v", id, err)
 		http.Error(w, "Product not found", http.StatusNotFound)
 		return
 	}
 
-	// Delete the product
-	_, err = repository.DeleteProduct(product)
+	_, err = h.repo.DeleteProduct(product)
 	if err != nil {
 		log.Printf("Error deleting product with id: %v and error: %v", id, err)
 		http.Error(w, "Unable to delete product", http.StatusInternalServerError)

@@ -49,6 +49,30 @@ paths:
         content:
           application/json:
             schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: User updated successfully
+          content:
+            application/json:
+              schemas:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: User not found
+    delete:
+      summary: Delete a user by ID
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The ID of the User
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Product deleted successfully
+        "404":
+          description: User not found
 
 components:
   schemas:

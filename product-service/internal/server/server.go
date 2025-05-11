@@ -2,49 +2,57 @@
 package server
 
 import (
+	"log"
 	"net/http"
-
-	"product-service/gen"
 	"product-service/internal/handler"
 
 	"github.com/gorilla/mux"
 )
 
 type Server struct {
-	productHandler *handler.ProductHandler
+	handler *handler.ProductHandler
+	router  *mux.Router
 }
 
-func NewServer(productHandler *handler.ProductHandler) *Server {
-	return &Server{
-		productHandler: productHandler,
+func NewServer(handler *handler.ProductHandler) *Server {
+	s := &Server{
+		handler: handler,
+		router:  mux.NewRouter(),
 	}
+	s.setupRoutes()
+	return s
 }
 
-func (s *Server) RegisterRoutes(r *mux.Router) {
-	// Create a new StrictServer
-	strictHandler := gen.NewStrictHandler(s, nil)
+func (s *Server) setupRoutes() {
+	s.router.HandleFunc("/products", s.handler.ListProducts).Methods("GET")
+	s.router.HandleFunc("/products", s.handler.CreateProduct).Methods("POST")
+	s.router.HandleFunc("/products/{id}", s.handler.GetProductById).Methods("GET")
+	s.router.HandleFunc("/products/{id}", s.handler.UpdateProduct).Methods("PUT")
+	s.router.HandleFunc("/products/{id}", s.handler.DeleteProduct).Methods("DELETE")
+}
 
-	// Register the routes
-	gen.RegisterHandlers(r, strictHandler)
+func (s *Server) Start(port string) error {
+	log.Printf("Starting server on %s", port)
+	return http.ListenAndServe(port, s.router)
 }
 
 // Implement the generated interface methods
 func (s *Server) ListProducts(w http.ResponseWriter, r *http.Request) {
-	s.productHandler.ListProducts(w, r)
+	s.handler.ListProducts(w, r)
 }
 
 func (s *Server) CreateProduct(w http.ResponseWriter, r *http.Request) {
-	s.productHandler.CreateProduct(w, r)
+	s.handler.CreateProduct(w, r)
 }
 
 func (s *Server) GetProductById(w http.ResponseWriter, r *http.Request, id string) {
-	s.productHandler.GetProductById(w, r, id)
+	s.handler.GetProductById(w, r)
 }
 
 func (s *Server) UpdateProduct(w http.ResponseWriter, r *http.Request, id string) {
-	s.productHandler.UpdateProduct(w, r, id)
+	s.handler.UpdateProduct(w, r)
 }
 
 func (s *Server) DeleteProduct(w http.ResponseWriter, r *http.Request, id string) {
-	s.productHandler.DeleteProduct(w, r, id)
+	s.handler.DeleteProduct(w, r)
 }
