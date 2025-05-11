@@ -105,14 +105,7 @@ func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["product_id"]
 
-	product, err := h.repo.GetProductById(id)
-	if err != nil {
-		log.Printf("Error fetching product with id: %v and error: %v", id, err)
-		http.Error(w, "Product not found", http.StatusNotFound)
-		return
-	}
-
-	_, err = h.repo.DeleteProduct(product)
+	err := h.repo.DeleteProduct(id)
 	if err != nil {
 		log.Printf("Error deleting product with id: %v and error: %v", id, err)
 		http.Error(w, "Unable to delete product", http.StatusInternalServerError)

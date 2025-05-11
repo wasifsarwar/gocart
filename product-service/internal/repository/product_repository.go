@@ -11,7 +11,7 @@ type ProductRepository interface {
 	CreateProduct(product models.Product) (models.Product, error)
 	GetProductById(id string) (models.Product, error)
 	UpdateProduct(product models.Product) (models.Product, error)
-	DeleteProduct(product models.Product) (models.Product, error)
+	DeleteProduct(id string) error
 }
 
 /**
@@ -50,9 +50,9 @@ func (r *productRepository) CreateProduct(product models.Product) (models.Produc
 	return product, nil
 }
 
-func (r *productRepository) GetProductById(id string) (models.Product, error) {
+func (r *productRepository) GetProductById(productId string) (models.Product, error) {
 	var product models.Product
-	if err := r.db.Where("product_id = ?", id).First(&product).Error; err != nil {
+	if err := r.db.Where("product_id = ?", productId).First(&product).Error; err != nil {
 		return models.Product{}, err
 	}
 	return product, nil
@@ -65,9 +65,6 @@ func (r *productRepository) UpdateProduct(product models.Product) (models.Produc
 	return product, nil
 }
 
-func (r *productRepository) DeleteProduct(product models.Product) (models.Product, error) {
-	if err := r.db.Where("product_id = ?", product.ProductID).Delete(&product).Error; err != nil {
-		return models.Product{}, err
-	}
-	return product, nil
+func (r *productRepository) DeleteProduct(id string) error {
+	return r.db.Delete(&models.Product{}, "product_id = ?", id).Error
 }
