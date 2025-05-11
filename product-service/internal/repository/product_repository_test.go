@@ -82,7 +82,7 @@ func TestCreateProductError(t *testing.T) {
 func TestGetProductById(t *testing.T) {
 	mockRepo := &MockProductRepository{
 		MockGetProductById: func(id string) (models.Product, error) {
-			return models.Product{ID: id, Name: "Test Product", Description: "Test Description", Price: 100.00}, nil
+			return models.Product{ProductID: id, Name: "Test Product", Description: "Test Description", Price: 100.00}, nil
 		},
 	}
 
