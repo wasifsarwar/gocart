@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	shared "gocart/shared/db"
+	shared "gocart/pkg/db"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"

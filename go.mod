@@ -5,12 +5,9 @@ go 1.24.2
 require (
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/mux v1.8.1
-	gocart/shared/db v0.0.0
 	gorm.io/driver/postgres v1.5.11
 	gorm.io/gorm v1.26.1
 )
-
-replace gocart/shared/db => ./shared/db
 
 require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect

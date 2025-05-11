@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
+	db "gocart/pkg/db"
 	"gocart/product-service/handler"
 	"gocart/product-service/models"
 	"gocart/product-service/repository"
 	"gocart/product-service/server"
-	db "gocart/shared/db"
 	"log"
 	"time"
 )

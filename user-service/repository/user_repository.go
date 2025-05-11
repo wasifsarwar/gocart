@@ -4,7 +4,7 @@ import (
 	"gocart/user-service/models"
 	"time"
 
-	db "gocart/shared/db"
+	db "gocart/pkg/db"
 )
 
 type UserRepository interface {

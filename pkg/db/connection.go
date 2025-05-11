@@ -1,4 +1,4 @@
-package shared
+package db
 
 import (
 	"errors"
@@ -33,7 +33,7 @@ func DefaultConfig() Config {
 }
 
 func ConnectWithReplitConfig() (*gorm.DB, error) {
-	config := Config {
+	config := Config{
 		Host:     getEnv("REPLIT_DB_HOST", "localhost"),
 		Port:     getEnv("REPLIT_DB_PORT", "5432"),
 		User:     getEnv("REPLIT_DB_USER", "admin"),
@@ -41,6 +41,11 @@ func ConnectWithReplitConfig() (*gorm.DB, error) {
 		DBName:   getEnv("REPLIT_DB_NAME", "gocart_db"),
 	}
 	return Connect(config)
+}
+
+// ConnectWithDefaults connects to the database using environment variables
+func ConnectWithDefaults() (*gorm.DB, error) {
+	return Connect(DefaultConfig())
 }
 
 func Connect(config Config) (*gorm.DB, error) {
@@ -80,11 +85,6 @@ func Connect(config Config) (*gorm.DB, error) {
 	log.Printf("Connected to PostgresSQL database at %s:%s", config.Host, config.Port)
 
 	return db, nil
-}
-
-// ConnectWithDefaults connects to the database using environment variables
-func ConnectWithDefaults() (*gorm.DB, error) {
-	return Connect(DefaultConfig())
 }
 
 // Migrate runs database migrations

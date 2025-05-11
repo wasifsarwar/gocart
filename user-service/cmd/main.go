@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	db "gocart/shared/db"
+	db "gocart/pkg/db"
 	"gocart/user-service/handler"
 	"gocart/user-service/models"
 	"gocart/user-service/repository"
@@ -20,7 +20,7 @@ func main() {
 	// TestCreateUser()
 	r := mux.NewRouter()
 
-	r.HandleFunc("/users", handler.CreateUser).Methods("POST")
+	r.HandleFunc("/users/register", handler.CreateUser).Methods("POST")
 	r.HandleFunc("/users/{user_id}", handler.GetUserById).Methods("GET")
 	r.HandleFunc("/users/{user_id}", handler.UpdateUser).Methods("PUT")
 	r.HandleFunc("/users/{user_id}", handler.DeleteUser).Methods("DELETE")
