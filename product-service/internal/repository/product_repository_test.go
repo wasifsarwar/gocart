@@ -177,12 +177,19 @@ func setupTestDB(t *testing.T) (*gorm.DB, func()) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 
+	//migrating product model to db
+	err = db.AutoMigrate(&models.Product{})
+	if err != nil {
+		t.Fatalf("Failed to run migrations: %v", err)
+	}
+
 	// Get the underlying *sql.DB instance and defer its closure
 	sqlDB, err := db.DB()
 	if err != nil {
 		t.Fatalf("Failed to get underlying *sql.DB: %v", err)
 	}
 	cleanup := func() {
+		db.Migrator().DropTable(&models.Product{})
 		sqlDB.Close()
 	}
 	return db, cleanup
