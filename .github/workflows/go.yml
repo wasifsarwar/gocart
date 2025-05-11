@@ -49,7 +49,7 @@ jobs:
 
       - name: Run tests with coverage
         working-directory: product-service
-        run: go test ./... -coverprofile=coverage.out
+        run: go test -v ./... -coverprofile=coverage.out
 
       - name: Upload coverage
         uses: codecov/codecov-action@v1
