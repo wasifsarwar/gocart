@@ -4,9 +4,13 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 	"user-service/models"
 	"user-service/repository"
 
+	shared "gocart/shared/db"
+
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
@@ -16,9 +20,22 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	// Generate a new UUID for the user
+	user.UserID = uuid.New().String()
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
+
+	// Save to database
+	createdUser, err := repository.CreateUser(user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(createdUser)
 }
 
 func GetUserById(w http.ResponseWriter, r *http.Request) {
@@ -53,9 +70,16 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update fields
-	updatedUser.UserID = existingUser.UserID
+	updatedUser = updateUser(existingUser, updatedUser)
 
-	user, err := repository.UpdateUser(updatedUser)
+	user, err := func() (models.User, error) {
+		var user models.User = updatedUser
+		user.UpdatedAt = time.Now()
+		if err := shared.DB.Model(&models.User{}).Where("user_id = ?", user.UserID).Updates(&user).Error; err != nil {
+			return models.User{}, err
+		}
+		return user, nil
+	}()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -63,6 +87,17 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
 	json.NewEncoder(w).Encode(user)
+}
+
+func updateUser(existingUser models.User, updatedUser models.User) models.User {
+	updatedUser.UserID = existingUser.UserID
+	updatedUser.CreatedAt = existingUser.CreatedAt
+	updatedUser.UpdatedAt = time.Now()
+	updatedUser.FirstName = existingUser.FirstName
+	updatedUser.LastName = existingUser.LastName
+	updatedUser.Email = existingUser.Email
+	updatedUser.Phone = existingUser.Phone
+	return updatedUser
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {

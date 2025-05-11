@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"time"
 	"user-service/models"
 
 	db "gocart/shared/db"
@@ -15,6 +16,7 @@ type UserRepository interface {
 }
 
 func CreateUser(user models.User) (models.User, error) {
+	user.CreatedAt = time.Now()
 	if err := db.DB.Create(&user).Error; err != nil {
 		return models.User{}, err
 	}
@@ -38,6 +40,7 @@ func DeleteUser(userID string) (models.User, error) {
 }
 
 func UpdateUser(user models.User) (models.User, error) {
+	user.UpdatedAt = time.Now()
 	if err := db.DB.Model(&models.User{}).Where("user_id = ?", user.UserID).Updates(&user).Error; err != nil {
 		return models.User{}, err
 	}

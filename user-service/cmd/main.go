@@ -32,10 +32,11 @@ func main() {
 
 func TestCreateUser() {
 	user := models.User{
-		UserID:    fmt.Sprintf("Test-User-%d", uuid.New().String()),
+		UserID:    fmt.Sprintf("Test-User-%v", uuid.New().String()),
 		FirstName: "John",
 		LastName:  "Doe",
 		Email:     "john.doe@example.com",
+		Phone:     "+1234567890",
 	}
 
 	createdUser, err := repository.CreateUser(user)
