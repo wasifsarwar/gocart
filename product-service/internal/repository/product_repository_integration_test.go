@@ -1,0 +1,138 @@
+package repository
+
+import (
+	"fmt"
+	"log"
+	"os"
+	"product-service/internal/models"
+	"testing"
+	"time"
+
+	"github.com/google/uuid"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
+
+func setupTestDB(t *testing.T) (*gorm.DB, func()) {
+
+	t.Logf("Setting up test database connection at %v", time.Now())
+
+	dsn := getEnv()
+	db, err := gorm.Open(postgres.Open(dsn))
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+
+	//migrating product model to db
+	t.Log("Running database migrations...")
+	err = db.AutoMigrate(&models.Product{})
+	if err != nil {
+		t.Fatalf("Failed to run migrations: %v", err)
+	}
+
+	// Get the underlying *sql.DB instance and defer its closure
+	sqlDB, err := db.DB()
+	if err != nil {
+		t.Fatalf("Failed to get underlying *sql.DB: %v", err)
+	}
+	cleanup := func() {
+		t.Log("Cleaning up test database...")
+		db.Migrator().DropTable(&models.Product{})
+		sqlDB.Close()
+		t.Log("Cleanup completed")
+
+	}
+	return db, cleanup
+}
+
+func getEnv() string {
+	host := os.Getenv("TEST_DB_HOST")
+	if host == "" {
+		host = "localhost"
+	}
+
+	user := os.Getenv("TEST_DB_USER")
+	if user == "" {
+		user = "admin"
+	}
+
+	password := os.Getenv("TEST_DB_PASSWORD")
+	if password == "" {
+		password = "admin"
+	}
+
+	dbname := os.Getenv("TEST_DB_NAME")
+	if dbname == "" {
+		dbname = "gocart_db"
+	}
+
+	port := os.Getenv("TEST_DB_PORT")
+	if port == "" {
+		port = "5432"
+	}
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		host, user, password, dbname, port,
+	)
+	return dsn
+}
+
+func TestDeleteProductIntegration(t *testing.T) {
+
+	// Create a test-specific logger
+	logger := log.New(os.Stdout, "[TestDeleteProductIntegration]", log.Ltime|log.Lmicroseconds)
+
+	logger.Println("Starting delete product integration test")
+
+	// Setup DB connection
+	db, cleanup := setupTestDB(t)
+	defer cleanup()
+
+	repo := NewProductRepository(db)
+
+	// Create a test product first
+	testProduct := models.Product{
+		ProductID:   uuid.New().String(),
+		Name:        "Test Product for Deletion",
+		Description: "This product should be deleted",
+		Price:       99.99,
+	}
+
+	// Insert the product
+	logger.Printf("Creating test product with ID: %s", testProduct.ProductID)
+	createdProduct, err := repo.CreateProduct(testProduct)
+	if err != nil {
+		t.Fatalf("Failed to create test product: %v", err)
+	}
+	logger.Printf("Successfully created test product: %+v", createdProduct)
+
+	// Verify product was created
+	logger.Printf("Verifying product creation...")
+	fetchedProduct, err := repo.GetProductById(createdProduct.ProductID)
+	if err != nil {
+		t.Fatalf("Failed to fetch created product: %v", err)
+	}
+	if fetchedProduct.ProductID != createdProduct.ProductID {
+		t.Errorf("Expected product ID %s, got %s", createdProduct.ProductID, fetchedProduct.ProductID)
+	}
+	logger.Printf("Successfully fetched product: %+v", fetchedProduct)
+
+	// Delete the product
+	logger.Printf("Attempting to delete product with ID: %s", createdProduct.ProductID)
+	err = repo.DeleteProduct(createdProduct.ProductID)
+	if err != nil {
+		t.Errorf("Failed to delete product: %v", err)
+	}
+	logger.Println("Successfully deleted product")
+
+	// Verify product was deleted
+	logger.Printf("Verifying product deletion...")
+	_, err = repo.GetProductById(createdProduct.ProductID)
+	if err == nil {
+		t.Error("Expected error when fetching deleted product, got nil")
+	} else {
+		logger.Printf("Verified product deletion: %v", err)
+	}
+
+	logger.Println("Test completed successfully")
+}
