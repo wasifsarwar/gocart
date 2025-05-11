@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
+	"gocart/product-service/handler"
+	"gocart/product-service/models"
+	"gocart/product-service/repository"
+	"gocart/product-service/server"
 	db "gocart/shared/db"
 	"log"
-	"product-service/internal/handler"
-	"product-service/internal/models"
-	"product-service/internal/repository"
-	"product-service/internal/server"
 	"time"
 )
 

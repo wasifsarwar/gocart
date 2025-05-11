@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 	db "gocart/shared/db"
+	"gocart/user-service/handler"
+	"gocart/user-service/models"
+	"gocart/user-service/repository"
 	"log"
 	"net/http"
-	"user-service/handler"
-	"user-service/models"
-	"user-service/repository"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"

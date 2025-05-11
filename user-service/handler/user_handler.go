@@ -2,11 +2,11 @@ package handler
 
 import (
 	"encoding/json"
+	"gocart/user-service/models"
+	"gocart/user-service/repository"
 	"log"
 	"net/http"
 	"time"
-	"user-service/models"
-	"user-service/repository"
 
 	shared "gocart/shared/db"
 

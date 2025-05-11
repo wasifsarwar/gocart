@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"product-service/internal/models"
+	"gocart/product-service/models"
 
 	"gorm.io/gorm"
 )

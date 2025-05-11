@@ -2,9 +2,9 @@
 package server
 
 import (
+	"gocart/product-service/handler"
 	"log"
 	"net/http"
-	"product-service/internal/handler"
 
 	"github.com/gorilla/mux"
 )

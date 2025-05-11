@@ -1,6 +1,6 @@
 package handler
 
-import "product-service/internal/models"
+import "gocart/product-service/models"
 
 type MockProductRepository struct {
 	MockListAllProducts func() ([]models.Product, error)

@@ -1,8 +1,8 @@
 package repository
 
 import (
+	"gocart/user-service/models"
 	"time"
-	"user-service/models"
 
 	db "gocart/shared/db"
 )

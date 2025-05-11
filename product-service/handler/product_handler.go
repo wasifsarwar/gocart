@@ -3,10 +3,10 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"gocart/product-service/models"
+	"gocart/product-service/repository"
 	"log"
 	"net/http"
-	"product-service/internal/models"
-	"product-service/internal/repository"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
