@@ -23,7 +23,6 @@ func setupTestDB(t *testing.T) (*gorm.DB, func()) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 
-	//migrating product model to db
 	t.Log("Running database migrations...")
 	err = db.AutoMigrate(&models.Product{})
 	if err != nil {
@@ -80,7 +79,7 @@ func getEnv() string {
 func TestListAllProducts(t *testing.T) {
 	logger := log.New(os.Stdout, "[TestListAllProducts]", log.Ltime|log.Lmicroseconds)
 	logger.Println("Starting list all products integration test")
-	// Setup DB connection
+
 	db, cleanup := setupTestDB(t)
 	defer cleanup()
 
@@ -117,13 +116,12 @@ func TestListAllProducts(t *testing.T) {
 func TestUpdateProductIntegration(t *testing.T) {
 	logger := log.New(os.Stdout, "[TestUpdateProductIntegration]", log.Ltime|log.Lmicroseconds)
 	logger.Println("Starting update product integration test")
-	// Setup DB connection
+
 	db, cleanup := setupTestDB(t)
 	defer cleanup()
 
 	repo := NewProductRepository(db)
 
-	// Create a test product first
 	testProduct := models.Product{
 		ProductID:   uuid.New().String(),
 		Name:        "Test Product for Create Initially",
@@ -131,7 +129,6 @@ func TestUpdateProductIntegration(t *testing.T) {
 		Price:       99.99,
 	}
 
-	// Insert the product
 	logger.Printf("Creating test product with ID: %s", testProduct.ProductID)
 	createdProduct, err := repo.CreateProduct(testProduct)
 	if err != nil {
@@ -146,30 +143,25 @@ func TestUpdateProductIntegration(t *testing.T) {
 		Price:       109.99,
 	}
 
-	// Insert the product
 	logger.Printf("Updating test product with ID: %s", updatedProduct.ProductID)
 	updated, err := repo.UpdateProduct(updatedProduct)
 	if err != nil {
 		t.Fatalf("Failed to update test product: %v", err)
 	}
-	logger.Printf("Successfully created test product: %+v", updated)
+	logger.Printf("Successfully updated test product: %+v", updated)
 
 }
 
 func TestCreateAndDeleteProductIntegration(t *testing.T) {
 
-	// Create a test-specific logger
 	logger := log.New(os.Stdout, "[TestCreateAndDeleteProductIntegration]", log.Ltime|log.Lmicroseconds)
-
 	logger.Println("Starting delete product integration test")
 
-	// Setup DB connection
 	db, cleanup := setupTestDB(t)
 	defer cleanup()
 
 	repo := NewProductRepository(db)
 
-	// Create a test product first
 	testProduct := models.Product{
 		ProductID:   uuid.New().String(),
 		Name:        "Test Product for Deletion",
@@ -177,7 +169,6 @@ func TestCreateAndDeleteProductIntegration(t *testing.T) {
 		Price:       99.99,
 	}
 
-	// Insert the product
 	logger.Printf("Creating test product with ID: %s", testProduct.ProductID)
 	createdProduct, err := repo.CreateProduct(testProduct)
 	if err != nil {
@@ -185,7 +176,6 @@ func TestCreateAndDeleteProductIntegration(t *testing.T) {
 	}
 	logger.Printf("Successfully created test product: %+v", createdProduct)
 
-	// Verify product was created
 	logger.Printf("Verifying product creation...")
 	fetchedProduct, err := repo.GetProductById(createdProduct.ProductID)
 	if err != nil {
@@ -196,7 +186,6 @@ func TestCreateAndDeleteProductIntegration(t *testing.T) {
 	}
 	logger.Printf("Successfully fetched product: %+v", fetchedProduct)
 
-	// Delete the product
 	logger.Printf("Attempting to delete product with ID: %s", createdProduct.ProductID)
 	err = repo.DeleteProduct(createdProduct.ProductID)
 	if err != nil {
@@ -204,7 +193,6 @@ func TestCreateAndDeleteProductIntegration(t *testing.T) {
 	}
 	logger.Println("Successfully deleted product")
 
-	// Verify product was deleted
 	logger.Printf("Verifying product deletion...")
 	_, err = repo.GetProductById(createdProduct.ProductID)
 	if err == nil {
@@ -213,5 +201,5 @@ func TestCreateAndDeleteProductIntegration(t *testing.T) {
 		logger.Printf("Verified product deletion: %v", err)
 	}
 
-	logger.Println("Test completed successfully")
+	logger.Println("Create and delete a product test completed successfully")
 }
