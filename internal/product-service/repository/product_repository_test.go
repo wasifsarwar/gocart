@@ -2,7 +2,7 @@ package repository
 
 import (
 	"errors"
-	"gocart/product-service/models"
+	"gocart/internal/product-service/models"
 	"testing"
 )
 

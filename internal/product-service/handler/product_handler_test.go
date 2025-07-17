@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"gocart/product-service/models"
+	"gocart/internal/product-service/models"
 	"net/http"
 	"net/http/httptest"
 	"testing"

@@ -2,7 +2,7 @@ package repository
 
 import (
 	"fmt"
-	"gocart/product-service/models"
+	"gocart/internal/product-service/models"
 	"log"
 	"os"
 	"testing"
