@@ -1,14 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
-	"time"
 
 	productHandler "gocart/internal/product-service/handler"
 	productModels "gocart/internal/product-service/models"
@@ -19,96 +17,41 @@ import (
 	userRepository "gocart/internal/user-service/repository"
 	userServer "gocart/internal/user-service/server"
 	db "gocart/pkg/db"
+	"gocart/pkg/seeder"
 )
 
 func main() {
-
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	log.Printf("Starting server on port %s", port)
+	log.Printf("Starting GoCart E-commerce API...")
 
 	// Initialize database connection
 	db.Connect(db.DefaultConfig())
 	db.Migrate(&productModels.Product{})
 	db.Migrate(&userModels.User{})
 
-	// Initialize dependencies
+	// Initialize repositories
 	productRepo := productRepository.NewProductRepository(db.DB)
-	productHandler := productHandler.NewProductHandler(productRepo)
 	userRepo := userRepository.NewUserRepository(db.DB)
+
+	// Initialize handlers
+	productHandler := productHandler.NewProductHandler(productRepo)
 	userHandler := userHandler.NewUserHandler(userRepo)
 
 	// Initialize servers
 	productSrv := productServer.NewServer(productHandler)
 	userSrv := userServer.NewServer(userHandler)
 
-	//Test grab current list of products
-	allProducts, err := productRepo.ListAllProducts()
-	if err != nil {
-		log.Printf("Error listing existing products %v", err)
+	// Seed database with sample data
+	seederInstance := seeder.NewSeeder(productRepo, userRepo)
+	if err := seederInstance.SeedAll(); err != nil {
+		log.Printf("⚠️  Warning: Failed to seed database: %v", err)
 	} else {
-		log.Printf("Here's a list of products")
-		for _, product := range allProducts {
-			log.Printf("Product %s (ID: %s) - Price: %.2f, Category: %s",
-				product.Name,
-				product.ProductID,
-				product.Price,
-				product.Category)
-		}
-
-	}
-
-	// Test data insertion
-	inputProduct := productModels.Product{
-		ProductID:   fmt.Sprintf("test-%d", time.Now().Unix()),
-		Name:        "Test Product",
-		Description: "Test Description",
-		Price:       100.00,
-		Category:    "Test Category",
-	}
-
-	// Use repository for data operations
-	createdProduct, err := productRepo.CreateProduct(inputProduct)
-	if err != nil {
-		log.Printf("Error creating product: %v", err)
-	} else {
-		log.Printf("Successfully created product with ID: %s", createdProduct.ProductID)
-
-		// Retrieve the product to verify
-		product, err := productRepo.GetProductById(createdProduct.ProductID)
-		if err != nil {
-			log.Printf("Error getting product: %v", err)
-		} else {
-			log.Printf("Retrieved product: %+v", product)
-		}
-	}
-
-	// Test User data insertion
-	inputUser := userModels.User{
-		UserID:    fmt.Sprintf("test-%d", time.Now().Unix()),
-		FirstName: "Test",
-		LastName:  "User",
-		Email:     "test@example.com",
-		Phone:     "+1234567890",
-	}
-
-	createdUser, err := userRepo.CreateUser(inputUser)
-	if err != nil {
-		log.Printf("Error creating user: %v", err)
-	} else {
-
-		log.Printf("Successfully created user with ID: %s", createdUser.UserID)
-
-		// Retrieve the user to verify
-		user, err := userRepo.GetUserById(createdUser.UserID)
-		if err != nil {
-			log.Printf("Error getting user: %v", err)
-		} else {
-			log.Printf("Retrieved user: %+v", user)
-		}
+		// Print seeding summary
+		seederInstance.PrintSeedingSummary()
 	}
 
 	// Start servers concurrently on different ports
@@ -117,6 +60,8 @@ func main() {
 
 	go func() {
 		defer wg.Done()
+		log.Printf("🛍️  Product Service starting on http://localhost:8080")
+		log.Printf("📖 Product API docs: http://localhost:8080/products")
 		if err := productSrv.Start(":8080"); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Product server failed: %v", err)
 		}
@@ -124,18 +69,22 @@ func main() {
 
 	go func() {
 		defer wg.Done()
+		log.Printf("👥 User Service starting on http://localhost:8081")
+		log.Printf("📖 User API docs: http://localhost:8081/users")
 		if err := userSrv.Start(":8081"); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("User server failed: %v", err)
 		}
 	}()
 
+	log.Println("🚀 All services started successfully!")
+	log.Println("📚 Full API Documentation: https://wasifsarwar.github.io/gocart/")
+
 	// Handle graceful shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Println("Shutting down servers...")
+	log.Println("🛑 Shutting down servers...")
 
-	// Shutdown both (basic; extend Start with ctx if needed)
 	wg.Wait()
-	log.Println("Servers stopped")
+	log.Println("✅ Servers stopped gracefully")
 }
