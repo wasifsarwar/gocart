@@ -18,6 +18,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/User"
+  /users/register:
     post:
       summary: Create a new user
       requestBody:
@@ -35,10 +36,20 @@ paths:
                 $ref: "#/components/schemas/User"
         "400":
           description: Invalid request body or user already exists
+  /users/{id}:
+    get:
+      summary: Get a user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the user to get
+          schema:
+            type: string
     put:
       summary: Update a user
       parameters:
-        - name: user_id
+        - name: id
           in: path
           required: true
           description: The ID of the user to update
@@ -62,7 +73,7 @@ paths:
     delete:
       summary: Delete a user by ID
       parameters:
-        - name: user_id
+        - name: id
           in: path
           required: true
           description: The ID of the User

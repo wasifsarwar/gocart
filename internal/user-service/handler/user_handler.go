@@ -2,19 +2,25 @@ package handler
 
 import (
 	"encoding/json"
-	"gocart/user-service/models"
-	"gocart/user-service/repository"
+	"gocart/internal/user-service/models"
+	"gocart/internal/user-service/repository"
 	"log"
 	"net/http"
 	"time"
-
-	shared "gocart/pkg/db"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+type UserHandler struct {
+	repo repository.UserRepository
+}
+
+func NewUserHandler(repo repository.UserRepository) *UserHandler {
+	return &UserHandler{repo: repo}
+}
+
+func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -27,7 +33,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	user.UpdatedAt = time.Now()
 
 	// Save to database
-	createdUser, err := repository.CreateUser(user)
+	createdUser, err := h.repo.CreateUser(user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -38,11 +44,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(createdUser)
 }
 
-func GetUserById(w http.ResponseWriter, r *http.Request) {
+func (h *UserHandler) GetUserById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID := vars["user_id"]
 
-	user, err := repository.GetUserById(userID)
+	user, err := h.repo.GetUserById(userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -52,7 +58,7 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-func UpdateUser(w http.ResponseWriter, r *http.Request) {
+func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID := vars["user_id"]
 
@@ -61,60 +67,45 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	// First get the existing user to update
-	existingUser, err := repository.GetUserById(userID)
+
+	// Get existing user
+	existingUser, err := h.repo.GetUserById(userID)
 	if err != nil {
 		log.Printf("Error fetching user with id: %v and error: %v", userID, err)
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
 	}
 
-	// Update fields
-	updatedUser = updateUser(existingUser, updatedUser)
-
-	user, err := func() (models.User, error) {
-		var user models.User = updatedUser
-		user.UpdatedAt = time.Now()
-		if err := shared.DB.Model(&models.User{}).Where("user_id = ?", user.UserID).Updates(&user).Error; err != nil {
-			return models.User{}, err
-		}
-		return user, nil
-	}()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusAccepted)
-	json.NewEncoder(w).Encode(user)
-}
-
-func updateUser(existingUser models.User, updatedUser models.User) models.User {
+	// Update fields (implement updateUser logic as needed)
 	updatedUser.UserID = existingUser.UserID
 	updatedUser.CreatedAt = existingUser.CreatedAt
 	updatedUser.UpdatedAt = time.Now()
-	updatedUser.FirstName = existingUser.FirstName
-	updatedUser.LastName = existingUser.LastName
-	updatedUser.Email = existingUser.Email
-	updatedUser.Phone = existingUser.Phone
-	return updatedUser
-}
 
-func DeleteUser(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	userID := vars["user_id"]
-
-	_, err := repository.DeleteUser(userID)
+	result, err := h.repo.UpdateUser(updatedUser)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusAccepted)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(result)
 }
 
-func ListAllUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := repository.ListAllUsers()
+func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userID := vars["user_id"]
+
+	_, err := h.repo.DeleteUser(userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h *UserHandler) ListAllUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := h.repo.ListAllUsers()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

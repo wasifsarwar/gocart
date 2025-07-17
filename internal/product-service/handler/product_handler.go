@@ -3,8 +3,8 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"gocart/product-service/models"
-	"gocart/product-service/repository"
+	productModels "gocart/internal/product-service/models"
+	productRepository "gocart/internal/product-service/repository"
 	"log"
 	"net/http"
 
@@ -13,10 +13,10 @@ import (
 )
 
 type ProductHandler struct {
-	repo repository.ProductRepository
+	repo productRepository.ProductRepository
 }
 
-func NewProductHandler(repo repository.ProductRepository) *ProductHandler {
+func NewProductHandler(repo productRepository.ProductRepository) *ProductHandler {
 	return &ProductHandler{
 		repo: repo,
 	}
@@ -35,7 +35,7 @@ func (h *ProductHandler) ListProducts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
-	var product models.Product
+	var product productModels.Product
 	if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -74,7 +74,7 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["product_id"]
 
-	var updatedProduct models.Product
+	var updatedProduct productModels.Product
 	if err := json.NewDecoder(r.Body).Decode(&updatedProduct); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

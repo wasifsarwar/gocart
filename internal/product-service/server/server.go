@@ -2,7 +2,7 @@
 package server
 
 import (
-	"gocart/product-service/handler"
+	"gocart/internal/product-service/handler"
 	"log"
 	"net/http"
 

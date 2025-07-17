@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"gocart/product-service/models"
+	"gocart/internal/product-service/models"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -44,6 +45,7 @@ func (r *productRepository) ListAllProducts() ([]models.Product, error) {
 }
 
 func (r *productRepository) CreateProduct(product models.Product) (models.Product, error) {
+	product.ProductID = uuid.New().String()
 	if err := r.db.Create(&product).Error; err != nil {
 		return models.Product{}, err
 	}
