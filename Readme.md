@@ -67,16 +67,7 @@ go run cmd/main.go
 - Product Service: http://localhost:8080
 - User Service: http://localhost:8081
 
-#### **Option B: Run Individual Services**
-```bash
-# Product Service
-cd internal/product-service && go run cmd/main.go
-
-# User Service  
-cd internal/user-service && go run cmd/main.go
-```
-
-#### **Option C: Docker Compose**
+#### **Option B: Docker Compose**
 ```bash
 docker-compose up
 ```
@@ -197,7 +188,6 @@ Each integration test creates its own isolated PostgreSQL database:
 ### **🏗️ Architecture**
 - ✅ **Microservices** - Independent, scalable services
 - ✅ **RESTful APIs** - Standard HTTP/JSON interfaces
-- ✅ **Database per Service** - Isolated data stores
 - ✅ **Concurrent Execution** - Services run simultaneously
 
 ### **🔒 Data Management**
@@ -209,32 +199,17 @@ Each integration test creates its own isolated PostgreSQL database:
 ### **📋 Testing Strategy**
 - ✅ **Unit Tests** - Business logic validation
 - ✅ **Integration Tests** - End-to-end workflows
-- ✅ **Database Isolation** - Test-specific databases
 - ✅ **CI/CD Pipeline** - Automated testing
-
-### **📚 Documentation**
-- ✅ **Interactive Swagger UI** - Test APIs in browser
-- ✅ **OpenAPI 3.0.3 Specs** - Industry standard
-- ✅ **GitHub Pages** - Beautiful hosted docs
-- ✅ **Comprehensive README** - Clear setup instructions
 
 ---
 
 ## 🔄 **CI/CD Pipeline**
-
-Our GitHub Actions workflow automatically:
 
 1. **🔍 Code Quality** - Runs linting and formatting checks
 2. **🏗️ Build** - Compiles all services
 3. **🧪 Test** - Executes unit and integration tests
 4. **📊 Coverage** - Generates coverage reports
 5. **📋 Artifacts** - Uploads test results and coverage
-
-### **Workflow Status**
-- ✅ Automated testing on every push
-- ✅ PostgreSQL service integration
-- ✅ Coverage reporting with artifacts
-- ✅ Multi-service test isolation
 
 ---
 
@@ -296,28 +271,6 @@ export USER_SERVICE_PORT=8081
 
 ---
 
-## 🤝 **Contributing**
-
-1. **Fork the repository**
-2. **Create feature branch**: `git checkout -b feature/amazing-feature`
-3. **Commit changes**: `git commit -m 'Add amazing feature'`
-4. **Push to branch**: `git push origin feature/amazing-feature`
-5. **Open Pull Request**
-
-### **Development Guidelines**
-- Follow [Standard Go Project Layout](https://github.com/golang-standards/project-layout)
-- Write tests for all new features
-- Update API documentation for endpoint changes
-- Use conventional commit messages
-
----
-
-## 📝 **License**
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
 ## 📞 **Contact & Support**
 
 - **GitHub**: [@wasifsarwar](https://github.com/wasifsarwar)
@@ -327,8 +280,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <div align="center">
-
-**⭐ Star this repo if you find it helpful!**
 
 [API Documentation](https://wasifsarwar.github.io/gocart/) • [Report Bug](https://github.com/wasifsarwar/gocart/issues) • [Request Feature](https://github.com/wasifsarwar/gocart/issues)
 
