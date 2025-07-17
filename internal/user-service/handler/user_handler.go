@@ -72,7 +72,7 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	existingUser, err := h.repo.GetUserById(userID)
 	if err != nil {
 		log.Printf("Error fetching user with id: %v and error: %v", userID, err)
-		http.Error(w, "User not found", http.StatusNotFound)
+		http.Error(w, "User not found", http.StatusInternalServerError)
 		return
 	}
 

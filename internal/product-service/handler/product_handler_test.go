@@ -7,6 +7,7 @@ import (
 	"gocart/internal/product-service/models"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gorilla/mux"
@@ -292,7 +293,7 @@ func TestDeleteProduct(t *testing.T) {
 			name:           "Success",
 			productID:      "1",
 			mockError:      nil,
-			expectedStatus: http.StatusAccepted,
+			expectedStatus: http.StatusNoContent,
 		},
 		{
 			name:           "Not Found",
@@ -319,6 +320,25 @@ func TestDeleteProduct(t *testing.T) {
 
 			if w.Code != tt.expectedStatus {
 				t.Errorf("Expected status %d, got %d", tt.expectedStatus, w.Code)
+			}
+
+			// For successful deletion, expect empty body (204 NoContent)
+			// For error cases, expect error message in body
+			if tt.mockError == nil {
+				// Success case: expect empty body
+				if w.Body.Len() != 0 {
+					t.Errorf("Expected empty response body for successful delete, got: %s", w.Body.String())
+				}
+			} else {
+				// Error case: expect error message (plain text from http.Error)
+				if w.Body.Len() == 0 {
+					t.Error("Expected error message in response body, got empty body")
+				}
+				// http.Error returns plain text, not JSON
+				expectedErrorMsg := "Unable to delete product"
+				if !strings.Contains(w.Body.String(), expectedErrorMsg) {
+					t.Errorf("Expected error message to contain '%s', got: %s", expectedErrorMsg, w.Body.String())
+				}
 			}
 		})
 	}

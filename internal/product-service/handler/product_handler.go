@@ -103,6 +103,7 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(result)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Product updated successfully"})
 }
 
 func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
@@ -115,6 +116,5 @@ func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to delete product", http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusAccepted)
+	w.WriteHeader(http.StatusNoContent)
 }
