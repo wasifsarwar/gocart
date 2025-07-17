@@ -3,82 +3,25 @@ package handler
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"gocart/internal/product-service/models"
 	"gocart/internal/product-service/repository"
+	"gocart/pkg/testutils"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/gorilla/mux"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func setupTestDB(t *testing.T) (*gorm.DB, func()) {
-
-	t.Logf("Setting up test database connection at %v", time.Now())
-
-	dsn := getEnv()
-	db, err := gorm.Open(postgres.Open(dsn))
-	if err != nil {
-		t.Fatalf("Failed to connect to database: %v", err)
+	config := testutils.TestDBConfig{
+		ServiceName: "products_handler",
+		Models:      []interface{}{&models.Product{}},
 	}
-
-	t.Log("Running database migrations...")
-	err = db.AutoMigrate(&models.Product{})
-	if err != nil {
-		t.Fatalf("Failed to run migrations: %v", err)
-	}
-
-	// Get the underlying *sql.DB instance and defer its closure
-	sqlDB, err := db.DB()
-	if err != nil {
-		t.Fatalf("Failed to get underlying *sql.DB: %v", err)
-	}
-	cleanup := func() {
-		t.Log("Cleaning up test database...")
-		db.Migrator().DropTable(&models.Product{})
-		sqlDB.Close()
-		t.Log("Cleanup completed")
-
-	}
-	return db, cleanup
-}
-
-func getEnv() string {
-	host := os.Getenv("TEST_DB_HOST")
-	if host == "" {
-		host = "localhost"
-	}
-
-	user := os.Getenv("TEST_DB_USER")
-	if user == "" {
-		user = "admin"
-	}
-
-	password := os.Getenv("TEST_DB_PASSWORD")
-	if password == "" {
-		password = "admin"
-	}
-
-	dbname := os.Getenv("TEST_DB_NAME")
-	if dbname == "" {
-		dbname = "gocart_db"
-	}
-
-	port := os.Getenv("TEST_DB_PORT")
-	if port == "" {
-		port = "5432"
-	}
-	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		host, user, password, dbname, port,
-	)
-	return dsn
+	return testutils.SetupTestDB(t, config)
 }
 
 func TestCreateAndGetProductIntegration(t *testing.T) {
@@ -201,182 +144,3 @@ func TestListProductsIntegration(t *testing.T) {
 		t.Errorf("Expected 3 products, got %d", len(response))
 	}
 }
-
-/**
-d
-
-func TestProductHandlerIntegration(t *testing.T) {
-	setupTestDB(t)
-
-	productRepo := repository.NewProductRepository(db.DB)
-	handler := NewProductHandler(productRepo)
-
-	// Test Create Product
-	t.Run("Create Product", func(t *testing.T) {
-		product := models.Product{
-			Name:        "Test Product",
-			Description: "Test Description",
-			Price:       99.99,
-			Category:    "Test Category",
-		}
-
-		body, err := json.Marshal(product)
-		if err != nil {
-			t.Fatalf("Failed to marshal product: %v", err)
-		}
-
-		req := httptest.NewRequest(http.MethodPost, "/products", bytes.NewBuffer(body))
-		w := httptest.NewRecorder()
-
-		handler.CreateProduct(w, req)
-
-		if w.Code != http.StatusCreated {
-			t.Errorf("Expected status code %d, got %d", http.StatusCreated, w.Code)
-		}
-
-		var response models.Product
-		if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
-			t.Fatalf("Failed to unmarshal response: %v", err)
-		}
-
-		if response.ProductID == "" {
-			t.Error("Expected ProductID to be set, got empty string")
-		}
-		if response.Name != product.Name {
-			t.Errorf("Expected product name %s, got %s", product.Name, response.Name)
-		}
-	})
-
-	// Test Get Product
-	t.Run("Get Product", func(t *testing.T) {
-		product := models.Product{
-			Name:        "Get Test Product",
-			Description: "Test Description",
-			Price:       99.99,
-			Category:    "Test Category",
-		}
-		createdProduct, err := productRepo.CreateProduct(product)
-		if err != nil {
-			t.Fatalf("Failed to create test product: %v", err)
-		}
-
-		req := httptest.NewRequest(http.MethodGet, "/products/"+createdProduct.ProductID, nil)
-		req = mux.SetURLVars(req, map[string]string{"id": createdProduct.ProductID})
-		w := httptest.NewRecorder()
-
-		handler.GetProductById(w, req)
-
-		if w.Code != http.StatusOK {
-			t.Errorf("Expected status code %d, got %d", http.StatusOK, w.Code)
-		}
-
-		var response models.Product
-		if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
-			t.Fatalf("Failed to unmarshal response: %v", err)
-		}
-
-		if response.ProductID != createdProduct.ProductID {
-			t.Errorf("Expected ProductID %s, got %s", createdProduct.ProductID, response.ProductID)
-		}
-		if response.Name != createdProduct.Name {
-			t.Errorf("Expected Name %s, got %s", createdProduct.Name, response.Name)
-		}
-	})
-
-	// Test List Products
-	t.Run("List Products", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/products", nil)
-		w := httptest.NewRecorder()
-
-		handler.ListProducts(w, req)
-
-		if w.Code != http.StatusOK {
-			t.Errorf("Expected status code %d, got %d", http.StatusOK, w.Code)
-		}
-
-		var response []models.Product
-		if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
-			t.Fatalf("Failed to unmarshal response: %v", err)
-		}
-
-		if len(response) == 0 {
-			t.Error("Expected non-empty product list, got empty list")
-		}
-	})
-
-	// Test Update Product
-	t.Run("Update Product", func(t *testing.T) {
-		product := models.Product{
-			Name:        "Update Test Product",
-			Description: "Test Description",
-			Price:       99.99,
-			Category:    "Test Category",
-		}
-		createdProduct, err := productRepo.CreateProduct(product)
-		if err != nil {
-			t.Fatalf("Failed to create test product: %v", err)
-		}
-
-		updatedProduct := createdProduct
-		updatedProduct.Name = "Updated Name"
-		updatedProduct.Price = 199.99
-
-		body, err := json.Marshal(updatedProduct)
-		if err != nil {
-			t.Fatalf("Failed to marshal updated product: %v", err)
-		}
-
-		req := httptest.NewRequest(http.MethodPut, "/products/"+createdProduct.ProductID, bytes.NewBuffer(body))
-		req = mux.SetURLVars(req, map[string]string{"id": createdProduct.ProductID})
-		w := httptest.NewRecorder()
-
-		handler.UpdateProduct(w, req)
-
-		if w.Code != http.StatusOK {
-			t.Errorf("Expected status code %d, got %d", http.StatusOK, w.Code)
-		}
-
-		var response models.Product
-		if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
-			t.Fatalf("Failed to unmarshal response: %v", err)
-		}
-
-		if response.Name != updatedProduct.Name {
-			t.Errorf("Expected Name %s, got %s", updatedProduct.Name, response.Name)
-		}
-		if response.Price != updatedProduct.Price {
-			t.Errorf("Expected Price %.2f, got %.2f", updatedProduct.Price, response.Price)
-		}
-	})
-
-	// Test Delete Product
-	t.Run("Delete Product", func(t *testing.T) {
-		product := models.Product{
-			Name:        "Delete Test Product",
-			Description: "Test Description",
-			Price:       99.99,
-			Category:    "Test Category",
-		}
-		createdProduct, err := productRepo.CreateProduct(product)
-		if err != nil {
-			t.Fatalf("Failed to create test product: %v", err)
-		}
-
-		req := httptest.NewRequest(http.MethodDelete, "/products/"+createdProduct.ProductID, nil)
-		req = mux.SetURLVars(req, map[string]string{"id": createdProduct.ProductID})
-		w := httptest.NewRecorder()
-
-		handler.DeleteProduct(w, req)
-
-		if w.Code != http.StatusOK {
-			t.Errorf("Expected status code %d, got %d", http.StatusOK, w.Code)
-		}
-
-		// Verify product is deleted
-		_, err = productRepo.GetProductById(createdProduct.ProductID)
-		if err == nil {
-			t.Error("Expected error when getting deleted product, got nil")
-		}
-	})
-}
-*/

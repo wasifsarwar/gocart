@@ -3,77 +3,21 @@ package repository
 import (
 	"fmt"
 	"gocart/internal/product-service/models"
+	"gocart/pkg/testutils"
 	"log"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func setupTestDB(t *testing.T) (*gorm.DB, func()) {
-
-	t.Logf("Setting up test database connection at %v", time.Now())
-
-	dsn := getEnv()
-	db, err := gorm.Open(postgres.Open(dsn))
-	if err != nil {
-		t.Fatalf("Failed to connect to database: %v", err)
+	config := testutils.TestDBConfig{
+		ServiceName: "products_repo",
+		Models:      []interface{}{&models.Product{}},
 	}
-
-	t.Log("Running database migrations...")
-	err = db.AutoMigrate(&models.Product{})
-	if err != nil {
-		t.Fatalf("Failed to run migrations: %v", err)
-	}
-
-	// Get the underlying *sql.DB instance and defer its closure
-	sqlDB, err := db.DB()
-	if err != nil {
-		t.Fatalf("Failed to get underlying *sql.DB: %v", err)
-	}
-	cleanup := func() {
-		t.Log("Cleaning up test database...")
-		db.Migrator().DropTable(&models.Product{})
-		sqlDB.Close()
-		t.Log("Cleanup completed")
-
-	}
-	return db, cleanup
-}
-
-func getEnv() string {
-	host := os.Getenv("TEST_DB_HOST")
-	if host == "" {
-		host = "localhost"
-	}
-
-	user := os.Getenv("TEST_DB_USER")
-	if user == "" {
-		user = "admin"
-	}
-
-	password := os.Getenv("TEST_DB_PASSWORD")
-	if password == "" {
-		password = "admin"
-	}
-
-	dbname := os.Getenv("TEST_DB_NAME")
-	if dbname == "" {
-		dbname = "gocart_db"
-	}
-
-	port := os.Getenv("TEST_DB_PORT")
-	if port == "" {
-		port = "5432"
-	}
-	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		host, user, password, dbname, port,
-	)
-	return dsn
+	return testutils.SetupTestDB(t, config)
 }
 
 func TestListAllProducts(t *testing.T) {
