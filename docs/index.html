@@ -42,8 +42,8 @@
     <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-bundle.js"></script>
     <script>
         const specs = {
-            product: 'https://raw.githubusercontent.com/yourusername/gocart/main/api/product/openapi.yaml',
-            user: 'https://raw.githubusercontent.com/yourusername/gocart/main/api/user/openapi.yaml'
+            product: 'https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/product/openapi.yaml',
+            user: 'https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/user/openapi.yaml'
         };
 
         let currentSpec = 'product';
@@ -67,7 +67,7 @@
                 plugins: [
                     SwaggerUIBundle.plugins.DownloadUrl
                 ],
-                layout: "StandaloneLayout",
+                layout: "BaseLayout",
                 tryItOutEnabled: true,
                 requestInterceptor: (request) => {
                     // You can modify requests here if needed
