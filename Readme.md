@@ -58,6 +58,11 @@ docker-compose up -d postgres
 createdb gocart_db
 ```
 
+```bash
+# Shut down PostgreSQL instance
+brew services stop postgresql
+```
+
 ### **3. Run Services**
 
 #### **Option A: Run All Services**
