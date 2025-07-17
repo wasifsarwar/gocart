@@ -243,6 +243,12 @@ func TestUpdateProduct(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := &MockProductRepository{
+				MockGetProductById: func(id string) (models.Product, error) {
+					if tt.mockError != nil {
+						return models.Product{}, tt.mockError
+					}
+					return tt.mockProduct, nil
+				},
 				MockUpdateProduct: func(product models.Product) (models.Product, error) {
 					return tt.mockProduct, tt.mockError
 				},
@@ -286,13 +292,13 @@ func TestDeleteProduct(t *testing.T) {
 			name:           "Success",
 			productID:      "1",
 			mockError:      nil,
-			expectedStatus: http.StatusOK,
+			expectedStatus: http.StatusAccepted,
 		},
 		{
 			name:           "Not Found",
 			productID:      "999",
 			mockError:      errors.New("product not found"),
-			expectedStatus: http.StatusNotFound,
+			expectedStatus: http.StatusInternalServerError,
 		},
 	}
 

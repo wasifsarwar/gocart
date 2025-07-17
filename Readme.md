@@ -43,7 +43,7 @@ Message queue integration (RabbitMQ or Kafka)
 Basic CI/CD pipeline configuration
 
 
-![project structure](images/Project%20structure.png)
+![project structure](/docs/images/Project%20structure.png)
 ```
 /gocart
 └── product-service

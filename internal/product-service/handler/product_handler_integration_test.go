@@ -13,7 +13,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -91,10 +90,9 @@ func TestCreateAndGetProductIntegration(t *testing.T) {
 
 	productRepo := repository.NewProductRepository(db)
 	handler := NewProductHandler(productRepo)
-	productUUID := uuid.New().String()
 	testProduct := models.Product{
-		Name:        fmt.Sprintf("TestProduct-%s", productUUID),
-		ProductID:   productUUID,
+		Category:    "Test Category",
+		Name:        "TestProduct",
 		Description: "Test product description",
 		Price:       90.99,
 	}
@@ -125,7 +123,7 @@ func TestCreateAndGetProductIntegration(t *testing.T) {
 		t.Errorf("Expected product name %s, got %s", testProduct.Name, createdProductResponse.Name)
 	}
 
-	getProductID := testProduct.ProductID
+	getProductID := createdProductResponse.ProductID
 
 	getReq := httptest.NewRequest(http.MethodGet, "/products/"+getProductID, nil)
 	getReq = mux.SetURLVars(getReq, map[string]string{"id": getProductID}) // Set Mux vars
@@ -147,6 +145,60 @@ func TestCreateAndGetProductIntegration(t *testing.T) {
 	}
 	if getResponse.Name != testProduct.Name {
 		t.Errorf("Expected product name %s, got %s", testProduct.Name, getResponse.Name)
+	}
+}
+
+func TestListProductsIntegration(t *testing.T) {
+	logger := log.New(os.Stdout, "[TestListProductsIntegration]", log.Ltime|log.Lmicroseconds)
+	logger.Println("Starting list products integration test")
+
+	db, cleanup := setupTestDB(t)
+	defer cleanup()
+
+	productRepo := repository.NewProductRepository(db)
+	handler := NewProductHandler(productRepo)
+
+	product1 := models.Product{
+		Name:        "Product 1",
+		Description: "Description 1",
+		Price:       100.00,
+		Category:    "Category 1",
+	}
+
+	product2 := models.Product{
+		Name:        "Product 2",
+		Description: "Description 2",
+		Price:       200.00,
+		Category:    "Category 2",
+	}
+
+	product3 := models.Product{
+		Name:        "Product 3",
+		Description: "Description 3",
+		Price:       300.00,
+		Category:    "Category 3",
+	}
+
+	productRepo.CreateProduct(product1)
+	productRepo.CreateProduct(product2)
+	productRepo.CreateProduct(product3)
+
+	req := httptest.NewRequest(http.MethodGet, "/products", nil)
+	w := httptest.NewRecorder()
+
+	handler.ListProducts(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, w.Code)
+	}
+
+	var response []models.Product
+	if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
+		t.Fatalf("Failed to unmarshal response: %v", err)
+	}
+
+	if len(response) != 3 {
+		t.Errorf("Expected 3 products, got %d", len(response))
 	}
 }
 

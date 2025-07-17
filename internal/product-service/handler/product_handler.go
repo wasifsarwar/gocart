@@ -57,12 +57,16 @@ func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 func (h *ProductHandler) GetProductById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id := vars["product_id"]
+	id := vars["id"]
 
 	product, err := h.repo.GetProductById(id)
 	if err != nil {
 		log.Printf("Error fetching product with id: %v and error: %v", id, err)
-		http.Error(w, fmt.Sprintf("Unable to retrieve product with id: %v.", id), http.StatusInternalServerError)
+		if err.Error() == "product not found" {
+			http.Error(w, fmt.Sprintf("Product with id %v not found.", id), http.StatusNotFound)
+		} else {
+			http.Error(w, fmt.Sprintf("Unable to retrieve product with id: %v.", id), http.StatusInternalServerError)
+		}
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -72,7 +76,7 @@ func (h *ProductHandler) GetProductById(w http.ResponseWriter, r *http.Request) 
 
 func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id := vars["product_id"]
+	id := vars["id"]
 
 	var updatedProduct productModels.Product
 	if err := json.NewDecoder(r.Body).Decode(&updatedProduct); err != nil {
@@ -103,7 +107,7 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 
 func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id := vars["product_id"]
+	id := vars["id"]
 
 	err := h.repo.DeleteProduct(id)
 	if err != nil {
