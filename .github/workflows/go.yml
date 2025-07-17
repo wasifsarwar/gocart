@@ -29,12 +29,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
-          go-version: 1.24
+          go-version: '1.21'
 
       - name: Install dependencies
         run: go mod download
@@ -44,15 +44,54 @@ jobs:
 
       - name: Run Product Service tests with coverage
         working-directory: internal/product-service
-        run: go test -v ./... -coverprofile=coverage-product-service.out
+        run: go test -v ./... -coverprofile=coverage.out
+        env:
+          TEST_DB_HOST: localhost
+          TEST_DB_USER: admin
+          TEST_DB_PASSWORD: admin
+          TEST_DB_NAME: gocart_db
+          TEST_DB_PORT: 5432
 
       - name: Run User Service tests with coverage
         working-directory: internal/user-service
-        run: go test -v ./... -coverprofile=coverage-user-service.out
+        run: go test -v ./... -coverprofile=coverage.out
+        env:
+          TEST_DB_HOST: localhost
+          TEST_DB_USER: admin
+          TEST_DB_PASSWORD: admin
+          TEST_DB_NAME: gocart_db
+          TEST_DB_PORT: 5432
 
-      - name: Upload coverage
-        uses: codecov/codecov-action@v1
+      - name: Generate Product Service coverage HTML
+        working-directory: internal/product-service
+        run: go tool cover -html=coverage.out -o coverage.html
+
+      - name: Generate User Service coverage HTML
+        working-directory: internal/user-service
+        run: go tool cover -html=coverage.out -o coverage.html
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v3
         with:
-          file: product-service/coverage.out
-          flags: unittests
-          name: codecov-umbrella
+          name: coverage-reports
+          path: |
+            internal/product-service/coverage.html
+            internal/user-service/coverage.html
+            internal/product-service/coverage.out
+            internal/user-service/coverage.out
+
+      - name: Upload Product Service coverage to Codecov
+        uses: codecov/codecov-action@v3
+        continue-on-error: true
+        with:
+          file: ./internal/product-service/coverage.out
+          flags: product-service
+          name: product-service-coverage
+
+      - name: Upload User Service coverage to Codecov
+        uses: codecov/codecov-action@v3
+        continue-on-error: true
+        with:
+          file: ./internal/user-service/coverage.out
+          flags: user-service
+          name: user-service-coverage
