@@ -1,15 +1,23 @@
-name: Go
+name: User Service Tests
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'user-service/**'
+      - 'internal/user-service/**'
+      - 'pkg/**'
   pull_request:
     branches:
       - main
+    paths:
+      - 'user-service/**'
+      - 'internal/user-service/**'
+      - 'pkg/**'
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     services:
@@ -39,20 +47,18 @@ jobs:
       - name: Install dependencies
         run: go mod download
 
-      - name: Build
-        run: go build ./...
-
-      - name: Run Product Service tests with coverage
-        working-directory: internal/product-service
-        run: go test -v ./... -coverprofile=coverage-product-service.out
-
-      - name: Run User Service tests with coverage
-        working-directory: internal/user-service
-        run: go test -v ./... -coverprofile=coverage-user-service.out
+      - name: Run User Service tests
+        working-directory: user-service
+        run: go test -v ./... -coverprofile=coverage.out
+        env:
+          TEST_DB_HOST: localhost
+          TEST_DB_USER: admin
+          TEST_DB_PASSWORD: admin
+          TEST_DB_NAME: gocart_db
+          TEST_DB_PORT: 5432
 
       - name: Upload coverage
         uses: codecov/codecov-action@v1
         with:
-          file: product-service/coverage.out
-          flags: unittests
-          name: codecov-umbrella
+          file: ./user-service/coverage.out
+          flags: user-service 
