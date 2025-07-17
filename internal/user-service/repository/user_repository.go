@@ -4,6 +4,7 @@ import (
 	"gocart/internal/user-service/models"
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -27,6 +28,7 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 
 func (r *userRepository) CreateUser(user models.User) (models.User, error) {
 	user.CreatedAt = time.Now()
+	user.UserID = uuid.New().String()
 	if err := r.db.Create(&user).Error; err != nil {
 		return models.User{}, err
 	}
