@@ -1,10 +1,11 @@
-openapi: 3.0.4
+openapi: 3.1.0
 info:
   title: Product Service API
   description: API for managing products in gocart e-commerce platform
   version: 1.0.0
 servers:
   - url: http://localhost:8080
+    description: Development server
 paths:
   /products:
     get:

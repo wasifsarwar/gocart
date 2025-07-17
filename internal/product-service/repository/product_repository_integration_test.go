@@ -198,7 +198,7 @@ func TestCreateAndDeleteProductIntegration(t *testing.T) {
 	if err == nil {
 		t.Error("Expected error when fetching deleted product, got nil")
 	} else {
-		logger.Printf("Verified product deletion: %v", err)
+		logger.Printf("Verified product deletion: %v for product id: %s", err, createdProduct.ProductID)
 	}
 
 	logger.Println("Create and delete a product test completed successfully")

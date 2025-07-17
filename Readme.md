@@ -1,5 +1,18 @@
-E-commerce Microservice API
-Project Overview
+# GoCart E-commerce Microservice API
+
+[![API Documentation](https://img.shields.io/badge/API-Documentation-blue)](https://yourusername.github.io/gocart/)
+[![Product API](https://img.shields.io/badge/Product%20API-Swagger-green)](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/yourusername/gocart/main/api/product/openapi.yaml)
+[![User API](https://img.shields.io/badge/User%20API-Swagger-green)](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/yourusername/gocart/main/api/user/openapi.yaml)
+
+## 📚 API Documentation
+
+**🔗 [Live API Documentation](https://yourusername.github.io/gocart/)** - Interactive Swagger UI
+
+### Individual Service APIs
+- **Product Service**: [Swagger UI](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/yourusername/gocart/main/api/product/openapi.yaml) | [Raw Spec](api/product/openapi.yaml)
+- **User Service**: [Swagger UI](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/yourusername/gocart/main/api/user/openapi.yaml) | [Raw Spec](api/user/openapi.yaml)
+
+## Project Overview
 Build a microservice-based e-commerce API system with the following components:
 
 Product Service

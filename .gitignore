@@ -4,3 +4,6 @@
 .replit
 .git
 .idea
+coverage-*.out
+coverage.out
+openapitools.json
