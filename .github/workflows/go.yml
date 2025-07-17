@@ -42,15 +42,6 @@ jobs:
       - name: Build
         run: go build ./...
 
-      - name: Setup test database permissions
-        run: |
-          PGPASSWORD=admin psql -h localhost -U admin -d postgres -c "
-            ALTER USER admin CREATEDB;
-            CREATE DATABASE IF NOT EXISTS gocart_db;
-          "
-        env:
-          PGPASSWORD: admin
-
       - name: Run Product Service tests with coverage
         working-directory: internal/product-service
         run: go test -v ./... -coverprofile=coverage.out -timeout=10m
