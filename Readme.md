@@ -1,100 +1,336 @@
-# GoCart E-commerce Microservice API
+# 🛒 GoCart - Microservices E-commerce API
 
+[![Go](https://github.com/wasifsarwar/gocart/workflows/Go/badge.svg)](https://github.com/wasifsarwar/gocart/actions)
+[![Go Version](https://img.shields.io/badge/Go-1.23-blue.svg)](https://golang.org/)
 [![API Documentation](https://img.shields.io/badge/API-Documentation-blue)](https://wasifsarwar.github.io/gocart/)
-[![Product API](https://img.shields.io/badge/Product%20API-Swagger-green)](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/product/openapi.yaml)
-[![User API](https://img.shields.io/badge/User%20API-Swagger-green)](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/user/openapi.yaml)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## 📚 API Documentation
+> A modern, scalable microservices-based e-commerce API built with Go, featuring comprehensive testing, CI/CD, and beautiful API documentation.
 
-**🔗 [Live API Documentation](https://wasifsarwar.github.io/gocart/)** - Interactive Swagger UI
+## 🔗 **Live API Documentation**
 
-### Individual Service APIs
-- **Product Service**: [Swagger UI](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/product/openapi.yaml) | [Raw Spec](api/product/openapi.yaml)
-- **User Service**: [Swagger UI](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/user/openapi.yaml) | [Raw Spec](api/user/openapi.yaml)
+**[📖 Interactive API Explorer](https://wasifsarwar.github.io/gocart/)** - Test APIs directly in your browser
 
-## Project Overview
-Build a microservice-based e-commerce API system with the following components:
+### Service-Specific Documentation
+- **🛍️ Product API**: [Swagger UI](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/product/openapi.yaml) | [OpenAPI Spec](api/product/openapi.yaml)
+- **👤 User API**: [Swagger UI](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/user/openapi.yaml) | [OpenAPI Spec](api/user/openapi.yaml)
 
-Product Service
+---
 
-Product catalog management
-Inventory tracking
-Category management
-Search functionality
+## 🏗️ **Architecture Overview**
 
+GoCart implements a **microservices architecture** with the following services:
 
-User Service
+### ✅ **Implemented Services**
 
-Authentication (JWT implementation)
-User management
-Role-based access control
+| Service | Port | Status | Description |
+|---------|------|--------|-------------|
+| **Product Service** | `:8080` | ✅ Complete | Product catalog, inventory, CRUD operations |
+| **User Service** | `:8081` | ✅ Complete | User management, authentication, profiles |
 
+### 🚧 **Planned Services**
+- **Order Service** - Order processing and management
+- **Payment Service** - Payment processing simulation
+- **Notification Service** - Email/SMS notifications
 
-Order Service
+---
 
-Order processing
-Payment integration simulation
-Order history and tracking
+## 🚀 **Quick Start**
 
+### **Prerequisites**
+- **Go 1.23+** 
+- **PostgreSQL 13+**
+- **Docker & Docker Compose** (optional)
 
-
-Key Technical Requirements
-
-Microservice Architecture: Implement separate services that communicate via REST or gRPC
-Database Integration: Use PostgreSQL and implement proper migrations
-Caching Layer: Implement Redis for caching product information
-Docker Integration: Create Docker files and Docker Compose for easy deployment
-Testing: Comprehensive unit and integration tests
-Documentation: Well-documented API with Swagger
-Logging & Monitoring: Implement structured logging and basic metrics
-Rate Limiting: Implement rate limiting for API endpoints
-
-Stretch Goals
-
-Circuit breaker pattern
-Message queue integration (RabbitMQ or Kafka)
-Basic CI/CD pipeline configuration
-
-
-![project structure](/docs/images/Project%20structure.png)
-```
-/gocart
-└── product-service
-    ├── cmd
-    │   └── main.go                # Entry point for the service
-    ├── internal
-    │   ├── models
-    │   │   └── product.go         # Product model definition
-    │   ├── handlers
-    │   │   └── product_handler.go  # HTTP handlers for product-related endpoints
-    │   ├── repository
-    │   │   └── product_repository.go # Database interactions for products
-    │   ├── services
-    │   │   └── product_service.go  # Business logic for product operations
-    │   └── middleware
-    │       └── auth_middleware.go  # Middleware for authentication/authorization
-    ├── config
-    │   └── config.go              # Configuration management (e.g., loading environment variables)
-    ├── Dockerfile                  # Dockerfile for building the service
-    ├── docker-compose.yml          # (Optional) If you want to run the service with other services
-    ├── go.mod                      # Go module file for dependency management
-    ├── go.sum                      # Go module checksum file
-    └── README.md                   # Documentation for the product service
+### **1. Clone & Setup**
+```bash
+git clone https://github.com/wasifsarwar/gocart.git
+cd gocart
+go mod download
 ```
 
+### **2. Database Setup**
+```bash
+# Start PostgreSQL with Docker
+docker-compose up -d postgres
+
+# Or use your local PostgreSQL
+createdb gocart_db
+```
+
+### **3. Run Services**
+
+#### **Option A: Run All Services**
+```bash
+go run cmd/main.go
+```
+- Product Service: http://localhost:8080
+- User Service: http://localhost:8081
+
+#### **Option B: Run Individual Services**
+```bash
+# Product Service
+cd internal/product-service && go run cmd/main.go
+
+# User Service  
+cd internal/user-service && go run cmd/main.go
+```
+
+#### **Option C: Docker Compose**
+```bash
+docker-compose up
+```
+
+---
+
+## 📊 **API Endpoints**
+
+### **Product Service** (`localhost:8080`)
+```http
+GET    /products           # List all products
+POST   /products           # Create product
+GET    /products/{id}      # Get product by ID
+PUT    /products/{id}      # Update product
+DELETE /products/{id}      # Delete product
+```
+
+### **User Service** (`localhost:8081`)
+```http
+GET    /users              # List all users
+POST   /users/register     # Register new user
+GET    /users/{id}         # Get user by ID
+PUT    /users/{id}         # Update user
+DELETE /users/{id}         # Delete user
+```
+
+---
+
+## 🏛️ **Project Structure**
 
 ```
-sql commands
-admin: psql -U wasifsmacbookpro -h localhost -p 5432 -d postgres
-
-CREATE TABLE products (
-    id SERIAL PRIMARY KEY,          -- Unique identifier for each product
-    name VARCHAR(255) NOT NULL,     -- Name of the product
-    description TEXT,                -- Description of the product
-    price NUMERIC(10, 2) NOT NULL,   -- Price of the product (up to 10 digits, 2 decimal places)
-    category VARCHAR(100),           -- Category of the product
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp for when the product was created
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Timestamp for when the product was last updated
-);
+gocart/
+├── 📁 api/                          # OpenAPI specifications
+│   ├── product/openapi.yaml         # Product service API spec
+│   └── user/openapi.yaml            # User service API spec
+├── 📁 cmd/
+│   └── main.go                      # Main application entry point
+├── 📁 docs/                         # Documentation and assets
+│   └── index.html                   # Beautiful Swagger UI
+├── 📁 internal/                     # Private application code
+│   ├── 📁 product-service/
+│   │   ├── handler/                 # HTTP handlers
+│   │   ├── models/                  # Data models
+│   │   ├── repository/              # Database layer
+│   │   └── server/                  # Server setup
+│   └── 📁 user-service/
+│       ├── handler/                 # HTTP handlers
+│       ├── models/                  # Data models
+│       ├── repository/              # Database layer
+│       └── server/                  # Server setup
+├── 📁 pkg/                          # Shared utilities
+│   ├── db/                          # Database connections
+│   └── testutils/                   # Testing utilities
+├── 📁 .github/workflows/            # CI/CD pipelines
+├── docker-compose.yml               # Multi-service orchestration
+├── Dockerfile                       # Container build instructions
+├── go.mod                          # Go dependencies
+└── README.md                       # You are here!
 ```
+
+---
+
+## 🧪 **Testing**
+
+### **Run All Tests**
+```bash
+go test ./...
+```
+
+### **Run with Coverage**
+```bash
+go test -v ./... -coverprofile=coverage.out
+go tool cover -html=coverage.out
+```
+
+### **Integration Tests**
+```bash
+# Product Service Integration Tests
+cd internal/product-service && go test -v ./...
+
+# User Service Integration Tests  
+cd internal/user-service && go test -v ./...
+```
+
+### **Test Database Isolation**
+Each integration test creates its own isolated PostgreSQL database:
+- ✅ **No test interference** - Each test runs in isolation
+- ✅ **Parallel execution** - Tests can run concurrently
+- ✅ **Automatic cleanup** - Databases are dropped after tests
+
+---
+
+## 🔧 **Technology Stack**
+
+### **Backend**
+- **Language**: Go 1.23
+- **Framework**: Gorilla Mux (HTTP routing)
+- **Database**: PostgreSQL + GORM ORM
+- **Testing**: Go testing + testify
+- **Documentation**: OpenAPI 3.0.3 + Swagger UI
+
+### **Infrastructure**
+- **Containerization**: Docker + Docker Compose
+- **CI/CD**: GitHub Actions
+- **Database Migrations**: GORM AutoMigrate
+- **Code Coverage**: Go built-in tools + Codecov
+
+### **Development**
+- **Project Layout**: Standard Go project layout
+- **Dependency Management**: Go Modules
+- **Code Quality**: gofmt, go vet, golint
+- **Version Control**: Git with conventional commits
+
+---
+
+## 🌟 **Key Features**
+
+### **🏗️ Architecture**
+- ✅ **Microservices** - Independent, scalable services
+- ✅ **RESTful APIs** - Standard HTTP/JSON interfaces
+- ✅ **Database per Service** - Isolated data stores
+- ✅ **Concurrent Execution** - Services run simultaneously
+
+### **🔒 Data Management**
+- ✅ **PostgreSQL** - Robust relational database
+- ✅ **GORM Integration** - Type-safe database operations
+- ✅ **UUID Primary Keys** - Globally unique identifiers
+- ✅ **Automatic Migrations** - Schema management
+
+### **📋 Testing Strategy**
+- ✅ **Unit Tests** - Business logic validation
+- ✅ **Integration Tests** - End-to-end workflows
+- ✅ **Database Isolation** - Test-specific databases
+- ✅ **CI/CD Pipeline** - Automated testing
+
+### **📚 Documentation**
+- ✅ **Interactive Swagger UI** - Test APIs in browser
+- ✅ **OpenAPI 3.0.3 Specs** - Industry standard
+- ✅ **GitHub Pages** - Beautiful hosted docs
+- ✅ **Comprehensive README** - Clear setup instructions
+
+---
+
+## 🔄 **CI/CD Pipeline**
+
+Our GitHub Actions workflow automatically:
+
+1. **🔍 Code Quality** - Runs linting and formatting checks
+2. **🏗️ Build** - Compiles all services
+3. **🧪 Test** - Executes unit and integration tests
+4. **📊 Coverage** - Generates coverage reports
+5. **📋 Artifacts** - Uploads test results and coverage
+
+### **Workflow Status**
+- ✅ Automated testing on every push
+- ✅ PostgreSQL service integration
+- ✅ Coverage reporting with artifacts
+- ✅ Multi-service test isolation
+
+---
+
+## 🌐 **Environment Configuration**
+
+### **Database Configuration**
+```bash
+# Development
+export DB_HOST=localhost
+export DB_USER=admin
+export DB_PASSWORD=admin
+export DB_NAME=gocart_db
+export DB_PORT=5432
+
+# Testing (automatically handled)
+export TEST_DB_HOST=localhost
+export TEST_DB_USER=admin
+export TEST_DB_PASSWORD=admin
+export TEST_DB_NAME=gocart_db
+export TEST_DB_PORT=5432
+```
+
+### **Service Ports**
+```bash
+export PRODUCT_SERVICE_PORT=8080
+export USER_SERVICE_PORT=8081
+```
+
+---
+
+## 🚧 **Roadmap**
+
+### **Phase 1: Foundation** ✅ *Complete*
+- [x] Microservices architecture
+- [x] Product & User services
+- [x] PostgreSQL integration
+- [x] Comprehensive testing
+- [x] CI/CD pipeline
+- [x] API documentation
+
+### **Phase 2: Core Features** 🚧 *In Progress*
+- [ ] Order Service implementation
+- [ ] Payment processing simulation
+- [ ] JWT authentication
+- [ ] Role-based access control
+
+### **Phase 3: Advanced Features** 📋 *Planned*
+- [ ] Redis caching layer
+- [ ] Rate limiting
+- [ ] Message queue integration
+- [ ] Circuit breaker pattern
+- [ ] Monitoring & metrics
+
+### **Phase 4: Production Ready** 🎯 *Future*
+- [ ] Load balancing
+- [ ] Service mesh (Istio)
+- [ ] Distributed tracing
+- [ ] Kubernetes deployment
+
+---
+
+## 🤝 **Contributing**
+
+1. **Fork the repository**
+2. **Create feature branch**: `git checkout -b feature/amazing-feature`
+3. **Commit changes**: `git commit -m 'Add amazing feature'`
+4. **Push to branch**: `git push origin feature/amazing-feature`
+5. **Open Pull Request**
+
+### **Development Guidelines**
+- Follow [Standard Go Project Layout](https://github.com/golang-standards/project-layout)
+- Write tests for all new features
+- Update API documentation for endpoint changes
+- Use conventional commit messages
+
+---
+
+## 📝 **License**
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 📞 **Contact & Support**
+
+- **GitHub**: [@wasifsarwar](https://github.com/wasifsarwar)
+- **Issues**: [GitHub Issues](https://github.com/wasifsarwar/gocart/issues)
+- **Documentation**: [API Docs](https://wasifsarwar.github.io/gocart/)
+
+---
+
+<div align="center">
+
+**⭐ Star this repo if you find it helpful!**
+
+[API Documentation](https://wasifsarwar.github.io/gocart/) • [Report Bug](https://github.com/wasifsarwar/gocart/issues) • [Request Feature](https://github.com/wasifsarwar/gocart/issues)
+
+</div>
 
