@@ -202,6 +202,10 @@
                 👤 User Service<span class="badge">v1.0</span>
             </button>
             <div class="divider"></div>
+            <button id="order-btn" class="service-btn" onclick="loadSpec('order')">
+                🛒 Order Service<span class="badge">v1.0</span>
+            </button>
+            <div class="divider"></div>
             <a href="https://github.com/wasifsarwar/gocart" target="_blank">
                 <button class="github-btn">
                     🐙 View on GitHub
@@ -213,7 +217,7 @@
         
         <div class="footer">
             <p>Built with ❤️ using Go, GORM, PostgreSQL & Swagger UI</p>
-            <p>🚀 <strong>Status:</strong> Development | 🔧 <strong>Version:</strong> 1.0.0 | 📊 <strong>Services:</strong> 2 Active</p>
+            <p>🚀 <strong>Status:</strong> Development | 🔧 <strong>Version:</strong> 1.0.0 | 📊 <strong>Services:</strong> 3 Active</p>
         </div>
     </div>
 
@@ -221,7 +225,8 @@
     <script>
         const specs = {
             product: 'https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/product/openapi.yaml',
-            user: 'https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/user/openapi.yaml'
+            user: 'https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/user/openapi.yaml',
+            order: 'https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/order-management/openapi.yaml'
         };
 
         let currentSpec = 'product';
