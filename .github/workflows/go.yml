@@ -80,6 +80,10 @@ jobs:
         working-directory: internal/user-service
         run: go tool cover -html=coverage.out -o coverage.html
 
+      - name: Generate Order Management Service coverage HTML
+        working-directory: internal/order-management-service
+        run: go tool cover -html=coverage.out -o coverage.html
+
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
         with:
@@ -87,8 +91,10 @@ jobs:
           path: |
             internal/product-service/coverage.html
             internal/user-service/coverage.html
+            internal/order-management-service/coverage.html
             internal/product-service/coverage.out
             internal/user-service/coverage.out
+            internal/order-management-service/coverage.out
 
       - name: Upload Product Service coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -105,3 +111,11 @@ jobs:
           file: ./internal/user-service/coverage.out
           flags: user-service
           name: user-service-coverage
+      
+      - name: Upload Order Management Service coverage to Codecov
+        uses: codecov/codecov-action@v4
+        continue-on-error: true
+        with:
+          file: ./internal/order-management-service/coverage.out
+          flags: order-management-service
+          name: order-management-service-coverage
