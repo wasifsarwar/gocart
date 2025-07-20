@@ -7,6 +7,7 @@ import (
 	"gocart/internal/order-management-service/repository"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -79,7 +80,6 @@ func (h *OrderHandler) UpdateOrder(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(result)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Order updated successfully"})
 }
 
 func (h *OrderHandler) DeleteOrder(w http.ResponseWriter, r *http.Request) {
@@ -93,8 +93,39 @@ func (h *OrderHandler) DeleteOrder(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+func (h *OrderHandler) DeleteOrderItem(w http.ResponseWriter, r *http.Request) {
+	orderItemId := mux.Vars(r)["item_id"]
+	if err := h.orderRepo.DeleteOrderItem(orderItemId); err != nil {
+		log.Printf("Error deleting order item with id: %v and error: %v", orderItemId, err)
+		http.Error(w, "Unable to delete order item", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func (h *OrderHandler) ListAllOrders(w http.ResponseWriter, r *http.Request) {
-	orders, err := h.orderRepo.ListAllOrders()
+
+	// get query params
+	limitStr := r.URL.Query().Get("limit")
+	offsetStr := r.URL.Query().Get("offset")
+
+	limit := 10 // default
+	offset := 0 // default
+
+	if limitStr != "" {
+		if parsedLimit, err := strconv.Atoi(limitStr); err == nil && parsedLimit > 0 {
+			limit = parsedLimit
+		}
+	}
+
+	if offsetStr != "" {
+		if parsedOffset, err := strconv.Atoi(offsetStr); err == nil && parsedOffset >= 0 {
+			offset = parsedOffset
+		}
+	}
+
+	orders, err := h.orderRepo.ListAllOrders(limit, offset)
 	if err != nil {
 		log.Printf("Error listing all orders and error: %v", err)
 		http.Error(w, "Unable to list orders", http.StatusInternalServerError)
