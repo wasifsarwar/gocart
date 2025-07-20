@@ -8,6 +8,10 @@ import (
 	"sync"
 	"syscall"
 
+	orderHandler "gocart/internal/order-management-service/handler"
+	orderModels "gocart/internal/order-management-service/models"
+	orderRepository "gocart/internal/order-management-service/repository"
+	orderServer "gocart/internal/order-management-service/server"
 	productHandler "gocart/internal/product-service/handler"
 	productModels "gocart/internal/product-service/models"
 	productRepository "gocart/internal/product-service/repository"
@@ -32,18 +36,23 @@ func main() {
 	db.Connect(db.DefaultConfig())
 	db.Migrate(&productModels.Product{})
 	db.Migrate(&userModels.User{})
+	db.Migrate(&orderModels.Order{})
+	db.Migrate(&orderModels.OrderItem{})
 
 	// Initialize repositories
 	productRepo := productRepository.NewProductRepository(db.DB)
 	userRepo := userRepository.NewUserRepository(db.DB)
+	orderRepo := orderRepository.NewOrderRepository(db.DB)
 
 	// Initialize handlers
 	productHandler := productHandler.NewProductHandler(productRepo)
 	userHandler := userHandler.NewUserHandler(userRepo)
+	orderHandler := orderHandler.NewOrderHandler(orderRepo)
 
 	// Initialize servers
 	productSrv := productServer.NewServer(productHandler)
 	userSrv := userServer.NewServer(userHandler)
+	orderSrv := orderServer.NewServer(orderHandler)
 
 	// Seed database with sample data
 	seederInstance := seeder.NewSeeder(productRepo, userRepo)
@@ -56,8 +65,9 @@ func main() {
 
 	// Start servers concurrently on different ports
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(3)
 
+	// Start product service
 	go func() {
 		defer wg.Done()
 		log.Printf("🛍️  Product Service starting on http://localhost:8080")
@@ -73,6 +83,15 @@ func main() {
 		log.Printf("📖 User API docs: http://localhost:8081/users")
 		if err := userSrv.Start(":8081"); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("User server failed: %v", err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		log.Printf("🛒 Order Management Service starting on http://localhost:8082")
+		log.Printf("📖 Order Management API docs: http://localhost:8082/orders")
+		if err := orderSrv.Start(":8082"); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Order server failed: %v", err)
 		}
 	}()
 

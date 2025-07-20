@@ -67,12 +67,23 @@ func (r *orderRepository) CreateOrder(order models.Order) (models.Order, error) 
 	order.TotalAmount = calculateTotal(order.Items)
 
 	err := r.db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(&order).Error; err != nil {
+		// Create order without items first
+		orderWithoutItems := models.Order{
+			OrderID:     order.OrderID,
+			UserID:      order.UserID,
+			Status:      order.Status,
+			TotalAmount: order.TotalAmount,
+			CreatedAt:   order.CreatedAt,
+			UpdatedAt:   order.UpdatedAt,
+		}
+		if err := tx.Create(&orderWithoutItems).Error; err != nil {
 			return err
 		}
+
+		// Create items separately
 		for i := range order.Items {
 			order.Items[i].OrderItemID = uuid.New().String()
-			order.Items[i].OrderID = order.OrderID
+			order.Items[i].OrderID = orderWithoutItems.OrderID
 			order.Items[i].CreatedAt = time.Now()
 			order.Items[i].UpdatedAt = time.Now()
 			if err := tx.Create(&order.Items[i]).Error; err != nil {
