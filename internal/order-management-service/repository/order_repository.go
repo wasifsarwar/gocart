@@ -15,7 +15,8 @@ type OrderRepository interface {
 	GetOrderById(id string) (models.Order, error)
 	UpdateOrder(order models.Order) (models.Order, error)
 	DeleteOrder(id string) error
-	ListAllOrders() ([]models.Order, error)
+	DeleteOrderItem(orderItemID string) error
+	ListAllOrders(limit, offset int) ([]models.Order, error)
 	ListOrdersByUserId(userId string) ([]models.Order, error)
 }
 
@@ -31,12 +32,17 @@ func NewOrderRepository(db *gorm.DB) OrderRepository {
 
 func (r *orderRepository) CreateOrder(order models.Order) (models.Order, error) {
 
+	// validate user exists
+	if err := r.validateUserExists(order.UserID); err != nil {
+		return models.Order{}, fmt.Errorf("user validation failed: %w", err)
+	}
+
 	// Step 1: Basic validation (expand as needed)
 	if len(order.Items) == 0 {
 		return models.Order{}, errors.New("order must have at least one item")
 	}
 
-	for _, item := range order.Items {
+	for i, item := range order.Items {
 		if item.ProductID == "" {
 			return models.Order{}, errors.New("invalid order item: missing product_id")
 		}
@@ -46,6 +52,12 @@ func (r *orderRepository) CreateOrder(order models.Order) (models.Order, error) 
 		if item.Price <= 0 {
 			return models.Order{}, errors.New("invalid order item: price must be greater than 0")
 		}
+
+		currentPrice, err := r.validateProductAndFetchPrice(item.ProductID)
+		if err != nil {
+			return models.Order{}, fmt.Errorf("product validation failed for item %d: %w", i+1, err)
+		}
+		order.Items[i].Price = currentPrice
 	}
 
 	// Step 2: Create order and items in a transaction
@@ -58,13 +70,13 @@ func (r *orderRepository) CreateOrder(order models.Order) (models.Order, error) 
 		if err := tx.Create(&order).Error; err != nil {
 			return err
 		}
-		for _, item := range order.Items {
-			item.OrderItemID = uuid.New().String()
-			item.OrderID = order.OrderID
-			item.CreatedAt = time.Now()
-			item.UpdatedAt = time.Now()
-			if err := tx.Create(&item).Error; err != nil {
-				return err
+		for i := range order.Items {
+			order.Items[i].OrderItemID = uuid.New().String()
+			order.Items[i].OrderID = order.OrderID
+			order.Items[i].CreatedAt = time.Now()
+			order.Items[i].UpdatedAt = time.Now()
+			if err := tx.Create(&order.Items[i]).Error; err != nil {
+				return fmt.Errorf("failed to create order item %s: %w", order.Items[i].OrderItemID, err)
 			}
 		}
 		return nil
@@ -96,35 +108,122 @@ func (r *orderRepository) UpdateOrder(order models.Order) (models.Order, error) 
 	if err != nil {
 		return models.Order{}, fmt.Errorf("failed to get order %s: %w", order.OrderID, err)
 	}
-
-	existingOrder.Status = order.Status
-	existingOrder.UpdatedAt = time.Now()
-	existingOrder.Items = order.Items
-	existingOrder.TotalAmount = calculateTotal(existingOrder.Items)
-
+	// atomic update of order and items
 	err = r.db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Model(&models.Order{}).Where("order_id = ?", existingOrder.OrderID).Updates(&order).Error; err != nil {
-			return fmt.Errorf("failed to update order %s: %w", existingOrder.OrderID, err)
+
+		// update order-level fields only if provided (partial update)
+		orderUpdates := make(map[string]interface{})
+		if order.Status != "" {
+			orderUpdates["status"] = order.Status
 		}
-		if err := tx.Delete(&models.OrderItem{}, "order_id = ?", existingOrder.OrderID).Error; err != nil {
-			return fmt.Errorf("failed to delete order items for order %s: %w", existingOrder.OrderID, err)
-		}
-		for _, item := range existingOrder.Items {
-			item.OrderID = existingOrder.OrderID
-			item.CreatedAt = existingOrder.CreatedAt
-			item.UpdatedAt = time.Now()
-			if err := tx.Create(&item).Error; err != nil {
-				return fmt.Errorf("failed to create order item %s: %w", item.OrderItemID, err)
+		orderUpdates["updated_at"] = time.Now()
+
+		// update parent order
+		if len(orderUpdates) > 0 {
+			if err := tx.Model(&existingOrder).Updates(orderUpdates).Error; err != nil {
+				return fmt.Errorf("failed to update order %s: %w", existingOrder.OrderID, err)
 			}
 		}
+
+		// process order items: handle deletions, updates and inserts
+		for i := range order.Items {
+
+			order.Items[i].UpdatedAt = time.Now()
+			order.Items[i].OrderID = existingOrder.OrderID
+
+			// check if item is marked for deletion
+			if order.Items[i].Delete {
+				if order.Items[i].OrderItemID == "" {
+					return fmt.Errorf("invalid order item: missing order_item_id")
+				}
+				// delete item with proper WHERE clause
+				if err := tx.Where("order_item_id = ?", order.Items[i].OrderItemID).Delete(&models.OrderItem{}).Error; err != nil {
+					return fmt.Errorf("failed to delete order item %s: %w", order.Items[i].OrderItemID, err)
+				}
+
+				continue // Skip further processing for deleted items
+			}
+
+			if order.Items[i].OrderItemID != "" {
+				// update existing item
+				itemUpdates := make(map[string]interface{})
+				if order.Items[i].ProductID != "" {
+					// Validate product exists
+					currentPrice, err := r.validateProductAndFetchPrice(order.Items[i].ProductID)
+					if err != nil {
+						return fmt.Errorf("product validation failed for item update: %w", err)
+					}
+					order.Items[i].Price = currentPrice
+					itemUpdates["product_id"] = order.Items[i].ProductID
+				}
+				if order.Items[i].Quantity > 0 {
+					itemUpdates["quantity"] = order.Items[i].Quantity
+				}
+				if order.Items[i].Price > 0 {
+					itemUpdates["price"] = order.Items[i].Price
+				}
+				itemUpdates["updated_at"] = time.Now()
+				if len(itemUpdates) > 0 {
+					if err := tx.Model(&models.OrderItem{}).Where("order_item_id = ?", order.Items[i].OrderItemID).Updates(itemUpdates).Error; err != nil {
+						return fmt.Errorf("failed to update order item %s: %w", order.Items[i].OrderItemID, err)
+					}
+				}
+			} else {
+				// Validate required fields for new items
+				if order.Items[i].ProductID == "" {
+					return fmt.Errorf("new item missing product_id")
+				}
+				if order.Items[i].Quantity <= 0 {
+					return fmt.Errorf("new item invalid quantity")
+				}
+				// validate product exists, and get current price for new items
+				currentPrice, err := r.validateProductAndFetchPrice(order.Items[i].ProductID)
+				if err != nil {
+					return fmt.Errorf("product validation failed for new item %d: %w", i+1, err)
+				}
+				order.Items[i].Price = currentPrice
+
+				// create new item
+				order.Items[i].OrderItemID = uuid.New().String()
+				order.Items[i].OrderID = existingOrder.OrderID
+				order.Items[i].CreatedAt = time.Now()
+				order.Items[i].UpdatedAt = time.Now()
+				if err := tx.Create(&order.Items[i]).Error; err != nil {
+					return fmt.Errorf("failed to create order item %s: %w", order.Items[i].OrderItemID, err)
+				}
+			}
+		}
+
+		//recalculate total amount based on all current items
+		var allItems []models.OrderItem
+		if err := tx.Where("order_id = ?", order.OrderID).Find(&allItems).Error; err != nil {
+			return fmt.Errorf("failed to fetch order items for order %s: %w", order.OrderID, err)
+		}
+		newTotal := calculateTotal(allItems)
+		if err := tx.Model(&existingOrder).Update("total_amount", newTotal).Error; err != nil {
+			return fmt.Errorf("failed to update order total amount for order %s: %w", order.OrderID, err)
+		}
 		return nil
+
 	})
 
 	if err != nil {
 		return models.Order{}, fmt.Errorf("failed to update order %s: %w", existingOrder.OrderID, err)
 	}
 
+	// Return updated order with all items
 	return r.GetOrderById(existingOrder.OrderID)
+}
+
+func (r *orderRepository) DeleteOrderItem(orderItemID string) error {
+	result := r.db.Where("order_item_id = ?", orderItemID).Delete(&models.OrderItem{})
+	if result.Error != nil {
+		return fmt.Errorf("failed to delete order item %s: %w", orderItemID, result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("order item not found")
+	}
+	return nil
 }
 
 func (r *orderRepository) DeleteOrder(id string) error {
@@ -138,10 +237,23 @@ func (r *orderRepository) DeleteOrder(id string) error {
 	return nil
 }
 
-func (r *orderRepository) ListAllOrders() ([]models.Order, error) {
+func (r *orderRepository) ListAllOrders(limit, offset int) ([]models.Order, error) {
 	var orders []models.Order
-	if err := r.db.Preload("Items").Find(&orders).Error; err != nil {
-		return nil, err
+
+	if limit <= 0 {
+		limit = 10 // default page size
+	}
+
+	if offset < 0 {
+		offset = 0
+	}
+
+	if limit > 100 {
+		limit = 100 // maximum page size
+	}
+
+	if err := r.db.Preload("Items").Order("created_at DESC").Limit(limit).Offset(offset).Find(&orders).Error; err != nil {
+		return nil, fmt.Errorf("failed to list orders: %w", err)
 	}
 	return orders, nil
 }
@@ -152,6 +264,35 @@ func (r *orderRepository) ListOrdersByUserId(userId string) ([]models.Order, err
 		return nil, fmt.Errorf("failed to list orders by user %s: %w", userId, err)
 	}
 	return orders, nil
+}
+
+func (r *orderRepository) validateUserExists(userId string) error {
+	var count int64
+	err := r.db.Table("users").Where("user_id = ?", userId).Count(&count).Error
+	if err != nil {
+		return fmt.Errorf("failed to validate user exists: %w", err)
+	}
+	if count == 0 {
+		return fmt.Errorf("user %s not found", userId)
+	}
+	return nil
+}
+
+func (r *orderRepository) validateProductAndFetchPrice(productID string) (float64, error) {
+	var product struct {
+		Price float64 `gorm:"column:price"`
+	}
+	err := r.db.Table("products").
+		Select("price").
+		Where("product_id = ?", productID).
+		First(&product).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return 0, fmt.Errorf("product %s not found", productID)
+		}
+		return 0, fmt.Errorf("failed to validate product exists: %w", err)
+	}
+	return product.Price, nil
 }
 
 func calculateTotal(items []models.OrderItem) float64 {

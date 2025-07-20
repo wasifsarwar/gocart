@@ -20,4 +20,5 @@ type OrderItem struct {
 	Price       float64   `gorm:"not null" json:"price"`
 	CreatedAt   time.Time `gorm:"not null" json:"created_at"`
 	UpdatedAt   time.Time `gorm:"not null" json:"updated_at"`
+	Delete      bool      `json:"delete,omitempty"` // transient: true to remove this item
 }
