@@ -62,6 +62,16 @@ jobs:
           TEST_DB_NAME: gocart_db
           TEST_DB_PORT: 5432
 
+      - name: Run Order Management Service tests with coverage
+        working-directory: internal/order-management-service
+        run: go test -v ./... -coverprofile=coverage.out -timeout=10m
+        env:
+          TEST_DB_HOST: localhost
+          TEST_DB_USER: admin
+          TEST_DB_PASSWORD: admin
+          TEST_DB_NAME: gocart_db
+          TEST_DB_PORT: 5432
+
       - name: Generate Product Service coverage HTML
         working-directory: internal/product-service
         run: go tool cover -html=coverage.out -o coverage.html

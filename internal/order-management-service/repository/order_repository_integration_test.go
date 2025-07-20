@@ -74,7 +74,6 @@ func TestCreateOrderIntegration(t *testing.T) {
 	repo := NewOrderRepository(db)
 
 	order := models.Order{
-		// Don't set OrderID - let the repository generate it
 		UserID:      "user-123",
 		TotalAmount: 299.99,
 		Status:      "pending",
@@ -123,7 +122,6 @@ func TestGetOrderByIdIntegration(t *testing.T) {
 	repo := NewOrderRepository(db)
 
 	order := models.Order{
-		// Don't set OrderID - let the repository generate it
 		UserID:      "user-456",
 		TotalAmount: 149.99,
 		Status:      "pending",
