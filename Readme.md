@@ -77,6 +77,21 @@ go run cmd/main.go
 docker-compose up
 ```
 
+```bash
+# Full stack development
+docker-compose up --build      # Start everything
+docker-compose down           # Stop everything
+
+# Frontend only
+cd web && npm start           # Development server
+
+# Backend only  
+go run cmd/main.go           # Start Go services
+
+# View logs
+docker-compose logs frontend # Frontend logs
+docker-compose logs app      # Backend logs
+```
 ---
 
 ## 📊 **API Endpoints**
@@ -275,6 +290,33 @@ export USER_SERVICE_PORT=8081
 - [ ] Kubernetes deployment
 
 ---
+
+
+graph TD
+    subgraph "Overall System"
+        Client[Client App/Web] -->|HTTP Requests| OrderService[Order Service :8082]
+        OrderService -->|DB Queries| Postgres[PostgreSQL DB]
+        OrderService -->|API Calls| ProductService[Product Service :8080<br>(Check Inventory)]
+        OrderService -->|API Calls| UserService[User Service :8081<br>(Validate User)]
+        ProductService -->|DB Queries| Postgres
+        UserService -->|DB Queries| Postgres
+    end
+
+    subgraph "Order Service Internal Structure"
+        OrderService --> Handler[Handler<br>(HTTP Endpoints)]
+        Handler --> Repository[Repository<br>(GORM CRUD)]
+        Repository --> Models[Models<br>(Order, OrderItem)]
+        
+        Models -->|Fields| OrderModel[Order<br>- OrderID: string<br>- UserID: string (FK)<br>- Status: string<br>- TotalAmount: float64<br>- CreatedAt: time<br>- UpdatedAt: time]
+        Models -->|Fields| OrderItemModel[OrderItem<br>- OrderItemID: string<br>- OrderID: string (FK)<br>- ProductID: string (FK)<br>- Quantity: int<br>- Price: float64]
+        
+        Handler -->|e.g.| Endpoints[Endpoints:<br>POST /orders<br>GET /orders/{id}<br>GET /orders (list)<br>PUT /orders/{id}/status<br>DELETE /orders/{id}]
+    end
+
+    style OrderService fill:#f9f,stroke:#333,stroke-width:2px
+    style ProductService fill:#bbf,stroke:#333
+    style UserService fill:#bbf,stroke:#333
+
 
 ## 📞 **Contact & Support**
 
