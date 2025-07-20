@@ -119,7 +119,7 @@ func getEnv(customDBName ...string) string {
 
 	password := os.Getenv("TEST_DB_PASSWORD")
 	if password == "" {
-		password = "admin"
+		password = "password"
 	}
 
 	dbname := "gocart_db"
