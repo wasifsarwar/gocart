@@ -1,0 +1,12 @@
+.home-page {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.button-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}

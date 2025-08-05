@@ -1,7 +1,11 @@
 import UserList from "../components/users/UserList";
 import useUsers from "../hooks/useUsers";
-import Navigation
-    from "../components/navigation/Navigation";
+import Navigation from "../components/navigation/Navigation";
+
+import './Users.css'
+
+
+
 const Users = () => {
     const { users, loading, error } = useUsers();
     return (

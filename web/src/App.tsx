@@ -1,12 +1,14 @@
 import React from 'react';
-import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import ProductList from './components/products/ProductList';
 import useProducts from './hooks/useProducts';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import Users from './pages/Users';
+
+import './styles/App.css';
+import './styles/globals.css';
+
 
 function App() {
 

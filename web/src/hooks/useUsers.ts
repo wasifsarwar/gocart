@@ -25,7 +25,7 @@ const useUsers = () => {
             setUsers(convertedUser);
             setError(null)
         } catch (err) {
-            setError('Failed to fet users. Please try again')
+            setError('Failed to fetch users. Please try again')
             console.log('Error fetching all users: ', err)
         } finally {
             setLoading(false);

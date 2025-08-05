@@ -1,0 +1,16 @@
+/* Users Page Styles */
+.users-page h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.users-page {
+  width: 100%;
+  padding: 20px;
+  min-height: 100vh;           /* Ensure full viewport height */
+  overflow-y: auto;            /* Allow vertical scrolling if needed */
+  box-sizing: border-box;      /* Include padding in height calculation */
+  overflow-x: auto;
+  min-width: 1000px;
+}

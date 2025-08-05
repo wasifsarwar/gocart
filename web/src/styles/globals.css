@@ -1,0 +1,79 @@
+/* Shared utility classes and resets */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Generic navigation button styling */
+.nav-button, .back-button {
+  background-color: #182f47;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  margin: 10px 15px;  /* Added horizontal spacing */
+  transition: background-color 0.2s;
+  min-width: 150px;   /* Consistent button width */
+}
+
+.nav-button:hover, .back-button:hover {
+  background-color: #5297e1;
+  transform: translateY(-1px);  /* Subtle lift effect */
+}
+
+/* Button container for proper spacing */
+.button-container {
+  display: flex;
+  gap: 20px;          /* Space between buttons */
+  justify-content: center;
+  flex-wrap: wrap;    /* Responsive on mobile */
+  margin-top: 30px;
+}
+
+.nav-button {
+  margin: 20px;
+}
+
+.back-button {
+  margin-top: 20px;
+}
+
+/* Utility Classes */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.flex { display: flex; }
+.justify-center { justify-content: center; }
+.items-center { align-items: center; }
+
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mt-4 { margin-top: 1.5rem; }
+.mt-5 { margin-top: 3rem; }
+
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 1rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+.mb-5 { margin-bottom: 3rem; }
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.justify-center { justify-content: center; }
+.items-center { align-items: center; }
+.gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 1rem; }
+.gap-4 { gap: 1.5rem; }
+.gap-5 { gap: 3rem; }
