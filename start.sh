@@ -27,7 +27,7 @@ if docker-compose up --build -d; then
     echo "  🛍️  Product Service:  http://localhost:8080"
     echo "  👥 User Service:     http://localhost:8081" 
     echo "  🛒 Order Service:    http://localhost:8082"
-    echo "  🌐 Frontend:         http://localhost:3000"
+    # echo "  🌐 Frontend:         http://localhost:3000"
     echo "  🗄️  PostgreSQL:      localhost:5432"
     echo ""
     print_status "Use 'docker-compose logs -f' to view live logs"

@@ -34,3 +34,29 @@
 .product-list tr:hover {
   background-color: #f8f9fa;
 }
+
+.home-page {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.view-products-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 20px;
+}
+
+.view-products-btn:hover {
+  background-color: #0056b3;
+}
+
+.products-page {
+  padding: 20px;
+}

@@ -1,39 +1,24 @@
-import React, { useState, JSX } from 'react';
+import React from 'react';
 import './App.css';
-import Product from './types/product'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import ProductList from './components/ProductList';
+import useProducts from './hooks/useProducts';
+import Home from './pages/Home';
+import Products from './pages/Products';
 
-function App(): JSX.Element {
+function App() {
 
-  const mockProducts: Product[] = [{
-    productID: "111",
-    name: "gaming laptop",
-    description: "high performance laptop for gaming and productivity",
-    price: 1299.99,
-    category: "Electronics"
-  },
-  {
-    productID: "2",
-    name: "Wireless Headphones",
-    description: "Noise-cancelling bluetooth headphones",
-    price: 199.99,
-    category: "Audio"
-  },
-  {
-    productID: "3",
-    name: "Mechanical Keyboard",
-    description: "RGB backlit mechanical gaming keyboard",
-    price: 149.99,
-    category: "Accessories"
-  }]
-
+  const { products, loading, error } = useProducts();
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>GoCart Products</h1>
-        <ProductList products={mockProducts} />
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/products' element={<Products />} />
+        </Routes>
+      </div>
+    </Router >
   );
 }
 

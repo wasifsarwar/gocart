@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -34,7 +35,13 @@ func (s *Server) setupRoutes() {
 
 func (s *Server) Start(port string) error {
 	log.Printf("Starting server on %s", port)
-	return http.ListenAndServe(port, s.router)
+	corsRouter := handlers.CORS(
+		handlers.AllowedOrigins([]string{"*"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
+	)(s.router)
+
+	return http.ListenAndServe(port, corsRouter)
 }
 
 func (s *Server) CreateOrder(w http.ResponseWriter, r *http.Request) {
