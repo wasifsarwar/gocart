@@ -1,9 +1,54 @@
+# IDE and Editor Files
 .42c
 .vscode
-*.out
-.replit
-.git
 .idea
+.replit
+
+# Go Files
+*.out
 coverage-*.out
 coverage.out
+
+# Node.js / React / TypeScript
+web/node_modules/
+web/build/
+web/dist/
+web/.env
+web/.env.local
+web/.env.development.local
+web/.env.test.local
+web/.env.production.local
+web/npm-debug.log*
+web/yarn-debug.log*
+web/yarn-error.log*
+web/.pnpm-debug.log*
+
+# TypeScript
+web/*.tsbuildinfo
+
+# React specific
+web/build/
+web/.eslintcache
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Logs
+*.log
+logs
+lerna-debug.log*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Other
 openapitools.json

@@ -1,0 +1,36 @@
+.App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.App h1 {
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* Table Styling */
+.product-list {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.product-list th {
+  background-color: #f8f9fa;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+}
+
+.product-list td {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.product-list tr:hover {
+  background-color: #f8f9fa;
+}
