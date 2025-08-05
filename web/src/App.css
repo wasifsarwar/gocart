@@ -2,6 +2,8 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  min-height: 100vh;           /* Full viewport height */
+  box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
@@ -11,14 +13,20 @@
 }
 
 /* Table Styling */
-.product-list {
+.data-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  margin-bottom: 40px;         /* Add bottom margin */
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-width: none;             /* Remove any width restrictions */
 }
 
-.product-list th {
+.data-table tbody {
+  display: table-row-group;
+}
+
+.data-table th {
   background-color: #f8f9fa;
   padding: 12px;
   text-align: left;
@@ -26,12 +34,12 @@
   font-weight: 600;
 }
 
-.product-list td {
+.data-table td {
   padding: 12px;
   border-bottom: 1px solid #dee2e6;
 }
 
-.product-list tr:hover {
+.data-table tr:hover {
   background-color: #f8f9fa;
 }
 
@@ -40,7 +48,22 @@
   padding: 50px 20px;
 }
 
-.view-products-btn {
+
+
+.users-page,
+.products-page {
+  width: 100%;
+  padding: 20px;
+  min-height: 100vh;           /* Ensure full viewport height */
+  overflow-y: auto;            /* Allow vertical scrolling if needed */
+  box-sizing: border-box;      /* Include padding in height calculation */
+  overflow-x: auto;
+  border: 2px solid red;  /* See table boundaries */
+  min-width: 1000px;
+}
+
+/* Generic navigation button styling */
+.nav-button {
   background-color: #007bff;
   color: white;
   padding: 12px 24px;
@@ -50,13 +73,22 @@
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
-  margin-top: 20px;
+  margin: 10px 15px;  /* Added horizontal spacing */
+  transition: background-color 0.2s;
+  min-width: 150px;   /* Consistent button width */
 }
 
-.view-products-btn:hover {
+.nav-button:hover {
   background-color: #0056b3;
+  transform: translateY(-1px);  /* Subtle lift effect */
 }
 
-.products-page {
-  padding: 20px;
+/* Button container for proper spacing */
+.button-container {
+  display: flex;
+  gap: 20px;          /* Space between buttons */
+  justify-content: center;
+  flex-wrap: wrap;    /* Responsive on mobile */
+  margin-top: 30px;
 }
+

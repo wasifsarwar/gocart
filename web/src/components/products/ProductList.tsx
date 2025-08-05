@@ -1,4 +1,4 @@
-import Product from "../types/product"
+import Product from "../../types/product"
 import ProductCard from "./ProductCard"
 interface ProductListProps {
     products: Product[]
@@ -10,7 +10,7 @@ const ProductList = ({ products }: ProductListProps) => {
         return <div>No products available</div>;
     }
     return (
-        <table className="product-list">
+        <table className="data-table">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -22,7 +22,8 @@ const ProductList = ({ products }: ProductListProps) => {
             <tbody>
                 {products.map(product => (
                     <ProductCard key={product.productID} product={product} />
-                ))}</tbody>
+                ))}
+            </tbody>
         </table>
     );
 }
