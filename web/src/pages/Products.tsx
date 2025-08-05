@@ -1,6 +1,6 @@
 import ProductList from "../components/products/ProductList";
 import useProducts from "../hooks/useProducts";
-import Navigation from "../components/Navigation";
+import Navigation from "../components/navigation/Navigation";
 
 const Products = () => {
     const { products, loading, error } = useProducts();

@@ -52,3 +52,6 @@ Thumbs.db
 
 # Other
 openapitools.json
+
+# API Keys
+api_keys/
