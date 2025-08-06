@@ -5,7 +5,7 @@ interface SortOption {
     label: string;
 }
 
-interface ProductSortProps {
+interface UserSortProps {
     onSort: (sortValue: string) => void
     currentSort: string
 }
@@ -16,7 +16,7 @@ const sortOptions: SortOption[] = [
     { value: 'email-asc', label: 'Email (A-Z)' }
 ];
 
-const UserSort = ({ onSort, currentSort }: ProductSortProps) => {
+const UserSort = ({ onSort, currentSort }: UserSortProps) => {
     return (
         <div className='user-sort'>
             <label htmlFor='sort-select'>Sort By</label>

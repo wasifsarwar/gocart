@@ -1,4 +1,4 @@
-# 🛒 GoCart - Microservices E-commerce API
+# 🛒 GoCart - Full-Stack E-commerce API
 
 [![Go](https://github.com/wasifsarwar/gocart/workflows/Go/badge.svg)](https://github.com/wasifsarwar/gocart/actions)
 [![Go Version](https://img.shields.io/badge/Go-1.23-blue.svg)](https://golang.org/)
@@ -21,6 +21,14 @@
 ## 🏗️ **Architecture Overview**
 
 GoCart implements a **microservices architecture** with the following services:
+
+### ✅ **Frontend Stack**
+- **React 18** with TypeScript
+- **React Router** for navigation  
+- **Custom hooks** for state management
+- **Responsive CSS** with mobile-first design
+- **Real-time search & sorting**
+- **Animated gopher branding** 🐹
 
 ### ✅ **Implemented Services**
 
