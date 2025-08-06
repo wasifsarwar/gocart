@@ -10,6 +10,13 @@ export interface ApiUser {
     updated_at: string;
 }
 
+export interface CreateUserRequest {
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+}
+
 export const userService = {
     async getAllUsers(): Promise<ApiUser[]> {
         const response = await fetch(`${API_URL}/users`)
@@ -25,5 +32,22 @@ export const userService = {
             throw new Error(`HTTP error: status: ${response.status}`)
         }
         return response.json();
+    },
+
+    async createUser(userData: CreateUserRequest): Promise<ApiUser> {
+        const response = await fetch(`${API_URL}/users/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.text();
+            throw new Error(`HTTP error: status: ${response.status}, message: ${errorData}`)
+        }
+        return response.json();
+
     }
 }

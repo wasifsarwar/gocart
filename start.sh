@@ -17,6 +17,11 @@ print_status() {
 print_success() {
     echo -e "${GREEN}[SUCCESS]${NC} $1"
 }
+# check if docker is running
+if ! docker info > /dev/null 2>&1; then
+    echo "❌ Docker is not running. Please start Docker Desktop first."
+    exit 1
+fi
 
 # Start Docker Compose services
 print_status "Starting Docker Compose services..."
