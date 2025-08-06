@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Navigation from "@/components/navigation/Navigation";
-import UserRegistrationForm from "@/components/users/UserRegistrationForm";
+import Navigation from "../../components/navigation/Navigation";
+import UserRegistrationForm from "../../components/users/UserRegistrationForm";
 
 import './UserRegistration.css'
 

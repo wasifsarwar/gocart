@@ -6,7 +6,7 @@ const Home = () => {
         <div className="home-page">
             <header className="hero-section">
                 <div className="brand-container">
-                    <span className="gopher-icon">ʕ̢̣̣̣̣̩̩̩̩·͡˔·ོɁ̡̣̣̣̣̩̩̩̩✧</span>
+                    <img src="/assets/gopher_beer.gif" alt="Gocart Gopher" className="gopher-logo" />
                     <h1>GoCart</h1>
                 </div>
                 <p className="tagline">Your Go-powered e-commerce solution</p>

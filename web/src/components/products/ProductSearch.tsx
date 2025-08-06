@@ -21,3 +21,5 @@ const ProductSearch = ({ onSearch, placeHolder }: ProductSearchProps) => {
         </div>
     );
 };
+
+export default ProductSearch;
