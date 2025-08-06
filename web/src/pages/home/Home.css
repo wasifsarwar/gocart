@@ -1,0 +1,155 @@
+/* Home Page Styles */
+.home-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fef7f0 0%, #f4e4bc 100%);
+  padding: 0;
+}
+
+/* Hero Section */
+.hero-section {
+  text-align: center;
+  padding: 60px 20px 40px;
+  background: linear-gradient(135deg, #d4a574 0%, #c19a6b 100%);
+  color: #2d1810; /* Dark brown text instead of white */
+  margin-bottom: 50px;
+}
+
+.brand-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.gopher-icon {
+  font-size: 48px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.hero-section h1 {
+  font-size: 48px;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.tagline {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 15px 0 8px;
+  opacity: 0.95;
+}
+
+.subtitle {
+  font-size: 16px;
+  opacity: 0.8;
+  margin: 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Features Grid */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+/* Feature Cards */
+.feature-card {
+  background: white;
+  border-radius: 12px;
+  padding: 40px 30px;
+  text-decoration: none;
+  color: #333;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(24, 47, 71, 0.15);
+  border-color: #182f47;
+}
+
+.card-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.feature-card h3 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: #182f47;
+}
+
+.feature-card p {
+  font-size: 16px;
+  color: #6c757d;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 40px 20px 30px;
+  }
+  
+  .brand-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .gopher-icon {
+    font-size: 36px;
+  }
+  
+  .hero-section h1 {
+    font-size: 36px;
+  }
+  
+  .tagline {
+    font-size: 20px;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 15px 40px;
+  }
+  
+  .feature-card {
+    padding: 30px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section h1 {
+    font-size: 28px;
+  }
+  
+  .tagline {
+    font-size: 18px;
+  }
+  
+  .card-icon {
+    font-size: 40px;
+  }
+  
+  .feature-card h3 {
+    font-size: 20px;
+  }
+}

@@ -1,6 +1,6 @@
-import ProductList from "../components/products/ProductList";
-import useProducts from "../hooks/useProducts";
-import Navigation from "../components/navigation/Navigation";
+import ProductList from "../../components/products/ProductList";
+import useProducts from "../../hooks/useProducts";
+import Navigation from "../../components/navigation/Navigation";
 
 import './Products.css'
 

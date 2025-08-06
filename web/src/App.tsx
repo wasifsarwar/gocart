@@ -2,10 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import useProducts from './hooks/useProducts';
-import Home from './pages/Home';
-import Products from './pages/Products';
-import Users from './pages/Users';
-import UserRegistration from './pages/UserRegistration'
+import Home from './pages/home/Home';
+import Products from './pages/products/Products';
+import Users from './pages/users/Users';
+import UserRegistration from './pages/users/UserRegistration'
 
 import './styles/App.css';
 import './styles/globals.css';
