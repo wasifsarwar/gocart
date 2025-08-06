@@ -17,6 +17,11 @@ const Home = () => {
                         View Users
                     </button>
                 </Link>
+                <Link to="register">
+                    <button className="nav-button">
+                        Register a new user
+                    </button>
+                </Link>
             </div>
         </div>
     );

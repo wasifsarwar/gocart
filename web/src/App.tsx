@@ -5,9 +5,11 @@ import useProducts from './hooks/useProducts';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import Users from './pages/Users';
+import UserRegistration from './pages/UserRegistration'
 
 import './styles/App.css';
 import './styles/globals.css';
+
 
 
 function App() {
@@ -20,6 +22,7 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/products' element={<Products />} />
           <Route path='/users' element={<Users />} />
+          <Route path='/register' element={<UserRegistration />} />
         </Routes>
       </div>
     </Router >
