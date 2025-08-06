@@ -6,7 +6,7 @@ interface UserListProps {
 }
 
 const UserList = ({ users }: UserListProps) => {
-    if (users.length == 0) {
+    if (users.length === 0) {
         return <div>No users available</div>
     }
 

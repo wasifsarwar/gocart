@@ -36,7 +36,7 @@ const UserRegistrationForm = ({ onSuccess, onError }: UserRegistrationFormProps)
         }
 
         setErrors(newErrors);
-        return Object.keys(newErrors).length == 0;
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

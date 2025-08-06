@@ -33,7 +33,7 @@ const useProducts = () => {
     // effect to fetch on mount
     useEffect(() => {
         fetchProducts();
-    }, []);
+    }, [fetchProducts]);
     return {
         products,
         loading,
