@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import User from "../types/user";
 import { userService, ApiUser } from "../services/userService";
 
@@ -17,7 +17,7 @@ const useUsers = () => {
         updatedAt: new Date(apiUser.updated_at)
 
     });
-    const fetchUsers = async () => {
+    const fetchUsers = useCallback(async () => {
         try {
             setLoading(true);
             const apiUsers = await userService.getAllUsers()
@@ -30,7 +30,7 @@ const useUsers = () => {
         } finally {
             setLoading(false);
         }
-    }
+    }, [])
 
     useEffect(() => {
         fetchUsers();

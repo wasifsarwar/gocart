@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Product from '../types/product';
 import { productService, ApiProduct } from '../services/productService';
 
@@ -16,7 +16,7 @@ const useProducts = () => {
 
     });
 
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         try {
             setLoading(true);
             const apiProducts = await productService.getAllProducts();
@@ -29,7 +29,7 @@ const useProducts = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
     // effect to fetch on mount
     useEffect(() => {
         fetchProducts();
