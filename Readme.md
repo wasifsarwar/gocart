@@ -90,27 +90,25 @@ go run cmd/main.go
 
 #### **Option B: Docker Compose**
 ```bash
+# Start all services
 docker-compose up
-```
 
-```bash
-# Full stack development
-docker-compose up --build      # Start everything
-docker-compose down           # Stop everything
+# Build and start
+docker-compose up --build
 
-# Frontend only
-cd web && npm start           # Development server
-
-# Backend only  
-go run cmd/main.go           # Start Go services
+# Stop all services
+docker-compose down
 
 # View logs
-docker-compose logs frontend # Frontend logs
 docker-compose logs app      # Backend logs
+```
 
-# bash script to run everything
+#### **Option C: Bash startup script**
+```bash
+# Start everything with one command
 ./start.sh
 ```
+
 
 ---
 
