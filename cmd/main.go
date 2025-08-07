@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	orderHandler "gocart/internal/order-management-service/handler"
 	orderModels "gocart/internal/order-management-service/models"
@@ -57,12 +58,27 @@ func main() {
 	userSrv := userServer.NewServer(userHandler)
 	orderSrv := orderServer.NewServer(orderHandler)
 
+	// Seed database with sample data
+	seederInstance := seeder.NewSeeder(productRepo, userRepo)
+	if err := seederInstance.SeedAll(); err != nil {
+		log.Printf("⚠️  Warning: Failed to seed database: %v", err)
+	} else {
+		// Print seeding summary
+		seederInstance.PrintSeedingSummary()
+	}
+
 	mainRouter := mux.NewRouter()
 
 	//Mount each service's router to the main router
 	mainRouter.PathPrefix("/products").Handler(productSrv.GetRouter())
 	mainRouter.PathPrefix("/users").Handler(userSrv.GetRouter())
 	mainRouter.PathPrefix("/orders").Handler(orderSrv.GetRouter())
+
+	// Health check endpoint
+	mainRouter.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	}).Methods("GET")
 
 	// Add CORS middleware to main router
 	corsRouter := handlers.CORS(
@@ -89,16 +105,10 @@ func main() {
 		}
 	}()
 
-	log.Println("📚 Full API Documentation: https://wasifsarwar.github.io/gocart/")
+	// Give the server a moment to start
+	time.Sleep(100 * time.Millisecond)
 
-	// Seed database with sample data
-	seederInstance := seeder.NewSeeder(productRepo, userRepo)
-	if err := seederInstance.SeedAll(); err != nil {
-		log.Printf("⚠️  Warning: Failed to seed database: %v", err)
-	} else {
-		// Print seeding summary
-		seederInstance.PrintSeedingSummary()
-	}
+	log.Println("📚 Full API Documentation: https://wasifsarwar.github.io/gocart/")
 
 	// Handle graceful shutdown
 	quit := make(chan os.Signal, 1)
