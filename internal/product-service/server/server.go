@@ -3,10 +3,8 @@ package server
 
 import (
 	"gocart/internal/product-service/handler"
-	"log"
 	"net/http"
 
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -24,25 +22,16 @@ func NewServer(handler *handler.ProductHandler) *Server {
 	return s
 }
 
+func (s *Server) GetRouter() *mux.Router {
+	return s.router
+}
+
 func (s *Server) setupRoutes() {
 	s.router.HandleFunc("/products", s.handler.ListProducts).Methods("GET")
 	s.router.HandleFunc("/products", s.handler.CreateProduct).Methods("POST")
 	s.router.HandleFunc("/products/{id}", s.handler.GetProductById).Methods("GET")
 	s.router.HandleFunc("/products/{id}", s.handler.UpdateProduct).Methods("PUT")
 	s.router.HandleFunc("/products/{id}", s.handler.DeleteProduct).Methods("DELETE")
-}
-
-func (s *Server) Start(port string) error {
-	log.Printf("Starting server on %s", port)
-	// Create CORS-wrapped router
-	corsRouter := handlers.CORS(
-		handlers.AllowedOrigins([]string{"*"}),
-		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
-		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
-	)(s.router)
-
-	return http.ListenAndServe(port, corsRouter)
-
 }
 
 // Implement the generated interface methods

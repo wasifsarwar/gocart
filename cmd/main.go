@@ -1,11 +1,11 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 
 	orderHandler "gocart/internal/order-management-service/handler"
@@ -22,6 +22,9 @@ import (
 	userServer "gocart/internal/user-service/server"
 	db "gocart/pkg/db"
 	"gocart/pkg/seeder"
+
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -54,6 +57,40 @@ func main() {
 	userSrv := userServer.NewServer(userHandler)
 	orderSrv := orderServer.NewServer(orderHandler)
 
+	mainRouter := mux.NewRouter()
+
+	//Mount each service's router to the main router
+	mainRouter.PathPrefix("/products").Handler(productSrv.GetRouter())
+	mainRouter.PathPrefix("/users").Handler(userSrv.GetRouter())
+	mainRouter.PathPrefix("/orders").Handler(orderSrv.GetRouter())
+
+	// Add CORS middleware to main router
+	corsRouter := handlers.CORS(
+		handlers.AllowedOrigins([]string{"*"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
+	)(mainRouter)
+
+	// Create HTTP server
+	server := &http.Server{
+		Addr:    ":" + port,
+		Handler: corsRouter,
+	}
+
+	log.Printf("🚀 Starting unified GoCart API on http://localhost:%s", port)
+	log.Printf("🛍️  Product API: http://localhost:%s/products", port)
+	log.Printf("👥 User API: http://localhost:%s/users", port)
+	log.Printf("�� Order API: http://localhost:%s/orders", port)
+
+	// Start server in goroutine
+	go func() {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Server failed: %v", err)
+		}
+	}()
+
+	log.Println("📚 Full API Documentation: https://wasifsarwar.github.io/gocart/")
+
 	// Seed database with sample data
 	seederInstance := seeder.NewSeeder(productRepo, userRepo)
 	if err := seederInstance.SeedAll(); err != nil {
@@ -63,47 +100,15 @@ func main() {
 		seederInstance.PrintSeedingSummary()
 	}
 
-	// Start servers concurrently on different ports
-	var wg sync.WaitGroup
-	wg.Add(3)
-
-	// Start product service
-	go func() {
-		defer wg.Done()
-		log.Printf("🛍️  Product Service starting on http://localhost:8080")
-		log.Printf("📖 Product API docs: http://localhost:8080/products")
-		if err := productSrv.Start(":8080"); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Product server failed: %v", err)
-		}
-	}()
-
-	go func() {
-		defer wg.Done()
-		log.Printf("👥 User Service starting on http://localhost:8081")
-		log.Printf("📖 User API docs: http://localhost:8081/users")
-		if err := userSrv.Start(":8081"); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("User server failed: %v", err)
-		}
-	}()
-
-	go func() {
-		defer wg.Done()
-		log.Printf("🛒 Order Management Service starting on http://localhost:8082")
-		log.Printf("📖 Order Management API docs: http://localhost:8082/orders")
-		if err := orderSrv.Start(":8082"); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Order server failed: %v", err)
-		}
-	}()
-
-	log.Println("🚀 All services started successfully!")
-	log.Println("📚 Full API Documentation: https://wasifsarwar.github.io/gocart/")
-
 	// Handle graceful shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	log.Println("🛑 Shutting down servers...")
 
-	wg.Wait()
+	// Graceful shutdown
+	if err := server.Shutdown(context.Background()); err != nil {
+		log.Printf("Error during server shutdown: %v", err)
+	}
 	log.Println("✅ Servers stopped gracefully")
 }

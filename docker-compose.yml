@@ -7,8 +7,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-      - "8081:8081"
-      - "8082:8082"
     environment:
       - DB_HOST=postgres
       - DB_USER=admin
@@ -31,9 +29,9 @@ services:
   #   networks:
   #     - gocart-network
   #   environment:
-  #     - REACT_APP_PRODUCT_SERVICE_URL=http://localhost:8080
-  #     - REACT_APP_USER_SERVICE_URL=http://localhost:8081
-  #     - REACT_APP_ORDER_SERVICE_URL=http://localhost:8082
+  #     - REACT_APP_PRODUCT_SERVICE_URL=http://localhost:8080/products
+  #     - REACT_APP_USER_SERVICE_URL=http://localhost:8080/users
+  #     - REACT_APP_ORDER_SERVICE_URL=http://localhost:8080/orders
 
   postgres:
     image: postgres:16-alpine

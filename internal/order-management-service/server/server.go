@@ -2,10 +2,8 @@ package server
 
 import (
 	"gocart/internal/order-management-service/handler"
-	"log"
 	"net/http"
 
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -33,15 +31,8 @@ func (s *Server) setupRoutes() {
 	s.router.HandleFunc("/orders/user/{user_id}", s.handler.ListOrdersByUserId).Methods("GET")
 }
 
-func (s *Server) Start(port string) error {
-	log.Printf("Starting server on %s", port)
-	corsRouter := handlers.CORS(
-		handlers.AllowedOrigins([]string{"*"}),
-		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
-		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
-	)(s.router)
-
-	return http.ListenAndServe(port, corsRouter)
+func (s *Server) GetRouter() *mux.Router {
+	return s.router
 }
 
 func (s *Server) CreateOrder(w http.ResponseWriter, r *http.Request) {
