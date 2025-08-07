@@ -1,0 +1,90 @@
+products:
+  - product_id: "89a59086-6911-4c16-81c5-430e9a70d69c"
+    name: "iPhone 15 Pro"
+    description: "Latest Apple smartphone with titanium design, A17 Pro chip, and advanced camera system"
+    price: 999.99
+    category: "Electronics"
+
+  - product_id: "153e9df2-48bd-445b-94bc-6d7c2460a172"
+    name: "MacBook Pro 16-inch"
+    description: "Powerful laptop with M3 Max chip, 32GB RAM, and stunning Liquid Retina XDR display"
+    price: 2499.99
+    category: "Electronics"
+
+  - product_id: "880739e0-3c70-4da9-afc1-e77f704fa2bc"
+    name: "AirPods Pro (2nd gen)"
+    description: "Premium wireless earbuds with active noise cancellation and spatial audio"
+    price: 249.99
+    category: "Electronics"
+
+  - product_id: "a996d737-7eb1-49ed-8754-5b667a8a90c1"
+    name: 'Samsung 4K Smart TV 65"'
+    description: "Ultra HD Smart TV with HDR, built-in streaming apps, and voice control"
+    price: 899.99
+    category: "Electronics"
+
+  - product_id: "56bd8842-5973-412d-b6be-d441cc31174d"
+    name: "Sony WH-1000XM5 Headphones"
+    description: "Industry-leading noise canceling wireless headphones with 30-hour battery"
+    price: 399.99
+    category: "Electronics"
+
+  - product_id: "006ccbfb-dcd9-43ee-b9e2-a959171bd3c8"
+    name: "Levi's 501 Original Jeans"
+    description: "Classic straight-leg jeans in premium denim, available in multiple washes"
+    price: 89.99
+    category: "Clothing"
+
+  - product_id: "b4c8e841-8403-4713-99ea-1be08e62e70e"
+    name: "Nike Air Max 270"
+    description: "Comfortable running shoes with Max Air heel unit and breathable mesh upper"
+    price: 149.99
+    category: "Clothing"
+
+  - product_id: "2e18cad0-6d49-4a91-8093-dbf09b181008"
+    name: "Patagonia Down Jacket"
+    description: "Lightweight, packable down jacket perfect for outdoor adventures"
+    price: 229.99
+    category: "Clothing"
+
+  - product_id: "b4ded8b1-38ff-433a-89fa-0f32a0b7e364"
+    name: "Dyson V15 Detect Vacuum"
+    description: "Cordless vacuum with laser dust detection and powerful suction"
+    price: 749.99
+    category: "Home & Garden"
+
+  - product_id: "d5b89431-3338-469c-b572-8be2df05ca50"
+    name: "Instant Pot Duo 7-in-1"
+    description: "Multi-use pressure cooker, slow cooker, rice cooker, and more"
+    price: 99.99
+    category: "Home & Garden"
+
+  - product_id: "b4d7d66b-984a-4a27-8e86-33266309f591"
+    name: "Philips Hue Smart Bulbs (4-pack)"
+    description: "Color-changing smart LED bulbs controllable via smartphone app"
+    price: 199.99
+    category: "Home & Garden"
+
+  - product_id: "5954e291-2133-4fca-a8fb-2d80da1d3ab1"
+    name: "The Psychology of Money"
+    description: "Timeless lessons on wealth, greed, and happiness by Morgan Housel"
+    price: 16.99
+    category: "Books"
+
+  - product_id: "7e5a847f-a883-4bb7-9859-081700a87a6f"
+    name: "Clean Code"
+    description: "A handbook of agile software craftsmanship by Robert C. Martin"
+    price: 42.99
+    category: "Books"
+
+  - product_id: "b3333daa-155e-4c30-803b-24fb8aebe84d"
+    name: "Yeti Rambler 30 oz Tumbler"
+    description: "Stainless steel insulated tumbler that keeps drinks hot or cold for hours"
+    price: 39.99
+    category: "Sports & Outdoors"
+
+  - product_id: "e71bf2fc-1ac4-44e2-96f8-bd602997b2ac"
+    name: "REI Co-op Trail 40 Backpack"
+    description: "Versatile hiking backpack with adjustable suspension and multiple pockets"
+    price: 139.99
+    category: "Sports & Outdoors"

@@ -3,6 +3,7 @@ package seeder
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	productModels "gocart/internal/product-service/models"
@@ -10,8 +11,33 @@ import (
 	userModels "gocart/internal/user-service/models"
 	userRepository "gocart/internal/user-service/repository"
 
-	"github.com/google/uuid"
+	"gopkg.in/yaml.v3"
 )
+
+// YAML data structures
+type ProductData struct {
+	ProductID   string  `yaml:"product_id"`
+	Name        string  `yaml:"name"`
+	Description string  `yaml:"description"`
+	Price       float64 `yaml:"price"`
+	Category    string  `yaml:"category"`
+}
+
+type UserData struct {
+	UserID    string `yaml:"user_id"`
+	FirstName string `yaml:"first_name"`
+	LastName  string `yaml:"last_name"`
+	Email     string `yaml:"email"`
+	Phone     string `yaml:"phone"`
+}
+
+type ProductsYAML struct {
+	Products []ProductData `yaml:"products"`
+}
+
+type UsersYAML struct {
+	Users []UserData `yaml:"users"`
+}
 
 // SeedData contains all the sample data for seeding
 type SeedData struct {
@@ -43,9 +69,37 @@ func (s *SeedData) SeedAll() error {
 	return nil
 }
 
-// SeedProducts creates sample products
+// loadProductsFromYAML loads product data from YAML file
+func (s *SeedData) loadProductsFromYAML() ([]productModels.Product, error) {
+	data, err := os.ReadFile("pkg/seeder/data/products.yaml")
+	if err != nil {
+		return nil, fmt.Errorf("failed to read products.yaml: %w", err)
+	}
+
+	var productsYAML ProductsYAML
+	if err := yaml.Unmarshal(data, &productsYAML); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal products.yaml: %w", err)
+	}
+
+	// Convert YAML data to product models
+	var products []productModels.Product
+	for _, productData := range productsYAML.Products {
+		product := productModels.Product{
+			ProductID:   productData.ProductID,
+			Name:        productData.Name,
+			Description: productData.Description,
+			Price:       productData.Price,
+			Category:    productData.Category,
+		}
+		products = append(products, product)
+	}
+
+	return products, nil
+}
+
+// SeedProducts creates sample products from YAML file
 func (s *SeedData) SeedProducts() error {
-	log.Println("Seeding sample products...")
+	log.Println("Seeding sample products from YAML...")
 
 	// Check if products already exist
 	existingProducts, err := s.ProductRepo.ListAllProducts()
@@ -58,121 +112,10 @@ func (s *SeedData) SeedProducts() error {
 		return nil
 	}
 
-	sampleProducts := []productModels.Product{
-		// Electronics
-		{
-			ProductID:   uuid.New().String(),
-			Name:        "iPhone 15 Pro",
-			Description: "Latest Apple smartphone with titanium design, A17 Pro chip, and advanced camera system",
-			Price:       999.99,
-			Category:    "Electronics",
-		},
-		{
-			ProductID:   uuid.New().String(),
-			Name:        "MacBook Pro 16-inch",
-			Description: "Powerful laptop with M3 Max chip, 32GB RAM, and stunning Liquid Retina XDR display",
-			Price:       2499.99,
-			Category:    "Electronics",
-		},
-		{
-			ProductID:   uuid.New().String(),
-			Name:        "AirPods Pro (2nd gen)",
-			Description: "Premium wireless earbuds with active noise cancellation and spatial audio",
-			Price:       249.99,
-			Category:    "Electronics",
-		},
-		{
-			ProductID:   uuid.New().String(),
-			Name:        "Samsung 4K Smart TV 65\"",
-			Description: "Ultra HD Smart TV with HDR, built-in streaming apps, and voice control",
-			Price:       899.99,
-			Category:    "Electronics",
-		},
-		{
-			ProductID:   uuid.New().String(),
-			Name:        "Sony WH-1000XM5 Headphones",
-			Description: "Industry-leading noise canceling wireless headphones with 30-hour battery",
-			Price:       399.99,
-			Category:    "Electronics",
-		},
-
-		// Clothing
-		{
-			ProductID:   uuid.New().String(),
-			Name:        "Levi's 501 Original Jeans",
-			Description: "Classic straight-leg jeans in premium denim, available in multiple washes",
-			Price:       89.99,
-			Category:    "Clothing",
-		},
-		{
-			ProductID:   uuid.New().String(),
-			Name:        "Nike Air Max 270",
-			Description: "Comfortable running shoes with Max Air heel unit and breathable mesh upper",
-			Price:       149.99,
-			Category:    "Clothing",
-		},
-		{
-			ProductID:   uuid.New().String(),
-			Name:        "Patagonia Down Jacket",
-			Description: "Lightweight, packable down jacket perfect for outdoor adventures",
-			Price:       229.99,
-			Category:    "Clothing",
-		},
-
-		// Home & Garden
-		{
-			ProductID:   uuid.New().String(),
-			Name:        "Dyson V15 Detect Vacuum",
-			Description: "Cordless vacuum with laser dust detection and powerful suction",
-			Price:       749.99,
-			Category:    "Home & Garden",
-		},
-		{
-			ProductID:   uuid.New().String(),
-			Name:        "Instant Pot Duo 7-in-1",
-			Description: "Multi-use pressure cooker, slow cooker, rice cooker, and more",
-			Price:       99.99,
-			Category:    "Home & Garden",
-		},
-		{
-			ProductID:   uuid.New().String(),
-			Name:        "Philips Hue Smart Bulbs (4-pack)",
-			Description: "Color-changing smart LED bulbs controllable via smartphone app",
-			Price:       199.99,
-			Category:    "Home & Garden",
-		},
-
-		// Books
-		{
-			ProductID:   uuid.New().String(),
-			Name:        "The Psychology of Money",
-			Description: "Timeless lessons on wealth, greed, and happiness by Morgan Housel",
-			Price:       16.99,
-			Category:    "Books",
-		},
-		{
-			ProductID:   uuid.New().String(),
-			Name:        "Clean Code",
-			Description: "A handbook of agile software craftsmanship by Robert C. Martin",
-			Price:       42.99,
-			Category:    "Books",
-		},
-
-		// Sports & Outdoors
-		{
-			ProductID:   uuid.New().String(),
-			Name:        "Yeti Rambler 30 oz Tumbler",
-			Description: "Stainless steel insulated tumbler that keeps drinks hot or cold for hours",
-			Price:       39.99,
-			Category:    "Sports & Outdoors",
-		},
-		{
-			ProductID:   uuid.New().String(),
-			Name:        "REI Co-op Trail 40 Backpack",
-			Description: "Versatile hiking backpack with adjustable suspension and multiple pockets",
-			Price:       139.99,
-			Category:    "Sports & Outdoors",
-		},
+	// Load products from YAML file
+	sampleProducts, err := s.loadProductsFromYAML()
+	if err != nil {
+		return fmt.Errorf("failed to load products from YAML: %w", err)
 	}
 
 	// Create all products
@@ -186,13 +129,44 @@ func (s *SeedData) SeedProducts() error {
 			i+1, createdProduct.Name, createdProduct.ProductID, createdProduct.Price)
 	}
 
-	log.Printf("Successfully seeded %d products", len(sampleProducts))
+	log.Printf("Successfully seeded %d products from YAML", len(sampleProducts))
 	return nil
 }
 
-// SeedUsers creates sample users
+// loadUsersFromYAML loads user data from YAML file
+func (s *SeedData) loadUsersFromYAML() ([]userModels.User, error) {
+	data, err := os.ReadFile("pkg/seeder/data/users.yaml")
+	if err != nil {
+		return nil, fmt.Errorf("failed to read users.yaml: %w", err)
+	}
+
+	var usersYAML UsersYAML
+	if err := yaml.Unmarshal(data, &usersYAML); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal users.yaml: %w", err)
+	}
+
+	// Convert YAML data to user models
+	now := time.Now()
+	var users []userModels.User
+	for _, userData := range usersYAML.Users {
+		user := userModels.User{
+			UserID:    userData.UserID,
+			FirstName: userData.FirstName,
+			LastName:  userData.LastName,
+			Email:     userData.Email,
+			Phone:     userData.Phone,
+			CreatedAt: now,
+			UpdatedAt: now,
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
+}
+
+// SeedUsers creates sample users from YAML file
 func (s *SeedData) SeedUsers() error {
-	log.Println("Seeding sample users...")
+	log.Println("Seeding sample users from YAML...")
 
 	// Check if users already exist
 	existingUsers, err := s.UserRepo.ListAllUsers()
@@ -205,98 +179,10 @@ func (s *SeedData) SeedUsers() error {
 		return nil
 	}
 
-	now := time.Now()
-	sampleUsers := []userModels.User{
-		{
-			UserID:    uuid.New().String(),
-			FirstName: "John",
-			LastName:  "Doe",
-			Email:     "john.doe@example.com",
-			Phone:     "+1-555-0101",
-			CreatedAt: now,
-			UpdatedAt: now,
-		},
-		{
-			UserID:    uuid.New().String(),
-			FirstName: "Jane",
-			LastName:  "Smith",
-			Email:     "jane.smith@example.com",
-			Phone:     "+1-555-0102",
-			CreatedAt: now,
-			UpdatedAt: now,
-		},
-		{
-			UserID:    uuid.New().String(),
-			FirstName: "Michael",
-			LastName:  "Johnson",
-			Email:     "michael.johnson@example.com",
-			Phone:     "+1-555-0103",
-			CreatedAt: now,
-			UpdatedAt: now,
-		},
-		{
-			UserID:    uuid.New().String(),
-			FirstName: "Emily",
-			LastName:  "Brown",
-			Email:     "emily.brown@example.com",
-			Phone:     "+1-555-0104",
-			CreatedAt: now,
-			UpdatedAt: now,
-		},
-		{
-			UserID:    uuid.New().String(),
-			FirstName: "David",
-			LastName:  "Wilson",
-			Email:     "david.wilson@example.com",
-			Phone:     "+1-555-0105",
-			CreatedAt: now,
-			UpdatedAt: now,
-		},
-		{
-			UserID:    uuid.New().String(),
-			FirstName: "Sarah",
-			LastName:  "Davis",
-			Email:     "sarah.davis@example.com",
-			Phone:     "+1-555-0106",
-			CreatedAt: now,
-			UpdatedAt: now,
-		},
-		{
-			UserID:    uuid.New().String(),
-			FirstName: "Robert",
-			LastName:  "Miller",
-			Email:     "robert.miller@example.com",
-			Phone:     "+1-555-0107",
-			CreatedAt: now,
-			UpdatedAt: now,
-		},
-		{
-			UserID:    uuid.New().String(),
-			FirstName: "Lisa",
-			LastName:  "Garcia",
-			Email:     "lisa.garcia@example.com",
-			Phone:     "+1-555-0108",
-			CreatedAt: now,
-			UpdatedAt: now,
-		},
-		{
-			UserID:    uuid.New().String(),
-			FirstName: "Christopher",
-			LastName:  "Martinez",
-			Email:     "chris.martinez@example.com",
-			Phone:     "+1-555-0109",
-			CreatedAt: now,
-			UpdatedAt: now,
-		},
-		{
-			UserID:    uuid.New().String(),
-			FirstName: "Amanda",
-			LastName:  "Anderson",
-			Email:     "amanda.anderson@example.com",
-			Phone:     "+1-555-0110",
-			CreatedAt: now,
-			UpdatedAt: now,
-		},
+	// Load users from YAML file
+	sampleUsers, err := s.loadUsersFromYAML()
+	if err != nil {
+		return fmt.Errorf("failed to load users from YAML: %w", err)
 	}
 
 	// Create all users
@@ -310,7 +196,7 @@ func (s *SeedData) SeedUsers() error {
 			i+1, createdUser.FirstName, createdUser.LastName, createdUser.UserID, createdUser.Email)
 	}
 
-	log.Printf("Successfully seeded %d users", len(sampleUsers))
+	log.Printf("Successfully seeded %d users from YAML", len(sampleUsers))
 	return nil
 }
 
