@@ -1,7 +1,6 @@
 package db
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -11,9 +10,6 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-
-	secretmanager "cloud.google.com/go/secretmanager/apiv1"
-	secretmanagerpb "cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
 )
 
 var DB *gorm.DB
@@ -24,23 +20,10 @@ type Config struct {
 	User     string
 	Password string
 	DBName   string
+	SSLMode  string
 }
 
 func DefaultConfig() Config {
-	// For GCP Cloud Run, we need to fetch the secret from Secret Manager
-	if os.Getenv("K_SERVICE") != "" {
-		host, _ := getSecret("gocart-db-host")
-		password, _ := getSecret("gocart-db-password")
-
-		return Config{
-			Host:     host,
-			Port:     "5432",
-			User:     "postgres",
-			Password: password,
-			DBName:   "postgres",
-		}
-	}
-
 	return Config{
 		Host:     getEnv("DB_HOST", "localhost"),
 		Port:     getEnv("DB_PORT", "5432"),
@@ -50,23 +33,12 @@ func DefaultConfig() Config {
 	}
 }
 
-func ConnectWithReplitConfig() (*gorm.DB, error) {
-	config := Config{
-		Host:     getEnv("REPLIT_DB_HOST", "localhost"),
-		Port:     getEnv("REPLIT_DB_PORT", "5432"),
-		User:     getEnv("REPLIT_DB_USER", "admin"),
-		Password: getEnv("REPLIT_DB_PASSWORD", "password"),
-		DBName:   getEnv("REPLIT_DB_NAME", "gocart_db"),
-	}
-	return Connect(config)
-}
-
-// ConnectWithDefaults connects to the database using environment variables
-func ConnectWithDefaults() (*gorm.DB, error) {
-	return Connect(DefaultConfig())
-}
-
 func Connect(config Config) (*gorm.DB, error) {
+
+	// Log the connection attempt (hide password)
+	log.Printf("Attempting to connect to database - Host: %s, Port: %s, User: %s, DB: %s, SSL: %s",
+		config.Host, config.Port, config.User, config.DBName, config.SSLMode)
+
 	var err error
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
 		config.Host, config.User, config.Password, config.DBName, config.Port)
@@ -147,35 +119,4 @@ func getEnv(key, defaultValue string) string {
 		return defaultValue
 	}
 	return value
-}
-
-func getSecret(secretName string) (string, error) {
-
-	if os.Getenv("K_SERVICE") == "" {
-		return os.Getenv(secretName), nil
-	}
-
-	//Running in Cloud Run, fetch from Secret Manager
-	ctx := context.Background()
-	client, err := secretmanager.NewClient(ctx)
-	if err != nil {
-		return "", fmt.Errorf("failed to create secretmanager client: %v", err)
-	}
-	defer client.Close()
-
-	// Construct the resource name of the secret version
-	name := fmt.Sprintf("projects/%s/secrets/%s/versions/latest",
-		os.Getenv("GOOGLE_CLOUD_PROJECT"), secretName)
-
-	// Access the secret version
-	req := &secretmanagerpb.AccessSecretVersionRequest{
-		Name: name,
-	}
-
-	result, err := client.AccessSecretVersion(ctx, req)
-	if err != nil {
-		return "", fmt.Errorf("failed to access secret version: %v", err)
-	}
-
-	return string(result.Payload.Data), nil
 }
