@@ -30,6 +30,7 @@ func DefaultConfig() Config {
 		User:     getEnv("DB_USER", "admin"),
 		Password: getEnv("DB_PASSWORD", "password"),
 		DBName:   getEnv("DB_NAME", "gocart_db"),
+		SSLMode:  getEnv("DB_SSL_MODE", "disable"),
 	}
 }
 
@@ -40,8 +41,8 @@ func Connect(config Config) (*gorm.DB, error) {
 		config.Host, config.Port, config.User, config.DBName, config.SSLMode)
 
 	var err error
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
-		config.Host, config.User, config.Password, config.DBName, config.Port)
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
+		config.Host, config.User, config.Password, config.DBName, config.Port, config.SSLMode)
 
 	// Configure logger
 	gormLogger := logger.New(
