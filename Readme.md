@@ -7,6 +7,9 @@
 
 > A modern, scalable microservices-based e-commerce API built with Go, featuring comprehensive testing, CI/CD, and beautiful API documentation.
 
+### 🚀 Live Demo - Deployed on Netlify
+**[GoCart E-commerce Platform](https://gocartshopping.netlify.app/)** - Experience the full-featured shopping platform with real-time product browsing, user management, and order processing!
+
 ## 🔗 **Live API Documentation**
 
 **[📖 Interactive API Explorer](https://wasifsarwar.github.io/gocart/)** - Test APIs directly in your browser
@@ -32,11 +35,13 @@ GoCart implements a **microservices architecture** with the following services:
 
 ### ✅ **Implemented Services**
 
-| Service | Port | Status | Description |
-|---------|------|--------|-------------|
-| **Product Service** | `:8080` | ✅ Complete | Product catalog, inventory, CRUD operations |
-| **User Service** | `:8081` | ✅ Complete | User management, authentication, profiles |
-| **Order Service** | `:8082` | ✅ Complete | Order processing and management |
+| Service | Endpoint | Status | Description |
+|---------|----------|--------|-------------|
+| **Product Service** | `/products` | ✅ Complete | Product catalog, inventory, CRUD operations 
+| **User Service**    | `/users`    | ✅ Complete | User management, authentication, profiles 
+| **Order Service**   | `/orders`   | ✅ Complete | Order processing and management 
+
+**🌐 All services run on single port**
 
 ### 🚧 **Planned Services**
 - **Payment Service** - Payment processing simulation
@@ -74,12 +79,14 @@ brew services stop postgresql
 
 ### **3. Run Services**
 
-#### **Option A: Run All Services**
+#### **Option A: Run All Services (Single Port)**
 ```bash
 go run cmd/main.go
 ```
-- Product Service: http://localhost:8080
-- User Service: http://localhost:8081
+**🌐 Unified API**: http://localhost:8080
+- Products: http://localhost:8080/products
+- Users: http://localhost:8080/users  
+- Orders: http://localhost:8080/orders
 
 #### **Option B: Docker Compose**
 ```bash
@@ -100,12 +107,16 @@ go run cmd/main.go           # Start Go services
 # View logs
 docker-compose logs frontend # Frontend logs
 docker-compose logs app      # Backend logs
+
+# bash script to run everything
+./start.sh
 ```
+
 ---
 
 ## 📊 **API Endpoints**
 
-### **Product Service** (`localhost:8080`)
+### **Product Service**
 ```http
 GET    /products           # List all products
 POST   /products           # Create product
@@ -114,7 +125,7 @@ PUT    /products/{id}      # Update product
 DELETE /products/{id}      # Delete product
 ```
 
-### **User Service** (`localhost:8081`)
+### **User Service** 
 ```http
 GET    /users              # List all users
 POST   /users/register     # Register new user
@@ -123,41 +134,17 @@ PUT    /users/{id}         # Update user
 DELETE /users/{id}         # Delete user
 ```
 
----
-
-## 🏛️ **Project Structure**
-
-```
-gocart/
-├── 📁 api/                          # OpenAPI specifications
-│   ├── product/openapi.yaml         # Product service API spec
-│   └── user/openapi.yaml            # User service API spec
-├── 📁 cmd/
-│   └── main.go                      # Main application entry point
-├── 📁 docs/                         # Documentation and assets
-│   └── index.html                   # Beautiful Swagger UI
-├── 📁 internal/                     # Private application code
-│   ├── 📁 product-service/
-│   │   ├── handler/                 # HTTP handlers
-│   │   ├── models/                  # Data models
-│   │   ├── repository/              # Database layer
-│   │   └── server/                  # Server setup
-│   └── 📁 user-service/
-│       ├── handler/                 # HTTP handlers
-│       ├── models/                  # Data models
-│       ├── repository/              # Database layer
-│       └── server/                  # Server setup
-├── 📁 pkg/                          # Shared utilities
-│   ├── db/                          # Database connections
-│   └── testutils/                   # Testing utilities
-├── 📁 .github/workflows/            # CI/CD pipelines
-├── docker-compose.yml               # Multi-service orchestration
-├── Dockerfile                       # Container build instructions
-├── go.mod                          # Go dependencies
-└── README.md                       # You are here!
+### **Order Service**
+```http
+GET    /orders             # List all orders
+POST   /orders             # Create new order
+GET    /orders/{id}        # Get order by ID
+PUT    /orders/{id}        # Update order
+DELETE /orders/{id}        # Delete order
+GET    /orders/user/{user_id} # Get orders by user ID
+DELETE /orders/{id}/items  # Delete order item
 ```
 
----
 
 ## 🧪 **Testing**
 
