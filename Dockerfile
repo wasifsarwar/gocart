@@ -27,6 +27,9 @@ WORKDIR /app
 # Copy the binary from builder
 COPY --from=builder /app/main .
 
+# Copy the YAML data files needed for seeding
+COPY --from=builder /app/pkg/seeder/data ./pkg/seeder/data
+
 # Expose the ports the app runs on
 EXPOSE 8080
 

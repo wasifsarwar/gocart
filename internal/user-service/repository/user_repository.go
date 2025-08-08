@@ -45,7 +45,12 @@ func (r *userRepository) GetUserById(userID string) (models.User, error) {
 
 func (r *userRepository) DeleteUser(userID string) (models.User, error) {
 	var user models.User
-	if err := r.db.Where("user_id = ?", userID).Delete(&user).Error; err != nil {
+	// First get the user to return it
+	if err := r.db.Where("user_id = ?", userID).First(&user).Error; err != nil {
+		return models.User{}, err
+	}
+	// Then delete it
+	if err := r.db.Where("user_id = ?", userID).Delete(&models.User{}).Error; err != nil {
 		return models.User{}, err
 	}
 	return user, nil
