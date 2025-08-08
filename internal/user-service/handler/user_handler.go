@@ -2,10 +2,12 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"gocart/internal/user-service/models"
 	"gocart/internal/user-service/repository"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -27,6 +29,24 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Validate required fields
+	if strings.TrimSpace(user.FirstName) == "" {
+		http.Error(w, "First name is required", http.StatusBadRequest)
+		return
+	}
+	if strings.TrimSpace(user.LastName) == "" {
+		http.Error(w, "Last name is required", http.StatusBadRequest)
+		return
+	}
+	if strings.TrimSpace(user.Email) == "" {
+		http.Error(w, "Email is required", http.StatusBadRequest)
+		return
+	}
+	if strings.TrimSpace(user.Phone) == "" {
+		http.Error(w, "Phone is required", http.StatusBadRequest)
+		return
+	}
+
 	// Generate a new UUID for the user
 	user.UserID = uuid.New().String()
 	user.CreatedAt = time.Now()
@@ -35,7 +55,13 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	// Save to database
 	createdUser, err := h.repo.CreateUser(user)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		// Check for specific error types
+		if strings.Contains(err.Error(), "duplicate") || strings.Contains(err.Error(), "unique") {
+			http.Error(w, "User with this email already exists", http.StatusConflict)
+		} else {
+			log.Printf("Error creating user: %v", err)
+			http.Error(w, "Unable to create user", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -48,9 +74,19 @@ func (h *UserHandler) GetUserById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID := vars["user_id"]
 
+	if userID == "" {
+		http.Error(w, "User ID is required", http.StatusBadRequest)
+		return
+	}
+
 	user, err := h.repo.GetUserById(userID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		if strings.Contains(err.Error(), "not found") || strings.Contains(err.Error(), "no rows") {
+			http.Error(w, fmt.Sprintf("User with id %v not found", userID), http.StatusNotFound)
+		} else {
+			log.Printf("Error fetching user with id %v: %v", userID, err)
+			http.Error(w, fmt.Sprintf("Unable to retrieve user with id %v", userID), http.StatusInternalServerError)
+		}
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -62,28 +98,60 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID := vars["user_id"]
 
+	if userID == "" {
+		http.Error(w, "User ID is required", http.StatusBadRequest)
+		return
+	}
+
 	var updatedUser models.User
 	if err := json.NewDecoder(r.Body).Decode(&updatedUser); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Get existing user
-	existingUser, err := h.repo.GetUserById(userID)
-	if err != nil {
-		log.Printf("Error fetching user with id: %v and error: %v", userID, err)
-		http.Error(w, "User not found", http.StatusInternalServerError)
+	// Validate required fields
+	if strings.TrimSpace(updatedUser.FirstName) == "" {
+		http.Error(w, "First name is required", http.StatusBadRequest)
+		return
+	}
+	if strings.TrimSpace(updatedUser.LastName) == "" {
+		http.Error(w, "Last name is required", http.StatusBadRequest)
+		return
+	}
+	if strings.TrimSpace(updatedUser.Email) == "" {
+		http.Error(w, "Email is required", http.StatusBadRequest)
+		return
+	}
+	if strings.TrimSpace(updatedUser.Phone) == "" {
+		http.Error(w, "Phone is required", http.StatusBadRequest)
 		return
 	}
 
-	// Update fields (implement updateUser logic as needed)
+	// Get existing user
+	existingUser, err := h.repo.GetUserById(userID)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") || strings.Contains(err.Error(), "no rows") {
+			http.Error(w, fmt.Sprintf("User with id %v not found", userID), http.StatusNotFound)
+		} else {
+			log.Printf("Error fetching user with id %v: %v", userID, err)
+			http.Error(w, fmt.Sprintf("Unable to retrieve user with id %v", userID), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	// Update fields
 	updatedUser.UserID = existingUser.UserID
 	updatedUser.CreatedAt = existingUser.CreatedAt
 	updatedUser.UpdatedAt = time.Now()
 
 	result, err := h.repo.UpdateUser(updatedUser)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		if strings.Contains(err.Error(), "duplicate") || strings.Contains(err.Error(), "unique") {
+			http.Error(w, "User with this email already exists", http.StatusConflict)
+		} else {
+			log.Printf("Error updating user with id %v: %v", userID, err)
+			http.Error(w, "Unable to update user", http.StatusInternalServerError)
+		}
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -95,9 +163,19 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID := vars["user_id"]
 
+	if userID == "" {
+		http.Error(w, "User ID is required", http.StatusBadRequest)
+		return
+	}
+
 	_, err := h.repo.DeleteUser(userID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		if strings.Contains(err.Error(), "not found") || strings.Contains(err.Error(), "no rows") {
+			http.Error(w, fmt.Sprintf("User with id %v not found", userID), http.StatusNotFound)
+		} else {
+			log.Printf("Error deleting user with id %v: %v", userID, err)
+			http.Error(w, "Unable to delete user", http.StatusInternalServerError)
+		}
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -107,7 +185,8 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 func (h *UserHandler) ListAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := h.repo.ListAllUsers()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("Error fetching users: %v", err)
+		http.Error(w, "Unable to retrieve users", http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

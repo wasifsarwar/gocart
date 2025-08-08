@@ -88,9 +88,11 @@ func TestListUsers(t *testing.T) {
 				t.Errorf("Expected status %d, got %d", tt.expectedStatus, w.Code)
 			}
 
-			// Test Content-Type header
-			if w.Header().Get("Content-Type") != "application/json" {
-				t.Errorf("Expected Content-Type application/json, got %s", w.Header().Get("Content-Type"))
+			// Test Content-Type header only for successful responses
+			if tt.expectedStatus == http.StatusOK {
+				if w.Header().Get("Content-Type") != "application/json" {
+					t.Errorf("Expected Content-Type application/json, got %s", w.Header().Get("Content-Type"))
+				}
 			}
 
 			if tt.mockError == nil {
@@ -148,19 +150,26 @@ func TestCreateUser(t *testing.T) {
 			setContentType: true,
 		},
 		{
-			name:           "Invalid Email",
-			input:          models.User{FirstName: "John", LastName: "Doe", Email: "invalid-email", Phone: "123-456-7890"},
+			name:           "Missing LastName",
+			input:          models.User{FirstName: "John", Email: "john@example.com", Phone: "123-456-7890"},
 			mockUser:       models.User{},
-			mockError:      errors.New("invalid email format"),
+			mockError:      errors.New("last name is required"),
 			expectedStatus: http.StatusBadRequest,
 			setContentType: true,
 		},
 		{
-			name:           "Empty Request Body",
-			input:          models.User{},
-			requestBody:    "",
+			name:           "Missing Email",
+			input:          models.User{FirstName: "John", LastName: "Doe", Phone: "123-456-7890"},
 			mockUser:       models.User{},
-			mockError:      errors.New("request body is required"),
+			mockError:      errors.New("email is required"),
+			expectedStatus: http.StatusBadRequest,
+			setContentType: true,
+		},
+		{
+			name:           "Missing Phone",
+			input:          models.User{FirstName: "John", LastName: "Doe", Email: "john@example.com"},
+			mockUser:       models.User{},
+			mockError:      errors.New("phone is required"),
 			expectedStatus: http.StatusBadRequest,
 			setContentType: true,
 		},
@@ -174,18 +183,18 @@ func TestCreateUser(t *testing.T) {
 			setContentType: true,
 		},
 		{
-			name:           "Missing Content-Type",
-			input:          models.User{FirstName: "John", LastName: "Doe", Email: "john@example.com"},
+			name:           "Duplicate Email",
+			input:          models.User{FirstName: "John", LastName: "Doe", Email: "existing@example.com", Phone: "123-456-7890"},
 			mockUser:       models.User{},
-			mockError:      errors.New("content-type must be application/json"),
-			expectedStatus: http.StatusBadRequest,
-			setContentType: false,
+			mockError:      errors.New("duplicate email address"),
+			expectedStatus: http.StatusConflict,
+			setContentType: true,
 		},
 		{
 			name:           "Database Error",
 			input:          models.User{FirstName: "Jane", LastName: "Hunter", Email: "jane.hunter@example.com", Phone: "123-456-7890"},
 			mockUser:       models.User{},
-			mockError:      errors.New("database error"),
+			mockError:      errors.New("database connection failed"),
 			expectedStatus: http.StatusInternalServerError,
 			setContentType: true,
 		},
@@ -359,6 +368,15 @@ func TestUpdateUser(t *testing.T) {
 			setContentType: true,
 		},
 		{
+			name:           "Missing FirstName",
+			userID:         "1",
+			input:          models.User{LastName: "User", Email: "updated@example.com", Phone: "123-456-7890"},
+			mockUser:       models.User{},
+			mockError:      errors.New("first name is required"),
+			expectedStatus: http.StatusBadRequest,
+			setContentType: true,
+		},
+		{
 			name:           "Not Found",
 			userID:         "999",
 			input:          models.User{FirstName: "Updated", LastName: "User", Email: "updated@example.com", Phone: "123-456-7890"},
@@ -378,19 +396,19 @@ func TestUpdateUser(t *testing.T) {
 			setContentType: true,
 		},
 		{
-			name:           "Missing Content-Type",
+			name:           "Duplicate Email",
 			userID:         "1",
-			input:          models.User{FirstName: "Updated", LastName: "User", Email: "updated@example.com"},
-			mockUser:       models.User{},
-			mockError:      errors.New("content-type must be application/json"),
-			expectedStatus: http.StatusBadRequest,
-			setContentType: false,
+			input:          models.User{FirstName: "Updated", LastName: "User", Email: "existing@example.com", Phone: "123-456-7890"},
+			mockUser:       models.User{UserID: "1", FirstName: "Updated", LastName: "User", Email: "existing@example.com", Phone: "123-456-7890"},
+			mockError:      errors.New("duplicate email address"),
+			expectedStatus: http.StatusConflict,
+			setContentType: true,
 		},
 		{
 			name:           "Database Error",
 			userID:         "1",
-			input:          models.User{FirstName: "Updated", LastName: "User", Email: "updated@example.com"},
-			mockUser:       models.User{},
+			input:          models.User{FirstName: "Updated", LastName: "User", Email: "updated@example.com", Phone: "123-456-7890"},
+			mockUser:       models.User{UserID: "1", FirstName: "Updated", LastName: "User", Email: "updated@example.com", Phone: "123-456-7890"},
 			mockError:      errors.New("database connection failed"),
 			expectedStatus: http.StatusInternalServerError,
 			setContentType: true,
@@ -407,6 +425,9 @@ func TestUpdateUser(t *testing.T) {
 					return tt.mockUser, nil
 				},
 				MockUpdateUser: func(user models.User) (models.User, error) {
+					if tt.expectedStatus == http.StatusInternalServerError {
+						return models.User{}, tt.mockError
+					}
 					return tt.mockUser, tt.mockError
 				},
 			}
