@@ -56,7 +56,8 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	createdUser, err := h.repo.CreateUser(user)
 	if err != nil {
 		// Check for specific error types
-		if strings.Contains(err.Error(), "duplicate") || strings.Contains(err.Error(), "unique") {
+		lower := strings.ToLower(err.Error())
+		if strings.Contains(lower, "duplicate") || strings.Contains(lower, "unique") || strings.Contains(lower, "already exists") {
 			http.Error(w, "User with this email already exists", http.StatusConflict)
 		} else {
 			log.Printf("Error creating user: %v", err)
@@ -146,7 +147,8 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	result, err := h.repo.UpdateUser(updatedUser)
 	if err != nil {
-		if strings.Contains(err.Error(), "duplicate") || strings.Contains(err.Error(), "unique") {
+		lower := strings.ToLower(err.Error())
+		if strings.Contains(lower, "duplicate") || strings.Contains(lower, "unique") || strings.Contains(lower, "already exists") {
 			http.Error(w, "User with this email already exists", http.StatusConflict)
 		} else {
 			log.Printf("Error updating user with id %v: %v", userID, err)
