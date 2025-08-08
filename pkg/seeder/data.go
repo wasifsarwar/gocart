@@ -53,9 +53,9 @@ func NewSeeder(productRepo productRepository.ProductRepository, userRepo userRep
 	}
 }
 
-// SeedAll seeds both products and users
+// SeedAll resets and seeds both products and users with fresh test data
 func (s *SeedData) SeedAll() error {
-	log.Println("Starting database seeding...")
+	log.Println("🚀 Starting database reset and seeding for testing...")
 
 	if err := s.SeedProducts(); err != nil {
 		return fmt.Errorf("failed to seed products: %w", err)
@@ -65,7 +65,7 @@ func (s *SeedData) SeedAll() error {
 		return fmt.Errorf("failed to seed users: %w", err)
 	}
 
-	log.Println("Database seeding completed successfully!")
+	log.Println("🎉 Database reset and seeding completed successfully!")
 	return nil
 }
 
@@ -99,17 +99,22 @@ func (s *SeedData) loadProductsFromYAML() ([]productModels.Product, error) {
 
 // SeedProducts creates sample products from YAML file
 func (s *SeedData) SeedProducts() error {
-	log.Println("Seeding sample products from YAML...")
+	log.Println("🔄 Resetting and seeding sample products from YAML...")
 
-	// Check if products already exist
+	// Delete all existing products for fresh testing data
 	existingProducts, err := s.ProductRepo.ListAllProducts()
 	if err != nil {
 		return fmt.Errorf("failed to check existing products: %w", err)
 	}
 
 	if len(existingProducts) > 0 {
-		log.Printf("Found %d existing products, skipping product seeding", len(existingProducts))
-		return nil
+		log.Printf("🗑️  Deleting %d existing products for fresh test data...", len(existingProducts))
+		for _, product := range existingProducts {
+			if err := s.ProductRepo.DeleteProduct(product.ProductID); err != nil {
+				log.Printf("⚠️  Failed to delete product %s: %v", product.Name, err)
+			}
+		}
+		log.Printf("✅ Cleared existing products")
 	}
 
 	// Load products from YAML file
@@ -129,7 +134,7 @@ func (s *SeedData) SeedProducts() error {
 			i+1, createdProduct.Name, createdProduct.ProductID, createdProduct.Price)
 	}
 
-	log.Printf("Successfully seeded %d products from YAML", len(sampleProducts))
+	log.Printf("🎉 Successfully reset and seeded %d products from YAML", len(sampleProducts))
 	return nil
 }
 
@@ -166,17 +171,22 @@ func (s *SeedData) loadUsersFromYAML() ([]userModels.User, error) {
 
 // SeedUsers creates sample users from YAML file
 func (s *SeedData) SeedUsers() error {
-	log.Println("Seeding sample users from YAML...")
+	log.Println("🔄 Resetting and seeding sample users from YAML...")
 
-	// Check if users already exist
+	// Delete all existing users for fresh testing data
 	existingUsers, err := s.UserRepo.ListAllUsers()
 	if err != nil {
 		return fmt.Errorf("failed to check existing users: %w", err)
 	}
 
 	if len(existingUsers) > 0 {
-		log.Printf("Found %d existing users, skipping user seeding", len(existingUsers))
-		return nil
+		log.Printf("🗑️  Deleting %d existing users for fresh test data...", len(existingUsers))
+		for _, user := range existingUsers {
+			if _, err := s.UserRepo.DeleteUser(user.UserID); err != nil {
+				log.Printf("⚠️  Failed to delete user %s %s: %v", user.FirstName, user.LastName, err)
+			}
+		}
+		log.Printf("✅ Cleared existing users")
 	}
 
 	// Load users from YAML file
@@ -196,7 +206,7 @@ func (s *SeedData) SeedUsers() error {
 			i+1, createdUser.FirstName, createdUser.LastName, createdUser.UserID, createdUser.Email)
 	}
 
-	log.Printf("Successfully seeded %d users from YAML", len(sampleUsers))
+	log.Printf("🎉 Successfully reset and seeded %d users from YAML", len(sampleUsers))
 	return nil
 }
 
