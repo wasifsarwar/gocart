@@ -100,13 +100,4 @@
     margin: 20px 0;
 }
 
-.alert {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin: 8px 0;
-}
-
-.alert-error {
-    color: #c62828;
-}
+/* Alerts live in styles/globals.css */
