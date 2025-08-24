@@ -14,26 +14,32 @@
   box-sizing: border-box;      /* Include padding in height calculation */
   overflow-x: auto;
   min-width: 1000px;
+  background: linear-gradient(135deg, #fef7f0 0%, #f4e4bc 100%);
 }
 
-.product-search {
-    display: flex;
-    justify-content: center;
+.products-hero {
+  position: relative;
+  height: 64px;
+  padding: 0;
+  background: linear-gradient(135deg, #d4a574 0%, #c19a6b 100%);
+  color: #2d1810;
+  margin-bottom: 20px;
+  border-radius: 8px;
 }
 
-.search-input {
-    width: 300px;
-    padding: 12px 16px;
-    border: 2px solid #e1e5e9;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: border-color 0.2s;
+.products-brand {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 16px;
 }
 
-.search-input:focus {
-    outline: none;
-    border-color: #182f47;
-    box-shadow: 0 0 0 3px rgba(24, 47, 71, 0.1);
+.products-gopher-logo {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  height: 40px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 .products-controls {
@@ -84,4 +90,23 @@
     .product-sort {
         width: 100%;
     }
+}
+
+.results-meta {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.alert {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 8px 0;
+}
+
+.alert-error {
+    color: #c62828;
 }

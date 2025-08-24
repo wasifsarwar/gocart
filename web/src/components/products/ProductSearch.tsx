@@ -1,11 +1,13 @@
 import React from "react";
+import './ProductSearch.css';
 
 interface ProductSearchProps {
-    onSearch: (searchTerm: string) => void
-    placeHolder?: string
+    onSearch: (searchTerm: string) => void;
+    placeHolder?: string;
+    value?: string;
 }
 
-const ProductSearch = ({ onSearch, placeHolder }: ProductSearchProps) => {
+const ProductSearch = ({ onSearch, placeHolder, value }: ProductSearchProps) => {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         onSearch(e.target.value)
     }
@@ -15,6 +17,7 @@ const ProductSearch = ({ onSearch, placeHolder }: ProductSearchProps) => {
             <input
                 type="text"
                 placeholder={placeHolder}
+                value={value ?? ''}
                 onChange={handleInputChange}
                 className="search-input"
             />

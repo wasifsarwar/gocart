@@ -4,11 +4,16 @@ interface ProductCardProps {
     product: Product
 }
 
+const usdFormatter = new Intl.NumberFormat('en-us', {
+    style: 'currency',
+    currency: 'USD'
+});
+
 const ProductCard = ({ product }: ProductCardProps) => {
     return (
         <tr className="product-card">
             <td>{product.name}</td>
-            <td className="price">${product.price.toFixed(2)}</td>
+            <td className="price">{usdFormatter.format(product.price)}</td>
             <td className="category">{product.category}</td>
             <td className="description">{product.description}</td>
 

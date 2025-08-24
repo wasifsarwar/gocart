@@ -77,3 +77,7 @@ body {
 .gap-3 { gap: 1rem; }
 .gap-4 { gap: 1.5rem; }
 .gap-5 { gap: 3rem; }
+
+/* Alerts (shared) */
+.alert { display: flex; gap: 8px; align-items: center; margin: 8px 0; }
+.alert-error { color: #c62828; }

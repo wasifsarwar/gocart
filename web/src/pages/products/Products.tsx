@@ -10,7 +10,7 @@ import './Products.css'
 
 
 const Products = () => {
-    const { products, loading, error } = useProducts();
+    const { products, loading, error, refetch } = useProducts();
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('name-asc'); //default sort state value
 
@@ -39,16 +39,41 @@ const Products = () => {
         });
     }, [products, sortBy, searchTerm]);
 
+    const handleClear = () => {
+        setSearchTerm('');
+        setSortBy('name-asc');
+    }
+
     return (
         <div className="products-page">
             <Navigation title="GoCart Products" />
+            <div className="products-hero">
+                <div className="products-brand">
+                    <img src="/assets/gopher_beer.gif" alt="GoCart Gopher" className="products-gopher-logo" />
+                </div>
+            </div>
             <div className="products-controls" >
-                <ProductSearch onSearch={setSearchTerm} placeHolder="🔍 Search products..." />
+                <ProductSearch onSearch={setSearchTerm} value={searchTerm} placeHolder="Search products" />
                 <ProductSort onSort={setSortBy} currentSort={sortBy} />
             </div>
-            {loading && <p>Loading Products</p>}
-            {error && <p style={{ color: 'red' }} >{error}</p>}
-            {!loading && !error && <ProductList products={filteredProducts} />}
+            <div className="results-meta">
+                <span aria-live="polite">{filteredProducts.length} results</span>
+                {(searchTerm !== '' || sortBy !== 'name-asc') && (
+                    <button onClick={handleClear}>
+                        Clear
+                    </button>
+                )}
+            </div>
+            {
+                error && (
+                    <div role="alert" className="alert alert-error">
+                        <span>{error}</span>
+                        <button onClick={refetch}>Retry</button>
+                    </div>
+                )
+            }
+            <div className="table-container"><ProductList products={filteredProducts} loading={loading} /></div>
+
         </div >
     );
 };
