@@ -3,6 +3,15 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #fef7f0 0%, #f4e4bc 100%);
   padding: 0;
+  /* Make the background stretch full-bleed across the viewport */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  /* Counter .App padding to remove top/bottom white bands */
+  margin-top: -20px;
+  margin-bottom: -20px;
+  padding-top: 0;
+  padding-bottom: 20px;
 }
 
 /* Hero Section */
