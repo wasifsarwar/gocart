@@ -1,4 +1,4 @@
-# 🛒 GoCart - Full-Stack E-commerce API
+# GoCart - Full-Stack E-commerce API
 
 [![Go](https://github.com/wasifsarwar/gocart/workflows/Go/badge.svg)](https://github.com/wasifsarwar/gocart/actions)
 [![Go Version](https://img.shields.io/badge/Go-1.23-blue.svg)](https://golang.org/)
@@ -7,49 +7,49 @@
 
 > A modern, scalable microservices-based e-commerce API built with Go, featuring comprehensive testing, CI/CD, and beautiful API documentation.
 
-### 🚀 Live Demo - Deployed on Netlify
+### Live Demo - Deployed on Netlify
 **[GoCart E-commerce Platform](https://gocartshopping.netlify.app/)** - Experience the full-featured shopping platform with real-time product browsing, user management, and order processing!
 
-## 🔗 **Live API Documentation**
+## **Live API Documentation**
 
-**[📖 Interactive API Explorer](https://wasifsarwar.github.io/gocart/)** - Test APIs directly in your browser
+**[Interactive API Explorer](https://wasifsarwar.github.io/gocart/)** - Test APIs directly in your browser
 
 ### Service-Specific Documentation
-- **🛍️ Product API**: [Swagger UI](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/product/openapi.yaml) | [OpenAPI Spec](api/product/openapi.yaml)
-- **👤 User API**: [Swagger UI](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/user/openapi.yaml) | [OpenAPI Spec](api/user/openapi.yaml)
-- **🛒 Order API**: [Swagger UI](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/order-management/openapi.yaml) | [OpenAPI Spec](api/order-management/openapi.yaml)
+- **Product API**: [Swagger UI](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/product/openapi.yaml) | [OpenAPI Spec](api/product/openapi.yaml)
+- **User API**: [Swagger UI](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/user/openapi.yaml) | [OpenAPI Spec](api/user/openapi.yaml)
+- **Order API**: [Swagger UI](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/wasifsarwar/gocart/main/api/order-management/openapi.yaml) | [OpenAPI Spec](api/order-management/openapi.yaml)
 
 ---
 
-## 🏗️ **Architecture Overview**
+## **Architecture Overview**
 
 GoCart implements a **microservices architecture** with the following services:
 
-### ✅ **Frontend Stack**
+### **Frontend Stack**
 - **React 18** with TypeScript
 - **React Router** for navigation  
 - **Custom hooks** for state management
 - **Responsive CSS** with mobile-first design
 - **Real-time search & sorting**
-- **Animated gopher branding** 🐹
+- **Animated gopher branding**
 
-### ✅ **Implemented Services**
+### **Implemented Services**
 
 | Service | Endpoint | Status | Description |
 |---------|----------|--------|-------------|
-| **Product Service** | `/products` | ✅ Complete | Product catalog, inventory, CRUD operations 
-| **User Service**    | `/users`    | ✅ Complete | User management, authentication, profiles 
-| **Order Service**   | `/orders`   | ✅ Complete | Order processing and management 
+| **Product Service** | `/products` | Complete | Product catalog, inventory, CRUD operations 
+| **User Service**    | `/users`    | Complete | User management, authentication, profiles 
+| **Order Service**   | `/orders`   | Complete | Order processing and management 
 
-**🌐 All services run on single port**
+**All services run on single port**
 
-### 🚧 **Planned Services**
+### **Planned Services**
 - **Payment Service** - Payment processing simulation
 - **Notification Service** - Email/SMS notifications
 
 ---
 
-## 🚀 **Quick Start**
+## **Quick Start**
 
 ### **Prerequisites**
 - **Go 1.23+** 
@@ -83,7 +83,7 @@ brew services stop postgresql
 ```bash
 go run cmd/main.go
 ```
-**🌐 Unified API**: http://localhost:8080
+**Unified API**: http://localhost:8080
 - Products: http://localhost:8080/products
 - Users: http://localhost:8080/users  
 - Orders: http://localhost:8080/orders
@@ -112,7 +112,7 @@ docker-compose logs app      # Backend logs
 
 ---
 
-## 📊 **API Endpoints**
+## **API Endpoints**
 
 ### **Product Service**
 ```http
@@ -144,7 +144,7 @@ DELETE /orders/{id}/items  # Delete order item
 ```
 
 
-## 🧪 **Testing**
+## **Testing**
 
 ### **Run All Tests**
 ```bash
