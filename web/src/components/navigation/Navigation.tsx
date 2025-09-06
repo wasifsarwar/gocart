@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 interface NavigationProps {
-    title: string;
+    title?: string;
 }
 
 const Navigation = ({ title }: NavigationProps) => {
@@ -15,7 +15,7 @@ const Navigation = ({ title }: NavigationProps) => {
                         Back
                     </button>
                 </Link>
-                <h1>{title}</h1>
+                {title && <h1>{title}</h1>}
             </div>
         </div>
     );

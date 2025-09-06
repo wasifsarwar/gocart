@@ -14,12 +14,24 @@ const Products = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('name-asc'); //default sort state value
 
+    // Get unique categories for filtering
+    const categories = useMemo(() => {
+        return Array.from(new Set(products.map(product => product.category))).sort();
+    }, [products]);
+    
+    const [selectedCategory, setSelectedCategory] = useState<string>('');
+
     const filteredProducts = useMemo(() => {
         let filtered = products.filter(
             product => product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 product.category.toLowerCase().includes(searchTerm.toLowerCase())
         );
+
+        // Apply category filter
+        if (selectedCategory) {
+            filtered = filtered.filter(product => product.category === selectedCategory);
+        }
 
         return filtered.sort((a, b) => {
             switch (sortBy) {
@@ -37,42 +49,93 @@ const Products = () => {
                     return 0;
             }
         });
-    }, [products, sortBy, searchTerm]);
+    }, [products, sortBy, searchTerm, selectedCategory]);
 
     const handleClear = () => {
         setSearchTerm('');
         setSortBy('name-asc');
+        setSelectedCategory('');
     }
+
+    const getCategoryColor = (category: string) => {
+        const colors: { [key: string]: string } = {
+            'Electronics': '#3b82f6',
+            'Clothing': '#10b981',
+            'Books': '#f59e0b',
+            'Home': '#8b5cf6',
+            'Sports': '#ef4444',
+            'Beauty': '#ec4899',
+            'Food': '#f97316',
+            'default': '#6b7280'
+        };
+        return colors[category] || colors['default'];
+    };
 
     return (
         <div className="products-page">
-            <Navigation title="GoCart Products" />
-            <div className="products-hero">
-                <div className="products-brand">
-                    <img src="/assets/gopher_beer.gif" alt="GoCart Gopher" className="products-gopher-logo" />
+            <header className="hero-section">
+                <Navigation />
+                <div className="brand-container">
+                    <img src="/assets/gopher_beer.gif" alt="GoCart Gopher" className="gopher-logo" />
+                    <h1>GoCart Products</h1>
                 </div>
-            </div>
-            <div className="products-controls" >
-                <ProductSearch onSearch={setSearchTerm} value={searchTerm} placeHolder="Search products" />
-                <ProductSort onSort={setSortBy} currentSort={sortBy} />
-            </div>
-            <div className="results-meta">
-                <span aria-live="polite">{filteredProducts.length} results</span>
-                {(searchTerm !== '' || sortBy !== 'name-asc') && (
-                    <button onClick={handleClear}>
-                        Clear
-                    </button>
+                <p className="tagline">Browse our complete product catalog</p>
+                <p className="subtitle">Search, filter, and discover products</p>
+            </header>
+            <section className="products-content">
+                <div className="products-controls">
+                    <ProductSearch onSearch={setSearchTerm} value={searchTerm} placeHolder="Search products" />
+                    <ProductSort onSort={setSortBy} currentSort={sortBy} />
+                </div>
+                
+                {categories.length > 0 && (
+                    <div className="category-filters">
+                        <h4>Filter by Category:</h4>
+                        <div className="category-badges">
+                            <button
+                                className={`category-filter-btn ${!selectedCategory ? 'active' : ''}`}
+                                onClick={() => setSelectedCategory('')}
+                            >
+                                All Categories
+                            </button>
+                            {categories.map(category => (
+                                <button
+                                    key={category}
+                                    className={`category-filter-btn ${selectedCategory === category ? 'active' : ''}`}
+                                    style={{ 
+                                        backgroundColor: selectedCategory === category ? getCategoryColor(category) : 'transparent',
+                                        borderColor: getCategoryColor(category),
+                                        color: selectedCategory === category ? 'white' : getCategoryColor(category)
+                                    }}
+                                    onClick={() => setSelectedCategory(category)}
+                                >
+                                    {category}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 )}
-            </div>
-            {
-                error && (
+                
+                <div className="results-meta">
+                    <span aria-live="polite">{filteredProducts.length} results</span>
+                    {(searchTerm !== '' || sortBy !== 'name-asc' || selectedCategory !== '') && (
+                        <button onClick={handleClear}>
+                            Clear All Filters
+                        </button>
+                    )}
+                </div>
+                
+                {error && (
                     <div role="alert" className="alert alert-error">
                         <span>{error}</span>
                         <button onClick={refetch}>Retry</button>
                     </div>
-                )
-            }
-            <div className="table-container"><ProductList products={filteredProducts} loading={loading} /></div>
+                )}
+                
+                <div className="table-container">
+                    <ProductList products={filteredProducts} loading={loading} />
+                </div>
+            </section>
 
         </div >
     );
