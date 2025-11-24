@@ -13,11 +13,12 @@ import (
 )
 
 type MockUserRepository struct {
-	MockListAllUsers func() ([]models.User, error)
-	MockCreateUser   func(user models.User) (models.User, error)
-	MockGetUserById  func(id string) (models.User, error)
-	MockUpdateUser   func(user models.User) (models.User, error)
-	MockDeleteUser   func(id string) (models.User, error)
+	MockListAllUsers   func() ([]models.User, error)
+	MockCreateUser     func(user models.User) (models.User, error)
+	MockGetUserById    func(id string) (models.User, error)
+	MockGetUserByEmail func(email string) (models.User, error)
+	MockUpdateUser     func(user models.User) (models.User, error)
+	MockDeleteUser     func(id string) (models.User, error)
 }
 
 func (m *MockUserRepository) ListAllUsers() ([]models.User, error) {
@@ -30,6 +31,10 @@ func (m *MockUserRepository) CreateUser(user models.User) (models.User, error) {
 
 func (m *MockUserRepository) GetUserById(id string) (models.User, error) {
 	return m.MockGetUserById(id)
+}
+
+func (m *MockUserRepository) GetUserByEmail(email string) (models.User, error) {
+	return m.MockGetUserByEmail(email)
 }
 
 func (m *MockUserRepository) UpdateUser(user models.User) (models.User, error) {
@@ -135,7 +140,7 @@ func TestCreateUser(t *testing.T) {
 	}{
 		{
 			name:           "Success",
-			input:          models.User{FirstName: "John", LastName: "Doe", Email: "john.doe@example.com", Phone: "123-456-7890"},
+			input:          models.User{FirstName: "John", LastName: "Doe", Email: "john.doe@example.com", Phone: "123-456-7890", Password: "password123"},
 			mockUser:       models.User{UserID: "1", FirstName: "John", LastName: "Doe", Email: "john.doe@example.com", Phone: "123-456-7890"},
 			mockError:      nil,
 			expectedStatus: http.StatusCreated,
@@ -143,7 +148,7 @@ func TestCreateUser(t *testing.T) {
 		},
 		{
 			name:           "Missing FirstName",
-			input:          models.User{LastName: "Doe", Email: "john@example.com", Phone: "123-456-7890"},
+			input:          models.User{LastName: "Doe", Email: "john@example.com", Phone: "123-456-7890", Password: "password123"},
 			mockUser:       models.User{},
 			mockError:      errors.New("first name is required"),
 			expectedStatus: http.StatusBadRequest,
@@ -151,7 +156,7 @@ func TestCreateUser(t *testing.T) {
 		},
 		{
 			name:           "Missing LastName",
-			input:          models.User{FirstName: "John", Email: "john@example.com", Phone: "123-456-7890"},
+			input:          models.User{FirstName: "John", Email: "john@example.com", Phone: "123-456-7890", Password: "password123"},
 			mockUser:       models.User{},
 			mockError:      errors.New("last name is required"),
 			expectedStatus: http.StatusBadRequest,
@@ -159,7 +164,7 @@ func TestCreateUser(t *testing.T) {
 		},
 		{
 			name:           "Missing Email",
-			input:          models.User{FirstName: "John", LastName: "Doe", Phone: "123-456-7890"},
+			input:          models.User{FirstName: "John", LastName: "Doe", Phone: "123-456-7890", Password: "password123"},
 			mockUser:       models.User{},
 			mockError:      errors.New("email is required"),
 			expectedStatus: http.StatusBadRequest,
@@ -167,9 +172,25 @@ func TestCreateUser(t *testing.T) {
 		},
 		{
 			name:           "Missing Phone",
-			input:          models.User{FirstName: "John", LastName: "Doe", Email: "john@example.com"},
+			input:          models.User{FirstName: "John", LastName: "Doe", Email: "john@example.com", Password: "password123"},
 			mockUser:       models.User{},
 			mockError:      errors.New("phone is required"),
+			expectedStatus: http.StatusBadRequest,
+			setContentType: true,
+		},
+		{
+			name:           "Missing Password",
+			input:          models.User{FirstName: "John", LastName: "Doe", Email: "john@example.com", Phone: "123-456-7890"},
+			mockUser:       models.User{},
+			mockError:      errors.New("password is required"),
+			expectedStatus: http.StatusBadRequest,
+			setContentType: true,
+		},
+		{
+			name:           "Short Password",
+			input:          models.User{FirstName: "John", LastName: "Doe", Email: "john@example.com", Phone: "123-456-7890", Password: "123"},
+			mockUser:       models.User{},
+			mockError:      errors.New("password must be at least 6 characters"),
 			expectedStatus: http.StatusBadRequest,
 			setContentType: true,
 		},
@@ -184,7 +205,7 @@ func TestCreateUser(t *testing.T) {
 		},
 		{
 			name:           "Duplicate Email",
-			input:          models.User{FirstName: "John", LastName: "Doe", Email: "existing@example.com", Phone: "123-456-7890"},
+			input:          models.User{FirstName: "John", LastName: "Doe", Email: "existing@example.com", Phone: "123-456-7890", Password: "password123"},
 			mockUser:       models.User{},
 			mockError:      errors.New("duplicate email address"),
 			expectedStatus: http.StatusConflict,
@@ -192,7 +213,7 @@ func TestCreateUser(t *testing.T) {
 		},
 		{
 			name:           "Database Error",
-			input:          models.User{FirstName: "Jane", LastName: "Hunter", Email: "jane.hunter@example.com", Phone: "123-456-7890"},
+			input:          models.User{FirstName: "Jane", LastName: "Hunter", Email: "jane.hunter@example.com", Phone: "123-456-7890", Password: "password123"},
 			mockUser:       models.User{},
 			mockError:      errors.New("database connection failed"),
 			expectedStatus: http.StatusInternalServerError,

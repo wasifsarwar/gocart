@@ -39,6 +39,7 @@ func TestCreateAndGetUserIntegration(t *testing.T) {
 		LastName:  "Doe",
 		Email:     "john.doe@example.com",
 		Phone:     "123-456-7890",
+		Password:  "password123",
 	}
 	body, err := json.Marshal(testUser)
 	if err != nil {
@@ -176,6 +177,7 @@ func TestCreateUserValidationErrors(t *testing.T) {
 				LastName: "Doe",
 				Email:    "john.doe@example.com",
 				Phone:    "123-456-7890",
+				Password: "password123",
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedError:  "First name is required",
@@ -186,6 +188,7 @@ func TestCreateUserValidationErrors(t *testing.T) {
 				FirstName: "John",
 				Email:     "john.doe@example.com",
 				Phone:     "123-456-7890",
+				Password:  "password123",
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedError:  "Last name is required",
@@ -196,6 +199,7 @@ func TestCreateUserValidationErrors(t *testing.T) {
 				FirstName: "John",
 				LastName:  "Doe",
 				Phone:     "123-456-7890",
+				Password:  "password123",
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedError:  "Email is required",
@@ -206,6 +210,7 @@ func TestCreateUserValidationErrors(t *testing.T) {
 				FirstName: "John",
 				LastName:  "Doe",
 				Email:     "john.doe@example.com",
+				Password:  "password123",
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedError:  "Phone is required",
@@ -278,6 +283,7 @@ func TestCreateUserDuplicateEmail(t *testing.T) {
 		LastName:  "Doe",
 		Email:     "john.doe@example.com",
 		Phone:     "123-456-7890",
+		Password:  "password123",
 	}
 	body1, _ := json.Marshal(user1)
 	req1 := httptest.NewRequest(http.MethodPost, "/users", bytes.NewBuffer(body1))
@@ -295,6 +301,7 @@ func TestCreateUserDuplicateEmail(t *testing.T) {
 		LastName:  "Doe",
 		Email:     "john.doe@example.com", // Same email
 		Phone:     "123-456-7890",
+		Password:  "password123",
 	}
 	body2, _ := json.Marshal(user2)
 	req2 := httptest.NewRequest(http.MethodPost, "/users", bytes.NewBuffer(body2))

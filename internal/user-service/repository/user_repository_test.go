@@ -8,11 +8,12 @@ import (
 )
 
 type MockUserRepository struct {
-	MockCreateUser   func(user models.User) (models.User, error)
-	MockGetUserByID  func(id string) (models.User, error)
-	MockUpdateUser   func(user models.User) (models.User, error)
-	MockDeleteUser   func(id string) (models.User, error)
-	MockListAllUsers func() ([]models.User, error)
+	MockCreateUser     func(user models.User) (models.User, error)
+	MockGetUserByID    func(id string) (models.User, error)
+	MockGetUserByEmail func(email string) (models.User, error)
+	MockUpdateUser     func(user models.User) (models.User, error)
+	MockDeleteUser     func(id string) (models.User, error)
+	MockListAllUsers   func() ([]models.User, error)
 }
 
 func (m *MockUserRepository) CreateUser(user models.User) (models.User, error) {
@@ -21,6 +22,10 @@ func (m *MockUserRepository) CreateUser(user models.User) (models.User, error) {
 
 func (m *MockUserRepository) GetUserById(id string) (models.User, error) {
 	return m.MockGetUserByID(id)
+}
+
+func (m *MockUserRepository) GetUserByEmail(email string) (models.User, error) {
+	return m.MockGetUserByEmail(email)
 }
 
 func (m *MockUserRepository) UpdateUser(user models.User) (models.User, error) {
