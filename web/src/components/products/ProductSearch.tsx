@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { FaSearch, FaTimes } from "react-icons/fa";
+import { IconType } from "react-icons";
 import './ProductSearch.css';
 
 interface ProductSearchProps {
@@ -7,25 +9,28 @@ interface ProductSearchProps {
     value?: string;
 }
 
+// Wrapper to fix TS2786 error with React 19 types
+const Icon = ({ icon: IconComponent, className }: { icon: IconType; className?: string }) => {
+    const Component = IconComponent as any;
+    return <Component className={className} />;
+};
+
 const ProductSearch = ({ onSearch, placeHolder, value }: ProductSearchProps) => {
     const [isFocused, setIsFocused] = useState(false);
-    const [isTyping, setIsTyping] = useState(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setIsTyping(true);
         onSearch(e.target.value);
-        
-        // Clear typing indicator after a delay
-        setTimeout(() => setIsTyping(false), 500);
     }
 
     const handleFocus = () => setIsFocused(true);
     const handleBlur = () => setIsFocused(false);
 
     return (
-        <div className={`product-search ${isFocused ? 'focused' : ''} ${isTyping ? 'typing' : ''}`}>
+        <div className={`product-search ${isFocused ? 'focused' : ''}`}>
             <div className="search-container">
-                <span className="search-icon">🔍</span>
+                <span className="search-icon">
+                    <Icon icon={FaSearch} />
+                </span>
                 <input
                     type="text"
                     placeholder={placeHolder}
@@ -36,16 +41,16 @@ const ProductSearch = ({ onSearch, placeHolder, value }: ProductSearchProps) => 
                     className="search-input"
                 />
                 {value && (
-                    <button 
+                    <button
                         className="clear-button"
                         onClick={() => onSearch('')}
                         type="button"
+                        aria-label="Clear search"
                     >
-                        ✕
+                        <Icon icon={FaTimes} />
                     </button>
                 )}
             </div>
-            {isTyping && <div className="typing-indicator">Searching...</div>}
         </div>
     );
 };

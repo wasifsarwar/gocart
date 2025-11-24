@@ -1,6 +1,7 @@
 import Product from "../../types/product"
 import ProductCard from "./ProductCard"
 import './ProductList.css';
+
 interface ProductListProps {
     products: Product[];
     loading: boolean;
@@ -8,42 +9,43 @@ interface ProductListProps {
 
 const ProductList = ({ products, loading }: ProductListProps) => {
 
-    const skeletonRows = Array.from({ length: 5 });
+    const skeletonCards = Array.from({ length: 8 });
+
+    if (loading) {
+        return (
+            <div className="product-grid">
+                {skeletonCards.map((_, i) => (
+                    <div key={i} className="product-card skeleton-card">
+                        <div className="skeleton-image" />
+                        <div className="skeleton-content">
+                            <div className="skeleton-line w-25" />
+                            <div className="skeleton-line w-75" />
+                            <div className="skeleton-line w-50" />
+                            <div className="skeleton-button" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+    if (products.length === 0) {
+        return (
+            <div className="no-products">
+                <div className="empty-state">
+                    <h3>No Products Found</h3>
+                    <p>Try adjusting your search or filter to find what you're looking for.</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <table className="data-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Category</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {loading ? (
-                    skeletonRows.map((_, i) => (
-                        <tr key={i}>
-                            <td colSpan={4}>
-                                <div className="skeleton-row" />
-                            </td>
-                        </tr>
-                    ))
-                ) : products.length === 0 ? (
-                    <tr>
-                        <td colSpan={4} style={{
-                            textAlign: 'center', padding: '16px'
-                        }}>
-                            No Products Available
-                        </td>
-                    </tr>
-                ) : (
-                    products.map(product => (
-                        <ProductCard key={product.productID} product={product} />
-                    ))
-                )}
-            </tbody>
-        </table>
+        <div className="product-grid">
+            {products.map(product => (
+                <ProductCard key={product.productID} product={product} />
+            ))}
+        </div>
     );
 }
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import './ProductSort.css';
 
 interface SortOption {
     value: string;
@@ -21,17 +22,19 @@ const sortOptions: SortOption[] = [
 const ProductSort = ({ onSort, currentSort }: ProductSortProps) => {
     return (
         <div className='product-sort'>
-            <label htmlFor="sort-select">Sort by:</label>
-            <select
-                id="sort-select"
-                value={currentSort}
-                onChange={(e) => onSort(e.target.value)}
-                className="sort-select"
-            >
-                {sortOptions.map(option => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
-            </select>
+            <label htmlFor="sort-select">Sort by</label>
+            <div className="select-wrapper">
+                <select
+                    id="sort-select"
+                    value={currentSort}
+                    onChange={(e) => onSort(e.target.value)}
+                    className="sort-select"
+                >
+                    {sortOptions.map(option => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                </select>
+            </div>
         </div>
     );
 };

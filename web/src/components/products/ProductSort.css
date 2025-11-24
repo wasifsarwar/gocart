@@ -1,0 +1,46 @@
+.product-sort {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.product-sort label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+.sort-select {
+    padding: 0.6rem 2.5rem 0.6rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+    appearance: none; /* Remove default arrow */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1em;
+    min-width: 180px;
+}
+
+.sort-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 173, 216, 0.1);
+}
+
+.sort-select:hover {
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+

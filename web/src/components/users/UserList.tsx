@@ -1,5 +1,6 @@
 import User from "../../types/user";
 import UserCard from "./UserCard";
+import './UserList.css';
 
 interface UserListProps {
     users: User[]
@@ -7,23 +8,27 @@ interface UserListProps {
 
 const UserList = ({ users }: UserListProps) => {
     if (users.length === 0) {
-        return <div>No users available</div>
+        return (
+            <div className="user-list-container">
+                <div className="no-users">No users found.</div>
+            </div>
+        );
     }
 
     return (
-        <table className="data-table">
-            <thead>
-                <th>Full Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-            </thead>
-            <tbody>
-                {users.map(user => (
-                    <UserCard key={user.userId} user={user} />
+        <div className="user-list-container">
+            <div className="user-list-header">
+                <span></span> {/* Avatar spacer */}
+                <span>User</span>
+                <span>Contact</span>
+                <span></span> {/* Actions spacer */}
+            </div>
+            <div className="user-list-body">
+                {users.map((user, index) => (
+                    <UserCard key={user.userId} user={user} index={index} />
                 ))}
-            </tbody>
-        </table>
-
+            </div>
+        </div>
     );
 }
 

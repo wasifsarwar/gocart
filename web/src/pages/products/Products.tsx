@@ -56,69 +56,51 @@ const Products = () => {
         setSelectedCategory('');
     }
 
-    const getCategoryColor = (category: string) => {
-        const colors: { [key: string]: string } = {
-            'Electronics': '#3b82f6',
-            'Clothing': '#10b981',
-            'Books': '#f59e0b',
-            'Home': '#8b5cf6',
-            'Sports': '#ef4444',
-            'Beauty': '#ec4899',
-            'Food': '#f97316',
-            'default': '#6b7280'
-        };
-        return colors[category] || colors['default'];
-    };
-
     return (
         <div className="products-page page-container">
-            <header className="hero-section">
-                <div className="brand-container">
-                    <img src="/assets/gopher_beer.gif" alt="GoCart Gopher" className="gopher-logo" />
-                    <h1>GoCart Products</h1>
+            <div className="products-header">
+                <div className="header-content">
+                    <h1>Products</h1>
+                    <p className="header-subtitle">Browse our complete catalog of quality items</p>
                 </div>
-                <p className="tagline">Browse our complete product catalog</p>
-                <p className="subtitle">Search, filter, and discover products</p>
-            </header>
+            </div>
+
             <section className="products-content">
                 <div className="products-controls">
-                    <ProductSearch onSearch={setSearchTerm} value={searchTerm} placeHolder="Search products" />
-                    <ProductSort onSort={setSortBy} currentSort={sortBy} />
+                    <div className="search-sort-row">
+                        <ProductSearch onSearch={setSearchTerm} value={searchTerm} placeHolder="Search products..." />
+                        <ProductSort onSort={setSortBy} currentSort={sortBy} />
+                    </div>
+
+                    {categories.length > 0 && (
+                        <div className="category-filters">
+                            <span className="filter-label">Filter:</span>
+                            <div className="category-badges">
+                                <button
+                                    className={`category-filter-btn ${!selectedCategory ? 'active' : ''}`}
+                                    onClick={() => setSelectedCategory('')}
+                                >
+                                    All
+                                </button>
+                                {categories.map(category => (
+                                    <button
+                                        key={category}
+                                        className={`category-filter-btn ${selectedCategory === category ? 'active' : ''}`}
+                                        onClick={() => setSelectedCategory(category)}
+                                    >
+                                        {category}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
-                {categories.length > 0 && (
-                    <div className="category-filters">
-                        <h4>Filter by Category:</h4>
-                        <div className="category-badges">
-                            <button
-                                className={`category-filter-btn ${!selectedCategory ? 'active' : ''}`}
-                                onClick={() => setSelectedCategory('')}
-                            >
-                                All Categories
-                            </button>
-                            {categories.map(category => (
-                                <button
-                                    key={category}
-                                    className={`category-filter-btn ${selectedCategory === category ? 'active' : ''}`}
-                                    style={{
-                                        backgroundColor: selectedCategory === category ? getCategoryColor(category) : 'transparent',
-                                        borderColor: getCategoryColor(category),
-                                        color: selectedCategory === category ? 'white' : getCategoryColor(category)
-                                    }}
-                                    onClick={() => setSelectedCategory(category)}
-                                >
-                                    {category}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
                 <div className="results-meta">
-                    <span aria-live="polite">{filteredProducts.length} results</span>
+                    <span aria-live="polite">{filteredProducts.length} results found</span>
                     {(searchTerm !== '' || sortBy !== 'name-asc' || selectedCategory !== '') && (
-                        <button onClick={handleClear}>
-                            Clear All Filters
+                        <button onClick={handleClear} className="clear-filters-btn">
+                            Clear Filters
                         </button>
                     )}
                 </div>
@@ -130,7 +112,7 @@ const Products = () => {
                     </div>
                 )}
 
-                <div className="table-container">
+                <div className="product-list-container">
                     <ProductList products={filteredProducts} loading={loading} />
                 </div>
             </section>

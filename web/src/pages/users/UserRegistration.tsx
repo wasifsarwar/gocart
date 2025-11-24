@@ -31,16 +31,23 @@ const UserRegistration = () => {
 
     return (
         <div className="user-registration-page page-container">
-            <h1>Register New User</h1>
-            {message && (
-                <div className={`alert ${messageType === 'success' ? 'alert-success' : 'alert-error'}`}>
-                    {message}
+            <div className="registration-container">
+                <div className="registration-header">
+                    <h1>Create Account</h1>
+                    <p>Join our community to start shopping</p>
                 </div>
-            )}
-            <UserRegistrationForm
-                onError={handleError}
-                onSuccess={handleSuccess}
-            />
+
+                {message && (
+                    <div className={`alert ${messageType === 'success' ? 'alert-success' : 'alert-error'}`}>
+                        {message}
+                    </div>
+                )}
+
+                <UserRegistrationForm
+                    onError={handleError}
+                    onSuccess={handleSuccess}
+                />
+            </div>
         </div>
     );
 };
