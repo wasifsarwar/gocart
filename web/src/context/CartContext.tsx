@@ -42,7 +42,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
 
 
-        const currentItems = items;
         const exists = items.some(item => item.productID === product.productID);
         if (exists) {
             toast.success(`Updated quantity for ${product.name}`);

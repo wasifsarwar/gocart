@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { orderService, Order } from '../../services/orderService';
 import { productService, ApiProduct } from '../../services/productService';
-import { FaBox, FaCalendar, FaMoneyBillWave, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaBox } from 'react-icons/fa';
 import { IconType } from 'react-icons';
 import './OrderHistory.css';
 
