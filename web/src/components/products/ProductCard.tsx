@@ -2,6 +2,7 @@ import React from "react";
 import Product from "../../types/product";
 import { FaShoppingBag } from "react-icons/fa";
 import { IconType } from "react-icons";
+import { useCart } from "../../context/CartContext";
 
 interface ProductCardProps {
     product: Product
@@ -19,6 +20,8 @@ const Icon = ({ icon: IconComponent, className }: { icon: IconType; className?: 
 };
 
 const ProductCard = ({ product }: ProductCardProps) => {
+    const { addToCart } = useCart();
+
     const getCategoryColor = (category: string) => {
         const colors: { [key: string]: string } = {
             'Electronics': 'blue',
@@ -35,6 +38,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
     const colorClass = getCategoryColor(product.category);
 
+    const handleAddToCart = () => {
+        addToCart(product);
+        // Optional: Add visual feedback here (toast notification, etc.)
+    };
+
     return (
         <div className="product-card">
             <div className={`product-image-placeholder ${colorClass}`}>
@@ -49,7 +57,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 </div>
                 <h3 className="product-name">{product.name}</h3>
                 <p className="product-description">{product.description}</p>
-                <button className="add-to-cart-btn">
+                <button className="add-to-cart-btn" onClick={handleAddToCart}>
                     Add to Cart
                 </button>
             </div>

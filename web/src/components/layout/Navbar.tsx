@@ -1,9 +1,19 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { FaShoppingCart } from 'react-icons/fa';
+import { IconType } from 'react-icons';
+import { useCart } from '../../context/CartContext';
 import './Navbar.css';
+
+// Wrapper to fix TS2786 error with React 19 types
+const Icon = ({ icon: IconComponent, className }: { icon: IconType; className?: string }) => {
+    const Component = IconComponent as any;
+    return <Component className={className} />;
+};
 
 const Navbar = () => {
     const location = useLocation();
+    const { cartCount } = useCart();
 
     const isActive = (path: string) => {
         return location.pathname === path ? 'active' : '';
@@ -29,6 +39,10 @@ const Navbar = () => {
                     <Link to="/register" className={`nav-link ${isActive('/register')}`}>
                         Register
                     </Link>
+                    <div className="cart-icon-container">
+                        <Icon icon={FaShoppingCart} className="cart-icon" />
+                        {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+                    </div>
                 </div>
             </div>
         </nav>

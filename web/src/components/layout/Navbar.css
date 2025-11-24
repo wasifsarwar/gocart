@@ -61,6 +61,37 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.cart-icon-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    cursor: pointer;
+    margin-left: 0.5rem;
+}
+
+.cart-icon {
+    font-size: 1.25rem;
+    color: white;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background-color: #ef4444; /* red-500 */
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid var(--primary-color);
+}
+
 @media (max-width: 768px) {
   .navbar-container {
     padding: 1rem;
