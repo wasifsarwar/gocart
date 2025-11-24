@@ -39,10 +39,10 @@ const Navbar = () => {
                     <Link to="/register" className={`nav-link ${isActive('/register')}`}>
                         Register
                     </Link>
-                    <div className="cart-icon-container">
+                    <Link to="/checkout" className="cart-icon-container">
                         <Icon icon={FaShoppingCart} className="cart-icon" />
                         {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-                    </div>
+                    </Link>
                 </div>
             </div>
         </nav>
