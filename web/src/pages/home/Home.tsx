@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaShoppingBag, FaUsers, FaUserPlus, FaArrowRight } from "react-icons/fa";
+import { FaShoppingBag, FaUsers, FaUserPlus, FaArrowRight, FaBox, FaShoppingCart } from "react-icons/fa";
 import { IconType } from "react-icons";
+import { useAuth } from "../../context/AuthContext";
 import './Home.css'
 
 // Wrapper to fix TS2786 error with React 19 types
@@ -11,6 +12,8 @@ const Icon = ({ icon: IconComponent, className }: { icon: IconType; className?: 
 };
 
 const Home = () => {
+    const { isAuthenticated } = useAuth();
+
     return (
         <div className="home-page">
             <header className="hero-section">
@@ -27,9 +30,11 @@ const Home = () => {
                             <Link to="/products" className="btn-primary">
                                 Browse Products <Icon icon={FaArrowRight} />
                             </Link>
-                            <Link to="/register" className="btn-secondary">
-                                Sign Up Now
-                            </Link>
+                            {!isAuthenticated && (
+                                <Link to="/register" className="btn-secondary">
+                                    Sign Up Now
+                                </Link>
+                            )}
                         </div>
                     </div>
                     <div className="hero-image">
@@ -51,23 +56,47 @@ const Home = () => {
                         <span className="card-link">Shop Now &rarr;</span>
                     </Link>
 
-                    <Link to="/users" className="feature-card">
-                        <div className="icon-wrapper purple">
-                            <Icon icon={FaUsers} />
-                        </div>
-                        <h3>User Management</h3>
-                        <p>Administer user accounts, profiles, and permissions seamlessly.</p>
-                        <span className="card-link">Manage Users &rarr;</span>
-                    </Link>
+                    {isAuthenticated ? (
+                        <>
+                            <Link to="/orders" className="feature-card">
+                                <div className="icon-wrapper purple">
+                                    <Icon icon={FaBox} />
+                                </div>
+                                <h3>Track Orders</h3>
+                                <p>View your order history and track shipment status.</p>
+                                <span className="card-link">View History &rarr;</span>
+                            </Link>
 
-                    <Link to="/register" className="feature-card">
-                        <div className="icon-wrapper green">
-                            <Icon icon={FaUserPlus} />
-                        </div>
-                        <h3>Easy Registration</h3>
-                        <p>Onboard new customers in seconds with our streamlined flow.</p>
-                        <span className="card-link">Register &rarr;</span>
-                    </Link>
+                            <Link to="/checkout" className="feature-card">
+                                <div className="icon-wrapper green">
+                                    <Icon icon={FaShoppingCart} />
+                                </div>
+                                <h3>Your Cart</h3>
+                                <p>Review selected items and proceed to secure checkout.</p>
+                                <span className="card-link">Checkout &rarr;</span>
+                            </Link>
+                        </>
+                    ) : (
+                        <>
+                            <Link to="/users" className="feature-card">
+                                <div className="icon-wrapper purple">
+                                    <Icon icon={FaUsers} />
+                                </div>
+                                <h3>User Management</h3>
+                                <p>Administer user accounts, profiles, and permissions seamlessly.</p>
+                                <span className="card-link">Manage Users &rarr;</span>
+                            </Link>
+
+                            <Link to="/register" className="feature-card">
+                                <div className="icon-wrapper green">
+                                    <Icon icon={FaUserPlus} />
+                                </div>
+                                <h3>Easy Registration</h3>
+                                <p>Onboard new customers in seconds with our streamlined flow.</p>
+                                <span className="card-link">Register &rarr;</span>
+                            </Link>
+                        </>
+                    )}
                 </div>
             </section>
         </div>

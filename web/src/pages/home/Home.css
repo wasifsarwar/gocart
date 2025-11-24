@@ -164,13 +164,16 @@
 }
 
 .features-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 2.5rem;
 }
 
-/* Feature Cards */
 .feature-card {
+  flex: 1;
+  min-width: 300px;
+  max-width: 380px;
   background: white;
   border-radius: 1.5rem;
   padding: 2.5rem;
