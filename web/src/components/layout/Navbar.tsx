@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaShoppingCart, FaSignOutAlt } from 'react-icons/fa';
 import { IconType } from 'react-icons';
 import { useCart } from '../../context/CartContext';
@@ -14,11 +14,17 @@ const Icon = ({ icon: IconComponent, className }: { icon: IconType; className?: 
 
 const Navbar = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const { cartCount } = useCart();
     const { isAuthenticated, logout, user } = useAuth();
 
     const isActive = (path: string) => {
         return location.pathname === path ? 'active' : '';
+    };
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
     };
 
     return (
@@ -50,7 +56,7 @@ const Navbar = () => {
                                 My Orders
                             </Link>
                             <span className="user-greeting">Hi, {user?.first_name}</span>
-                            <button onClick={logout} className="logout-btn" aria-label="Logout">
+                            <button onClick={handleLogout} className="logout-btn" aria-label="Logout">
                                 <Icon icon={FaSignOutAlt} />
                             </button>
                         </div>
