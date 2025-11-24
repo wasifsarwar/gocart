@@ -24,6 +24,7 @@ func NewServer(handler *handler.UserHandler) *Server {
 func (s *Server) setupRoutes() {
 	s.router.HandleFunc("/users", s.handler.ListAllUsers).Methods("GET")
 	s.router.HandleFunc("/users/register", s.handler.CreateUser).Methods("POST")
+	s.router.HandleFunc("/users/login", s.handler.Login).Methods("POST")
 	s.router.HandleFunc("/users/{id}", s.handler.GetUserById).Methods("GET")
 	s.router.HandleFunc("/users/{id}", s.handler.UpdateUser).Methods("PUT")
 	s.router.HandleFunc("/users/{id}", s.handler.DeleteUser).Methods("DELETE")

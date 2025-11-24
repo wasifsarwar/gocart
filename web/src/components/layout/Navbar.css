@@ -92,6 +92,37 @@
     border: 2px solid var(--primary-color);
 }
 
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-right: 0.5rem;
+}
+
+.user-greeting {
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.logout-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.logout-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fee2e2;
+}
+
 @media (max-width: 768px) {
   .navbar-container {
     padding: 1rem;
@@ -110,4 +141,11 @@
     padding: 0.4rem 0.8rem;
     font-size: 0.9rem;
   }
+
+  .user-menu {
+        width: 100%;
+        justify-content: center;
+        margin-right: 0;
+        margin-top: 0.5rem;
+    }
 }

@@ -12,7 +12,8 @@ const UserRegistrationForm = ({ onSuccess, onError }: UserRegistrationFormProps)
         first_name: '',
         last_name: '',
         email: '',
-        phone: ''
+        phone: '',
+        password: ''
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +34,11 @@ const UserRegistrationForm = ({ onSuccess, onError }: UserRegistrationFormProps)
         }
         if (!formData.phone.trim()) {
             newErrors.phone = 'Phone number is required'
+        }
+        if (!formData.password?.trim()) {
+            newErrors.password = 'Password is required'
+        } else if (formData.password.length < 6) {
+            newErrors.password = 'Password must be at least 6 characters';
         }
 
         setErrors(newErrors);
@@ -71,7 +77,8 @@ const UserRegistrationForm = ({ onSuccess, onError }: UserRegistrationFormProps)
                 first_name: '',
                 last_name: '',
                 email: '',
-                phone: ''
+                phone: '',
+                password: ''
             });
 
             onSuccess?.(`User ${newUser.first_name} ${newUser.last_name} created successfully!`);
@@ -141,6 +148,20 @@ const UserRegistrationForm = ({ onSuccess, onError }: UserRegistrationFormProps)
                     disabled={isLoading}
                 />
                 {errors.phone && <span className="error-message">{errors.phone}</span>}
+            </div>
+
+            <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className={errors.password ? 'error' : ''}
+                    disabled={isLoading}
+                />
+                {errors.password && <span className="error-message">{errors.password}</span>}
             </div>
 
             <div className="form-actions">
