@@ -89,6 +89,8 @@ go run cmd/main.go
 - Users: http://localhost:8080/users  
 - Orders: http://localhost:8080/orders
 
+> ℹ️ When the backend boots successfully it automatically migrates the schema and seeds the database with the sample catalog/users defined under `pkg/seeder/data`. You’ll see the seeding summary in the logs—no additional command is required for local development.
+
 #### **Option B: Docker Compose**
 ```bash
 # Start all services
@@ -109,6 +111,15 @@ docker-compose logs app      # Backend logs
 # Start everything with one command
 ./start.sh
 ```
+
+### **4. Preload Sample Data Without Running the API**
+Need a filled database before you launch the backend? Run the dedicated seeding command:
+
+```bash
+go run ./cmd/seed
+```
+
+This connects to the configured Postgres instance, migrates schemas, and loads the sample products/users defined in `pkg/seeder/data/*.yaml`. Feel free to tweak those YAML files (e.g., adjust prices or categories) and rerun the command whenever you need a fresh dataset.
 
 
 ---
