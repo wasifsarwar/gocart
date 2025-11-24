@@ -1,7 +1,7 @@
 # GoCart - Full-Stack E-commerce API
 
 [![Go](https://github.com/wasifsarwar/gocart/workflows/Go/badge.svg)](https://github.com/wasifsarwar/gocart/actions)
-[![Go Version](https://img.shields.io/badge/Go-1.23-blue.svg)](https://golang.org/)
+[![Go Version](https://img.shields.io/badge/Go-1.24-blue.svg)](https://golang.org/)
 [![API Documentation](https://img.shields.io/badge/API-Documentation-blue)](https://wasifsarwar.github.io/gocart/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/578e84c6-0d06-4df9-b2fa-8c8993f653dd/deploy-status)](https://app.netlify.com/projects/gocartshopping/deploys)
