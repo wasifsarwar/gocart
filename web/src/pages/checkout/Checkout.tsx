@@ -84,7 +84,7 @@ const Checkout = () => {
             clearCart();
             toast.success('Order placed successfully! Check your email for confirmation.');
             setTimeout(() => {
-                navigate('/');
+                navigate('/orders');
             }, 3000);
         } catch (error) {
             console.error('Checkout failed:', error);
