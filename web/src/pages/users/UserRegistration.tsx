@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Navigation from "../../components/navigation/Navigation";
 import UserRegistrationForm from "../../components/users/UserRegistrationForm";
 
 import './UserRegistration.css'
@@ -31,10 +30,10 @@ const UserRegistration = () => {
     };
 
     return (
-        <div className="user-registration-page">
-            <Navigation title="Register New User" />
+        <div className="user-registration-page page-container">
+            <h1>Register New User</h1>
             {message && (
-                <div className={`message ${messageType}`}>
+                <div className={`alert ${messageType === 'success' ? 'alert-success' : 'alert-error'}`}>
                     {message}
                 </div>
             )}

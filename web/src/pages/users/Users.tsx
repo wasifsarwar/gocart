@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react'
 import UserList from "../../components/users/UserList";
 import useUsers from "../../hooks/useUsers";
-import Navigation from "../../components/navigation/Navigation";
 
 import './Users.css'
 import UserSort from '../../components/users/UserSort';
@@ -32,8 +31,8 @@ const Users = () => {
     }, [users, sortBy]);
 
     return (
-        <div className="users-page">
-            <Navigation title="GoCart Users" />
+        <div className="users-page page-container">
+            <h1>GoCart Users</h1>
             <div className='users-controls' >
                 <UserSort onSort={setSortBy} currentSort={sortBy} />
             </div>

@@ -5,6 +5,7 @@ import Home from './pages/home/Home';
 import Products from './pages/products/Products';
 import Users from './pages/users/Users';
 import UserRegistration from './pages/users/UserRegistration'
+import Navbar from './components/layout/Navbar';
 
 import './styles/App.css';
 import './styles/globals.css';
@@ -12,6 +13,7 @@ import './styles/globals.css';
 function App() {
   return (
     <Router>
+      <Navbar />
       <div className="App">
         <Routes>
           <Route path='/' element={<Home />} />

@@ -4,7 +4,6 @@ import ProductList from "../../components/products/ProductList";
 import ProductSearch from '../../components/products/ProductSearch';
 import ProductSort from "../../components/products/ProductSort";
 import useProducts from "../../hooks/useProducts";
-import Navigation from "../../components/navigation/Navigation";
 
 import './Products.css'
 
@@ -18,7 +17,7 @@ const Products = () => {
     const categories = useMemo(() => {
         return Array.from(new Set(products.map(product => product.category))).sort();
     }, [products]);
-    
+
     const [selectedCategory, setSelectedCategory] = useState<string>('');
 
     const filteredProducts = useMemo(() => {
@@ -72,9 +71,8 @@ const Products = () => {
     };
 
     return (
-        <div className="products-page">
+        <div className="products-page page-container">
             <header className="hero-section">
-                <Navigation />
                 <div className="brand-container">
                     <img src="/assets/gopher_beer.gif" alt="GoCart Gopher" className="gopher-logo" />
                     <h1>GoCart Products</h1>
@@ -87,7 +85,7 @@ const Products = () => {
                     <ProductSearch onSearch={setSearchTerm} value={searchTerm} placeHolder="Search products" />
                     <ProductSort onSort={setSortBy} currentSort={sortBy} />
                 </div>
-                
+
                 {categories.length > 0 && (
                     <div className="category-filters">
                         <h4>Filter by Category:</h4>
@@ -102,7 +100,7 @@ const Products = () => {
                                 <button
                                     key={category}
                                     className={`category-filter-btn ${selectedCategory === category ? 'active' : ''}`}
-                                    style={{ 
+                                    style={{
                                         backgroundColor: selectedCategory === category ? getCategoryColor(category) : 'transparent',
                                         borderColor: getCategoryColor(category),
                                         color: selectedCategory === category ? 'white' : getCategoryColor(category)
@@ -115,7 +113,7 @@ const Products = () => {
                         </div>
                     </div>
                 )}
-                
+
                 <div className="results-meta">
                     <span aria-live="polite">{filteredProducts.length} results</span>
                     {(searchTerm !== '' || sortBy !== 'name-asc' || selectedCategory !== '') && (
@@ -124,14 +122,14 @@ const Products = () => {
                         </button>
                     )}
                 </div>
-                
+
                 {error && (
                     <div role="alert" className="alert alert-error">
                         <span>{error}</span>
                         <button onClick={refetch}>Retry</button>
                     </div>
                 )}
-                
+
                 <div className="table-container">
                     <ProductList products={filteredProducts} loading={loading} />
                 </div>

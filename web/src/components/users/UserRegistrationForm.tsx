@@ -85,7 +85,6 @@ const UserRegistrationForm = ({ onSuccess, onError }: UserRegistrationFormProps)
 
     return (
         <form onSubmit={handleSubmit} className="user-registration-form">
-            <h2>Register New User</h2>
             <div className="form-row">
                 <div className="form-group">
                     <label htmlFor="first_name">First Name</label>

@@ -1,164 +1,242 @@
-/* Home Page Styles */
+/* Home Page Layout */
 .home-page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #fef7f0 0%, #f4e4bc 100%);
-  padding: 0;
-  /* Make the background stretch full-bleed across the viewport */
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  /* Counter .App padding to remove top/bottom white bands */
-  margin-top: -20px;
-  margin-bottom: -20px;
-  padding-top: 0;
-  padding-bottom: 20px;
+  min-height: calc(100vh - 80px); /* Adjust for navbar */
+  display: flex;
+  flex-direction: column;
 }
 
 /* Hero Section */
 .hero-section {
-  text-align: center;
-  padding: 60px 20px 40px;
-  background: linear-gradient(135deg, #d4a574 0%, #c19a6b 100%);
-  color: #2d1810; /* Dark brown text instead of white */
-  margin-bottom: 50px;
+  background-color: white;
+  padding: 4rem 2rem;
+  border-bottom: 1px solid #edf2f7;
+  overflow: hidden;
+  position: relative;
 }
 
-.brand-container {
-  display: flex;
+.hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 20px;
+  gap: 4rem;
 }
 
-.gopher-icon {
-  font-size: 48px;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+.hero-text h1 {
+  font-size: 3.5rem;
+  line-height: 1.2;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
 }
 
-.hero-section h1 {
-  font-size: 48px;
-  font-weight: 700;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+.text-highlight {
+  color: var(--primary-color);
+  position: relative;
 }
 
 .tagline {
-  font-size: 24px;
-  font-weight: 500;
-  margin: 15px 0 8px;
-  opacity: 0.95;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+  max-width: 500px;
 }
 
-.subtitle {
-  font-size: 16px;
-  opacity: 0.8;
-  margin: 0;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+.hero-actions {
+  display: flex;
+  gap: 1rem;
 }
 
-/* Features Grid */
+.btn-primary, .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 173, 216, 0.25);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 173, 216, 0.3);
+}
+
+.btn-secondary {
+  background-color: #f1f5f9;
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background-color: #e2e8f0;
+}
+
+/* Hero Image & Blob */
+.hero-image {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.gopher-mascot {
+  height: 350px;
+  width: auto;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
+  animation: float 6s ease-in-out infinite;
+}
+
+.blob-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(0, 173, 216, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+  z-index: 1;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Features Section */
+.features-section {
+  padding: 5rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 3rem;
+  color: var(--text-primary);
+}
+
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 20px 60px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
 }
 
 /* Feature Cards */
 .feature-card {
   background: white;
-  border-radius: 12px;
-  padding: 40px 30px;
+  border-radius: 1rem;
+  padding: 2rem;
   text-decoration: none;
-  color: #333;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  border: 1px solid #e9ecef;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
 }
 
 .feature-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(24, 47, 71, 0.15);
-  border-color: #182f47;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-color: #e2e8f0;
 }
 
-.card-icon {
-  font-size: 48px;
-  margin-bottom: 20px;
-  display: block;
+.icon-wrapper {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.icon-wrapper.blue {
+  background-color: #ebf8ff;
+  color: #3182ce;
+}
+
+.icon-wrapper.purple {
+  background-color: #faf5ff;
+  color: #805ad5;
+}
+
+.icon-wrapper.green {
+  background-color: #f0fff4;
+  color: #38a169;
 }
 
 .feature-card h3 {
-  font-size: 22px;
-  font-weight: 600;
-  margin: 0 0 12px;
-  color: #182f47;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
 }
 
 .feature-card p {
-  font-size: 16px;
-  color: #6c757d;
-  margin: 0;
-  line-height: 1.5;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
+  flex-grow: 1;
+}
+
+.card-link {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: gap 0.2s ease;
+}
+
+.feature-card:hover .card-link {
+  gap: 0.5rem;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .hero-section {
-    padding: 40px 20px 30px;
-  }
-  
-  .brand-container {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .gopher-icon {
-    font-size: 36px;
-  }
-  
-  .hero-section h1 {
-    font-size: 36px;
-  }
-  
-  .tagline {
-    font-size: 20px;
-  }
-  
-  .features-grid {
+  .hero-content {
     grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 0 15px 40px;
+    text-align: center;
+    gap: 3rem;
+  }
+
+  .hero-text h1 {
+    font-size: 2.5rem;
+  }
+  
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-image {
+    order: -1;
+  }
+
+  .gopher-mascot {
+    height: 250px;
   }
   
   .feature-card {
-    padding: 30px 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-section h1 {
-    font-size: 28px;
-  }
-  
-  .tagline {
-    font-size: 18px;
-  }
-  
-  .card-icon {
-    font-size: 40px;
-  }
-  
-  .feature-card h3 {
-    font-size: 20px;
+    align-items: center;
+    text-align: center;
   }
 }
