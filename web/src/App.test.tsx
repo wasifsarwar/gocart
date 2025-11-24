@@ -2,8 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders GoCart app', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  // Look for the brand name in the navbar or home page
+  const brandElements = screen.getAllByText(/GoCart/i);
+  expect(brandElements.length).toBeGreaterThan(0);
 });

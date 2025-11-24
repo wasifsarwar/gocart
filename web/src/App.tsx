@@ -7,7 +7,6 @@ import Users from './pages/users/Users';
 import UserRegistration from './pages/users/UserRegistration'
 import Navbar from './components/layout/Navbar';
 
-import './styles/App.css';
 import './styles/globals.css';
 
 function App() {

@@ -27,6 +27,17 @@ body {
   color: var(--text-primary);
 }
 
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* Global App Wrapper */
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Page Container - Standardizes layout across pages */
 .page-container {
   max-width: 1200px;
