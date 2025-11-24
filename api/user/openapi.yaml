@@ -37,6 +37,34 @@ paths:
                 $ref: "#/components/schemas/User"
         "400":
           description: Invalid request body or user already exists
+  /users/login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Invalid email or password
   /users/{id}:
     get:
       summary: Get a user by ID
@@ -106,6 +134,10 @@ components:
         phone:
           type: string
           example: "+1234567890"
+        password:
+          type: string
+          example: "password123"
+          writeOnly: true
         created_at:
           type: string
           format: date-time

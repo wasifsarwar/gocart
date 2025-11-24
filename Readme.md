@@ -128,6 +128,7 @@ DELETE /products/{id}      # Delete product
 ```http
 GET    /users              # List all users
 POST   /users/register     # Register new user
+POST   /users/login        # Login user
 GET    /users/{id}         # Get user by ID
 PUT    /users/{id}         # Update user
 DELETE /users/{id}         # Delete user
