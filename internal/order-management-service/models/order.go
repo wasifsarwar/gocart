@@ -5,9 +5,14 @@ import "time"
 type Order struct {
 	OrderID     string      `gorm:"primaryKey;type:uuid" json:"order_id"`
 	UserID      string      `gorm:"not null" json:"user_id"`
-	Status      string      `gorm:"not null" json:"status"`
-	TotalAmount float64     `gorm:"not null" json:"total_amount"`
-	Items       []OrderItem `gorm:"foreignKey:OrderID;constraint:OnDelete:CASCADE" json:"items"` // 1:N relationship, cascade delete
+	Status          string      `gorm:"not null" json:"status"`
+	TotalAmount     float64     `gorm:"not null" json:"total_amount"`
+	FriendlyID      string      `json:"friendly_id"`
+	ShippingAddress string      `json:"shipping_address"`
+	City            string      `json:"city"`
+	ZipCode         string      `json:"zip_code"`
+	Country         string      `json:"country"`
+	Items           []OrderItem `gorm:"foreignKey:OrderID;constraint:OnDelete:CASCADE" json:"items"` // 1:N relationship, cascade delete
 	CreatedAt   time.Time   `gorm:"not null" json:"created_at"`
 	UpdatedAt   time.Time   `gorm:"not null" json:"updated_at"`
 }

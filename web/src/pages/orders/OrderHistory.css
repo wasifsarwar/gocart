@@ -142,8 +142,8 @@
 .order-item-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 0;
+    align-items: flex-start;
+    padding: 1rem 0;
     border-bottom: 1px dashed #e2e8f0;
 }
 
@@ -151,18 +151,60 @@
     border-bottom: none;
 }
 
+.item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
 .item-name {
     color: #1e293b;
     font-weight: 500;
+    font-size: 1.05rem;
+}
+
+.item-category {
+    font-size: 0.85rem;
+    color: #94a3b8;
 }
 
 .item-quantity {
     color: #64748b;
+    background-color: #f1f5f9;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
 .item-price {
     font-weight: 600;
     color: #475569;
+}
+
+.order-shipping {
+    padding: 1rem 1.5rem;
+    background-color: #fcfcfc;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+}
+
+.shipping-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.shipping-address {
+    color: #334155;
+    font-size: 0.95rem;
+    line-height: 1.5;
 }
 
 .order-footer {
@@ -198,5 +240,9 @@
     .order-status {
         align-self: flex-start;
     }
+    
+    .order-shipping {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
 }
-

@@ -9,13 +9,22 @@ export interface OrderItem {
 export interface CreateOrderRequest {
     user_id: string;
     items: OrderItem[];
+    shipping_address: string;
+    city: string;
+    zip_code: string;
+    country: string;
 }
 
 export interface Order {
     order_id: string;
+    friendly_id?: string;
     user_id: string;
     total_amount: number;
     status: string;
+    shipping_address?: string;
+    city?: string;
+    zip_code?: string;
+    country?: string;
     created_at: string;
     items: any[]; // We can define a more specific type if needed for viewing orders
 }

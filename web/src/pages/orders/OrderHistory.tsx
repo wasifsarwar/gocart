@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { orderService, Order } from '../../services/orderService';
-import { FaBox, FaCalendar, FaMoneyBillWave } from 'react-icons/fa';
+import { productService, ApiProduct } from '../../services/productService';
+import { FaBox, FaCalendar, FaMoneyBillWave, FaMapMarkerAlt } from 'react-icons/fa';
 import { IconType } from 'react-icons';
 import './OrderHistory.css';
 
@@ -15,6 +16,7 @@ const Icon = ({ icon: IconComponent, className }: { icon: IconType; className?: 
 const OrderHistory = () => {
     const { user } = useAuth();
     const [orders, setOrders] = useState<Order[]>([]);
+    const [products, setProducts] = useState<Record<string, ApiProduct>>({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -32,13 +34,39 @@ const OrderHistory = () => {
     });
 
     useEffect(() => {
-        const fetchOrders = async () => {
+        const fetchOrdersAndProducts = async () => {
             if (!user) return;
 
             try {
                 setLoading(true);
                 const userOrders = await orderService.getOrdersByUserId(user.user_id);
+
+                // Sort orders by date descending
+                userOrders.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
                 setOrders(userOrders);
+
+                // Collect all unique product IDs
+                const productIds = new Set<string>();
+                userOrders.forEach(order => {
+                    order.items?.forEach((item: any) => {
+                        if (item.product_id) productIds.add(item.product_id);
+                    });
+                });
+
+                // Fetch product details
+                const productMap: Record<string, ApiProduct> = {};
+                await Promise.all(
+                    Array.from(productIds).map(async (id) => {
+                        try {
+                            const product = await productService.getProductById(id);
+                            productMap[id] = product;
+                        } catch (err) {
+                            console.error(`Failed to fetch product ${id}`, err);
+                        }
+                    })
+                );
+                setProducts(productMap);
+
             } catch (err) {
                 setError('Failed to load order history. Please try again later.');
                 console.error(err);
@@ -47,7 +75,7 @@ const OrderHistory = () => {
             }
         };
 
-        fetchOrders();
+        fetchOrdersAndProducts();
     }, [user]);
 
     if (loading) {
@@ -87,35 +115,64 @@ const OrderHistory = () => {
                     {orders.map(order => (
                         <div key={order.order_id} className="order-card">
                             <div className="order-header">
-                                <div className="order-id">
-                                    <span className="label">Order ID:</span>
-                                    <span className="value">#{order.order_id.slice(0, 8)}</span>
+                                <div className="header-info-group">
+                                    <div className="header-item">
+                                        <span className="label">ORDER PLACED</span>
+                                        <span className="value">{dateFormatter.format(new Date(order.created_at))}</span>
+                                    </div>
+                                    <div className="header-item">
+                                        <span className="label">TOTAL</span>
+                                        <span className="value">{usdFormatter.format(order.total_amount)}</span>
+                                    </div>
+                                    <div className="header-item">
+                                        <span className="label">ORDER #</span>
+                                        <span className="value">{order.friendly_id || order.order_id.slice(0, 8)}</span>
+                                    </div>
                                 </div>
-                                <div className="order-date">
-                                    <Icon icon={FaCalendar} className="icon" />
-                                    <span>{dateFormatter.format(new Date(order.created_at))}</span>
-                                </div>
-                                <div className={`order-status status-${order.status || 'pending'}`}>
+                                <div className={`order-status status-${order.status?.toLowerCase() || 'pending'}`}>
                                     {order.status || 'Pending'}
                                 </div>
                             </div>
                             
-                            <div className="order-items">
-                                {order.items?.map((item: any, index: number) => (
-                                    <div key={index} className="order-item-row">
-                                        <span className="item-name">Product ID: {item.product_id.slice(0, 8)}...</span>
-                                        <span className="item-quantity">x{item.quantity}</span>
-                                        <span className="item-price">{usdFormatter.format(item.price)}</span>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className="order-footer">
-                                <div className="order-total">
-                                    <Icon icon={FaMoneyBillWave} className="icon" />
-                                    <span className="label">Total:</span>
-                                    <span className="value">{usdFormatter.format(order.total_amount)}</span>
+                            <div className="order-content">
+                                <div className="order-items">
+                                    {order.items?.map((item: any, index: number) => {
+                                        const product = products[item.product_id];
+                                        return (
+                                            <div key={index} className="order-item-row">
+                                                <div className="item-image-placeholder">
+                                                    {/* Image placeholder */}
+                                                </div>
+                                                <div className="item-details">
+                                                    <span className="item-name">
+                                                        {product ? product.name : `Product ID: ${item.product_id.slice(0, 8)}...`}
+                                                    </span>
+                                                    {product && <span className="item-category">{product.category}</span>}
+                                                    <div className="item-meta-mobile">
+                                                        <span>Qty: {item.quantity}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="item-price-qty">
+                                                    <span className="item-price">{usdFormatter.format(item.price)}</span>
+                                                    <span className="item-qty-badge">Qty: {item.quantity}</span>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
+
+                                {(order.shipping_address || order.city) && (
+                                    <div className="order-sidebar">
+                                        <div className="sidebar-section">
+                                            <h4>Shipping Address</h4>
+                                            <div className="address-block">
+                                                <p>{order.shipping_address}</p>
+                                                <p>{order.city}, {order.zip_code}</p>
+                                                <p>{order.country}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}

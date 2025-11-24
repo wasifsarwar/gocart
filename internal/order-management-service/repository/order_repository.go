@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"gocart/internal/order-management-service/models"
+	"math/rand"
 	"time"
 
 	"github.com/google/uuid"
@@ -62,6 +63,7 @@ func (r *orderRepository) CreateOrder(order models.Order) (models.Order, error) 
 
 	// Step 2: Create order and items in a transaction
 	order.OrderID = uuid.New().String()
+	order.FriendlyID = generateFriendlyID()
 	order.CreatedAt = time.Now()
 	order.UpdatedAt = time.Now()
 	order.TotalAmount = calculateTotal(order.Items)
@@ -69,12 +71,17 @@ func (r *orderRepository) CreateOrder(order models.Order) (models.Order, error) 
 	err := r.db.Transaction(func(tx *gorm.DB) error {
 		// Create order without items first
 		orderWithoutItems := models.Order{
-			OrderID:     order.OrderID,
-			UserID:      order.UserID,
-			Status:      order.Status,
-			TotalAmount: order.TotalAmount,
-			CreatedAt:   order.CreatedAt,
-			UpdatedAt:   order.UpdatedAt,
+			OrderID:         order.OrderID,
+			UserID:          order.UserID,
+			Status:          order.Status,
+			TotalAmount:     order.TotalAmount,
+			FriendlyID:      order.FriendlyID,
+			ShippingAddress: order.ShippingAddress,
+			City:            order.City,
+			ZipCode:         order.ZipCode,
+			Country:         order.Country,
+			CreatedAt:       order.CreatedAt,
+			UpdatedAt:       order.UpdatedAt,
 		}
 		if err := tx.Create(&orderWithoutItems).Error; err != nil {
 			return err
@@ -312,4 +319,13 @@ func calculateTotal(items []models.OrderItem) float64 {
 		total += float64(item.Quantity) * item.Price
 	}
 	return total
+}
+
+func generateFriendlyID() string {
+	const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, 6)
+	for i := range b {
+		b[i] = charset[rand.Intn(len(charset))]
+	}
+	return "ORD-" + string(b)
 }
