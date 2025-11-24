@@ -18,7 +18,7 @@ const Checkout = () => {
     const { user, isAuthenticated } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    
+
     const [step, setStep] = useState<'cart' | 'shipping'>('cart');
     const [shippingDetails, setShippingDetails] = useState({
         address: '',
@@ -58,7 +58,7 @@ const Checkout = () => {
 
     const handlePlaceOrder = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!user) return;
 
         setIsSubmitting(true);
@@ -78,7 +78,7 @@ const Checkout = () => {
                 zip_code: shippingDetails.zipCode,
                 country: shippingDetails.country
             });
-            
+
             setOrderStatus('success');
             clearCart();
             setTimeout(() => {
@@ -150,7 +150,7 @@ const Checkout = () => {
                                         <p className="item-category">{item.category}</p>
                                     </div>
                                     <div className="item-quantity">
-                                        <button 
+                                        <button
                                             onClick={() => updateQuantity(item.productID, item.quantity - 1)}
                                             className="quantity-btn"
                                             aria-label="Decrease quantity"
@@ -158,7 +158,7 @@ const Checkout = () => {
                                             <Icon icon={FaMinus} />
                                         </button>
                                         <span>{item.quantity}</span>
-                                        <button 
+                                        <button
                                             onClick={() => updateQuantity(item.productID, item.quantity + 1)}
                                             className="quantity-btn"
                                             aria-label="Increase quantity"
@@ -169,7 +169,7 @@ const Checkout = () => {
                                     <div className="item-total">
                                         {usdFormatter.format(item.price * item.quantity)}
                                     </div>
-                                    <button 
+                                    <button
                                         onClick={() => removeFromCart(item.productID)}
                                         className="remove-btn"
                                         aria-label="Remove item"
@@ -194,7 +194,7 @@ const Checkout = () => {
                                 <span>Total</span>
                                 <span>{usdFormatter.format(cartTotal)}</span>
                             </div>
-                            <button 
+                            <button
                                 className="checkout-btn"
                                 onClick={handleProceedToShipping}
                             >
@@ -217,7 +217,7 @@ const Checkout = () => {
                                     placeholder="123 Main St"
                                 />
                             </div>
-                            
+
                             <div className="form-row">
                                 <div className="form-group">
                                     <label htmlFor="city">City</label>
@@ -264,15 +264,15 @@ const Checkout = () => {
                             </div>
 
                             <div className="form-actions">
-                                <button 
-                                    type="submit" 
+                                <button
+                                    type="submit"
                                     className="checkout-btn"
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? 'Processing...' : 'Place Order'}
                                 </button>
                             </div>
-                            
+
                             {orderStatus === 'error' && (
                                 <p className="error-message">{errorMessage || 'Something went wrong. Please try again.'}</p>
                             )}

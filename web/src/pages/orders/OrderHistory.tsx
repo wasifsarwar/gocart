@@ -133,7 +133,7 @@ const OrderHistory = () => {
                                     {order.status || 'Pending'}
                                 </div>
                             </div>
-                            
+
                             <div className="order-content">
                                 <div className="order-items">
                                     {order.items?.map((item: any, index: number) => {
