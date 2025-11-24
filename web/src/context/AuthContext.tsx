@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { toast } from 'react-hot-toast';
 
 interface User {
     user_id: string;
@@ -41,6 +42,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             const userData = await response.json();
             setUser(userData);
             localStorage.setItem('user', JSON.stringify(userData));
+            toast.success(`Welcome back, ${userData.first_name}!`);
         } catch (error) {
             console.error('Login error:', error);
             throw error;
@@ -50,6 +52,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const logout = () => {
         setUser(null);
         localStorage.removeItem('user');
+        toast.success('Successfully logged out');
     };
 
     return (

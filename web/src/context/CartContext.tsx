@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { toast } from 'react-hot-toast';
 import Product from '../types/product';
 
 export interface CartItem extends Product {
@@ -39,9 +40,22 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
             return [...prevItems, { ...product, quantity: 1 }];
         });
+
+
+        const currentItems = items;
+        const exists = items.some(item => item.productID === product.productID);
+        if (exists) {
+            toast.success(`Updated quantity for ${product.name}`);
+        } else {
+            toast.success(`${product.name} added to cart`);
+        }
     };
 
     const removeFromCart = (productId: string) => {
+        const itemToRemove = items.find(item => item.productID === productId);
+        if (itemToRemove) {
+            toast.success(`${itemToRemove.name} removed from cart`);
+        }
         setItems(prevItems => prevItems.filter(item => item.productID !== productId));
     };
 

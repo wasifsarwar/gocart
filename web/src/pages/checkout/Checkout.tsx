@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { orderService } from '../../services/orderService';
@@ -81,12 +82,15 @@ const Checkout = () => {
 
             setOrderStatus('success');
             clearCart();
+            toast.success('Order placed successfully! Check your email for confirmation.');
             setTimeout(() => {
                 navigate('/');
             }, 3000);
         } catch (error) {
             console.error('Checkout failed:', error);
-            setErrorMessage(error instanceof Error ? error.message : 'Failed to place order');
+            const msg = error instanceof Error ? error.message : 'Failed to place order';
+            setErrorMessage(msg);
+            toast.error(msg);
             setOrderStatus('error');
         } finally {
             setIsSubmitting(false);
