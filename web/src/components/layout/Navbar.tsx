@@ -35,9 +35,6 @@ const Navbar = () => {
                     <Link to="/products" className={`nav-link ${isActive('/products')}`}>
                         Products
                     </Link>
-                    <Link to="/users" className={`nav-link ${isActive('/users')}`}>
-                        Users
-                    </Link>
                     {!isAuthenticated ? (
                         <>
                             <Link to="/login" className={`nav-link ${isActive('/login')}`}>
