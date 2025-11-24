@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
+import { orderService } from '../../services/orderService';
 import { FaTrash, FaMinus, FaPlus, FaArrowLeft } from 'react-icons/fa';
 import { IconType } from 'react-icons';
 import './Checkout.css';
@@ -13,9 +15,12 @@ const Icon = ({ icon: IconComponent, className }: { icon: IconType; className?: 
 
 const Checkout = () => {
     const { items, updateQuantity, removeFromCart, cartTotal, clearCart } = useCart();
+    const { user, isAuthenticated } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [orderStatus, setOrderStatus] = useState<'idle' | 'success' | 'error'>('idle');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const usdFormatter = new Intl.NumberFormat('en-us', {
         style: 'currency',
@@ -23,11 +28,26 @@ const Checkout = () => {
     });
 
     const handleCheckout = async () => {
+        if (!isAuthenticated) {
+            navigate('/login', { state: { from: location } });
+            return;
+        }
+
+        if (!user) return;
+
         setIsSubmitting(true);
+        setErrorMessage('');
         try {
-            // TODO: Implement actual API call to create order
-            // For now, simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            const orderItems = items.map(item => ({
+                product_id: item.productID,
+                quantity: item.quantity,
+                price: item.price
+            }));
+
+            await orderService.createOrder({
+                user_id: user.user_id,
+                items: orderItems
+            });
             
             setOrderStatus('success');
             clearCart();
@@ -36,6 +56,7 @@ const Checkout = () => {
             }, 3000);
         } catch (error) {
             console.error('Checkout failed:', error);
+            setErrorMessage(error instanceof Error ? error.message : 'Failed to place order');
             setOrderStatus('error');
         } finally {
             setIsSubmitting(false);
@@ -140,10 +161,10 @@ const Checkout = () => {
                         onClick={handleCheckout}
                         disabled={isSubmitting}
                     >
-                        {isSubmitting ? 'Processing...' : 'Place Order'}
+                        {isSubmitting ? 'Processing...' : (isAuthenticated ? 'Place Order' : 'Login to Checkout')}
                     </button>
                     {orderStatus === 'error' && (
-                        <p className="error-message">Something went wrong. Please try again.</p>
+                        <p className="error-message">{errorMessage || 'Something went wrong. Please try again.'}</p>
                     )}
                 </div>
             </div>

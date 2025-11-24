@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaShoppingCart, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import { FaShoppingCart, FaSignOutAlt } from 'react-icons/fa';
 import { IconType } from 'react-icons';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
@@ -49,6 +49,9 @@ const Navbar = () => {
                         </>
                     ) : (
                         <div className="user-menu">
+                            <Link to="/orders" className={`nav-link ${isActive('/orders')}`}>
+                                My Orders
+                            </Link>
                             <span className="user-greeting">Hi, {user?.first_name}</span>
                             <button onClick={logout} className="logout-btn" aria-label="Logout">
                                 <Icon icon={FaSignOutAlt} />

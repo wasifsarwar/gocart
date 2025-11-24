@@ -7,6 +7,7 @@ import Users from './pages/users/Users';
 import UserRegistration from './pages/users/UserRegistration'
 import Checkout from './pages/checkout/Checkout';
 import Login from './pages/login/Login';
+import OrderHistory from './pages/orders/OrderHistory';
 import Navbar from './components/layout/Navbar';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
@@ -26,6 +27,7 @@ function App() {
               <Route path='/users' element={<Users />} />
               <Route path='/register' element={<UserRegistration />} />
               <Route path='/login' element={<Login />} />
+              <Route path='/orders' element={<OrderHistory />} />
               <Route path='/checkout' element={<Checkout />} />
             </Routes>
           </div>
