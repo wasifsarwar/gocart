@@ -18,17 +18,44 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+function safeGetItem(key: string): string | null {
+    try {
+        return localStorage.getItem(key);
+    } catch {
+        return null;
+    }
+}
+
+function safeSetItem(key: string, value: string) {
+    try {
+        localStorage.setItem(key, value);
+    } catch {
+        // Ignore storage write failures
+    }
+}
+
+function safeParseCart(raw: string | null): CartItem[] {
+    if (!raw) return [];
+    try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? (parsed as CartItem[]) : [];
+    } catch {
+        return [];
+    }
+}
+
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [items, setItems] = useState<CartItem[]>(() => {
-        const savedCart = localStorage.getItem('cart');
-        return savedCart ? JSON.parse(savedCart) : [];
+        const savedCart = safeGetItem('cart');
+        return safeParseCart(savedCart);
     });
 
     useEffect(() => {
-        localStorage.setItem('cart', JSON.stringify(items));
+        safeSetItem('cart', JSON.stringify(items));
     }, [items]);
 
     const addToCart = (product: Product) => {
+        const exists = items.some(item => item.productID === product.productID);
         setItems(prevItems => {
             const existingItem = prevItems.find(item => item.productID === product.productID);
             if (existingItem) {
@@ -40,14 +67,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
             return [...prevItems, { ...product, quantity: 1 }];
         });
-
-
-        const exists = items.some(item => item.productID === product.productID);
-        if (exists) {
-            toast.success(`Updated quantity for ${product.name}`);
-        } else {
-            toast.success(`${product.name} added to cart`);
-        }
+        toast.success(exists ? `Updated quantity for ${product.name}` : `${product.name} added to cart`);
     };
 
     const removeFromCart = (productId: string) => {
