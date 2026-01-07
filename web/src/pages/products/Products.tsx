@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 import ProductList from "../../components/products/ProductList";
 import ProductSearch from '../../components/products/ProductSearch';
@@ -37,7 +37,7 @@ const Products = () => {
     });
 
     // Update price range when products change
-    useMemo(() => {
+    useEffect(() => {
         setPriceRange({ min: minPrice, max: maxPrice });
     }, [minPrice, maxPrice]);
 
