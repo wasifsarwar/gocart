@@ -31,6 +31,7 @@ const ProductSearch = ({ onSearch, placeHolder, value, products = [] }: ProductS
     const [localValue, setLocalValue] = useState(value || '');
     const inputRef = useRef<HTMLInputElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const blurTimeoutRef = useRef<number | null>(null);
     const navigate = useNavigate();
 
     // Sync local value with prop value when it changes externally (like when clearing)
@@ -106,8 +107,20 @@ const ProductSearch = ({ onSearch, placeHolder, value, products = [] }: ProductS
 
     const handleBlur = () => {
         setIsFocused(false);
-        // Delay hiding suggestions to allow click events to fire
-        setTimeout(() => setShowSuggestions(false), 200);
+
+        // If the user didn't confirm the search (Enter), don't leave a "ghost" query displayed.
+        // Reset the input to whatever is actually applied by the parent (value).
+        const appliedValue = value || '';
+        if (localValue !== appliedValue) {
+            setLocalValue(appliedValue);
+        }
+
+        // Delay hiding suggestions to allow click events to fire.
+        // Clear any prior blur timeout to avoid out-of-order state updates.
+        if (blurTimeoutRef.current) {
+            window.clearTimeout(blurTimeoutRef.current);
+        }
+        blurTimeoutRef.current = window.setTimeout(() => setShowSuggestions(false), 200);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

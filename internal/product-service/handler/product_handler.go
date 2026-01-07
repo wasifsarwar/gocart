@@ -136,6 +136,7 @@ func (h *ProductHandler) UploadProductImage(w http.ResponseWriter, r *http.Reque
 		http.Error(w, fmt.Sprintf("Product with id %v not found.", id), http.StatusNotFound)
 		return
 	}
+	oldImageURL := product.ImageURL
 
 	// Limit upload size (5MB)
 	r.Body = http.MaxBytesReader(w, r.Body, 5<<20)
@@ -195,7 +196,8 @@ func (h *ProductHandler) UploadProductImage(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	product.ImageURL = "/uploads/products/" + filename
+	newImageURL := "/uploads/products/" + filename
+	product.ImageURL = newImageURL
 	updated, err := h.repo.UpdateProduct(product)
 	if err != nil {
 		http.Error(w, "Failed to update product image", http.StatusInternalServerError)
@@ -204,6 +206,16 @@ func (h *ProductHandler) UploadProductImage(w http.ResponseWriter, r *http.Reque
 
 	// Mark upload as successful so defer doesn't remove the file
 	uploadSuccess = true
+
+	// Best-effort cleanup: delete the previous uploaded image (only if it was a local upload).
+	// Don't delete external seed URLs (picsum) or non-local paths.
+	if oldImageURL != "" && oldImageURL != newImageURL && strings.HasPrefix(oldImageURL, "/uploads/products/") {
+		oldFilename := filepath.Base(oldImageURL)
+		oldPath := filepath.Join("uploads", "products", oldFilename)
+		if err := os.Remove(oldPath); err != nil && !os.IsNotExist(err) {
+			log.Printf("Failed to remove old product image %s: %v", oldPath, err)
+		}
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

@@ -41,6 +41,13 @@ const Products = () => {
 
     const [selectedCategory, setSelectedCategory] = useState<string>('');
 
+    // Prevent "hidden" category filtering when switching tabs (where available categories differ).
+    useEffect(() => {
+        if (selectedCategory && !categories.includes(selectedCategory)) {
+            setSelectedCategory('');
+        }
+    }, [categories, selectedCategory]);
+
     // Calculate min and max prices from products
     const { minPrice, maxPrice } = useMemo(() => {
         if (tabProducts.length === 0) return { minPrice: 0, maxPrice: 1000 };
