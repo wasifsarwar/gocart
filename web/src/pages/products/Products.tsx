@@ -5,6 +5,7 @@ import ProductSearch from '../../components/products/ProductSearch';
 import ProductSort from "../../components/products/ProductSort";
 import PriceRangeFilter from '../../components/products/PriceRangeFilter';
 import ActiveFilterTags from '../../components/products/ActiveFilterTags';
+import RecentlyViewedProducts from '../../components/products/RecentlyViewedProducts';
 import useProducts from "../../hooks/useProducts";
 
 import './Products.css'
@@ -191,6 +192,8 @@ const Products = () => {
                     onRemoveSort={handleRemoveSort}
                     onClearAll={handleClear}
                 />
+
+                <RecentlyViewedProducts />
 
                 <div className="results-meta">
                     <span aria-live="polite">{filteredProducts.length} results found</span>

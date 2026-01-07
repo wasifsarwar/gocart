@@ -5,7 +5,9 @@ import { IconType } from 'react-icons';
 import { productService, ApiProduct } from '../../services/productService';
 import { useCart } from '../../context/CartContext';
 import useProducts from '../../hooks/useProducts';
+import useRecentlyViewedProducts from '../../hooks/useRecentlyViewedProducts';
 import Product from '../../types/product';
+import RecentlyViewedProducts from '../../components/products/RecentlyViewedProducts';
 import './ProductDetails.css';
 
 // Wrapper to fix TS2786 error with React 19 types
@@ -19,6 +21,7 @@ const ProductDetails = () => {
     const navigate = useNavigate();
     const { addToCart } = useCart();
     const { products } = useProducts();
+    const { addViewedProduct } = useRecentlyViewedProducts();
 
     const [product, setProduct] = useState<ApiProduct | null>(null);
     const [loading, setLoading] = useState(true);
@@ -74,6 +77,18 @@ const ProductDetails = () => {
             abortController.abort();
         };
     }, [id]);
+
+    // Track "recently viewed" once we have the product details
+    useEffect(() => {
+        if (!product) return;
+        addViewedProduct({
+            productID: String(product.product_id),
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            category: product.category
+        });
+    }, [product, addViewedProduct]);
 
     const handleAddToCart = () => {
         if (product) {
@@ -203,6 +218,8 @@ const ProductDetails = () => {
                     </div>
                 </div>
             )}
+
+            <RecentlyViewedProducts excludeProductID={String(product.product_id)} />
         </div>
     );
 };
