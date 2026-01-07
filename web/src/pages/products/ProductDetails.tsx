@@ -30,6 +30,15 @@ const ProductDetails = () => {
     });
 
     useEffect(() => {
+        // Reset state synchronously when id changes to prevent showing stale content
+        setLoading(true);
+        setError(null);
+        setProduct(null);
+
+        // Use AbortController to cancel fetch if component unmounts or id changes
+        const abortController = new AbortController();
+        let isCancelled = false;
+
         const fetchProduct = async () => {
             if (!id) {
                 setError('Product ID is missing');
@@ -38,19 +47,32 @@ const ProductDetails = () => {
             }
 
             try {
-                setLoading(true);
                 const data = await productService.getProductById(id);
-                setProduct(data);
-                setError(null);
+
+                // Only update state if this fetch hasn't been cancelled
+                if (!isCancelled) {
+                    setProduct(data);
+                    setError(null);
+                }
             } catch (err) {
-                console.error('Failed to fetch product:', err);
-                setError('Failed to load product details. Please try again.');
+                if (!isCancelled) {
+                    console.error('Failed to fetch product:', err);
+                    setError('Failed to load product details. Please try again.');
+                }
             } finally {
-                setLoading(false);
+                if (!isCancelled) {
+                    setLoading(false);
+                }
             }
         };
 
         fetchProduct();
+
+        // Cleanup function to cancel stale requests
+        return () => {
+            isCancelled = true;
+            abortController.abort();
+        };
     }, [id]);
 
     const handleAddToCart = () => {
