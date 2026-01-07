@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Product from "../../types/product";
 import { FaShoppingBag } from "react-icons/fa";
 import { IconType } from "react-icons";
@@ -45,9 +46,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
     return (
         <div className="product-card">
-            <div className={`product-image-placeholder ${colorClass}`}>
-                <Icon icon={FaShoppingBag} />
-            </div>
+            <Link to={`/products/${product.productID}`} className="product-link">
+                <div className={`product-image-placeholder ${colorClass}`}>
+                    <Icon icon={FaShoppingBag} />
+                </div>
+            </Link>
             <div className="product-content">
                 <div className="product-header">
                     <span className={`category-badge ${colorClass}`}>
@@ -55,7 +58,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
                     </span>
                     <span className="product-price">{usdFormatter.format(product.price)}</span>
                 </div>
-                <h3 className="product-name">{product.name}</h3>
+                <Link to={`/products/${product.productID}`} className="product-name-link">
+                    <h3 className="product-name">{product.name}</h3>
+                </Link>
                 <p className="product-description">{product.description}</p>
                 <button className="add-to-cart-btn" onClick={handleAddToCart}>
                     Add to Cart

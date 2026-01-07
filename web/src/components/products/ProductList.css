@@ -171,6 +171,23 @@
     50% { opacity: .5; }
 }
 
+/* Product Links */
+.product-link {
+    display: block;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.product-name-link {
+    text-decoration: none;
+    display: block;
+}
+
+.product-name-link:hover .product-name {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
 @media (max-width: 640px) {
     .product-grid {
         grid-template-columns: 1fr;
