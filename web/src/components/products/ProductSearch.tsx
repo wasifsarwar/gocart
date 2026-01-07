@@ -28,17 +28,23 @@ const ProductSearch = ({ onSearch, placeHolder, value, products = [] }: ProductS
     const [isFocused, setIsFocused] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [localValue, setLocalValue] = useState(value || '');
     const inputRef = useRef<HTMLInputElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
 
-    // Generate suggestions based on search term
+    // Sync local value with prop value when it changes externally (like when clearing)
+    useEffect(() => {
+        setLocalValue(value || '');
+    }, [value]);
+
+    // Generate suggestions based on local search term (not the filtered term)
     const suggestions = useMemo((): SearchSuggestion[] => {
-        if (!value || value.trim().length < 2 || products.length === 0) {
+        if (!localValue || localValue.trim().length < 2 || products.length === 0) {
             return [];
         }
 
-        const searchLower = value.toLowerCase().trim();
+        const searchLower = localValue.toLowerCase().trim();
         const results: SearchSuggestion[] = [];
         const seen = new Set<string>();
 
@@ -79,7 +85,7 @@ const ProductSearch = ({ onSearch, placeHolder, value, products = [] }: ProductS
         }
 
         return results.slice(0, 8); // Limit to 8 suggestions
-    }, [value, products]);
+    }, [localValue, products]);
 
     // Reset selected index when suggestions change
     useEffect(() => {
@@ -87,8 +93,10 @@ const ProductSearch = ({ onSearch, placeHolder, value, products = [] }: ProductS
     }, [suggestions]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        onSearch(e.target.value);
+        const newValue = e.target.value;
+        setLocalValue(newValue);
         setShowSuggestions(true);
+        // Don't call onSearch here - only update local state for autocomplete
     };
 
     const handleFocus = () => {
@@ -103,24 +111,32 @@ const ProductSearch = ({ onSearch, placeHolder, value, products = [] }: ProductS
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (!showSuggestions || suggestions.length === 0) return;
-
         switch (e.key) {
             case 'ArrowDown':
-                e.preventDefault();
-                setSelectedIndex(prev =>
-                    prev < suggestions.length - 1 ? prev + 1 : prev
-                );
+                if (showSuggestions && suggestions.length > 0) {
+                    e.preventDefault();
+                    setSelectedIndex(prev =>
+                        prev < suggestions.length - 1 ? prev + 1 : prev
+                    );
+                }
                 break;
             case 'ArrowUp':
-                e.preventDefault();
-                setSelectedIndex(prev => prev > 0 ? prev - 1 : -1);
+                if (showSuggestions && suggestions.length > 0) {
+                    e.preventDefault();
+                    setSelectedIndex(prev => prev > 0 ? prev - 1 : -1);
+                }
                 break;
             case 'Enter':
                 e.preventDefault();
-                if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
+                if (showSuggestions && suggestions.length > 0 && selectedIndex >= 0 && selectedIndex < suggestions.length) {
+                    // Navigate to selected suggestion
                     const selected = suggestions[selectedIndex];
                     navigate(`/products/${selected.product.productID}`);
+                    setShowSuggestions(false);
+                    inputRef.current?.blur();
+                } else {
+                    // Apply search filter to main list
+                    onSearch(localValue);
                     setShowSuggestions(false);
                     inputRef.current?.blur();
                 }
@@ -135,7 +151,15 @@ const ProductSearch = ({ onSearch, placeHolder, value, products = [] }: ProductS
     const handleSuggestionClick = (productId: string) => {
         navigate(`/products/${productId}`);
         setShowSuggestions(false);
+        setLocalValue('');
+        onSearch('');
         inputRef.current?.blur();
+    };
+
+    const handleClear = () => {
+        setLocalValue('');
+        onSearch('');
+        setShowSuggestions(false);
     };
 
     const highlightMatch = (text: string, searchTerm: string): React.ReactNode => {
@@ -186,7 +210,7 @@ const ProductSearch = ({ onSearch, placeHolder, value, products = [] }: ProductS
                     ref={inputRef}
                     type="text"
                     placeholder={placeHolder}
-                    value={value ?? ''}
+                    value={localValue}
                     onChange={handleInputChange}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
@@ -199,13 +223,10 @@ const ProductSearch = ({ onSearch, placeHolder, value, products = [] }: ProductS
                     aria-controls="search-suggestions"
                     aria-activedescendant={selectedIndex >= 0 ? `suggestion-${selectedIndex}` : undefined}
                 />
-                {value && (
+                {localValue && (
                     <button
                         className="clear-button"
-                        onClick={() => {
-                            onSearch('');
-                            setShowSuggestions(false);
-                        }}
+                        onClick={handleClear}
                         type="button"
                         aria-label="Clear search"
                     >
@@ -239,7 +260,7 @@ const ProductSearch = ({ onSearch, placeHolder, value, products = [] }: ProductS
                                 </div>
                                 <div className="suggestion-content">
                                     <div className="suggestion-name">
-                                        {highlightMatch(suggestion.product.name, value || '')}
+                                        {highlightMatch(suggestion.product.name, localValue)}
                                     </div>
                                     <div className="suggestion-meta">
                                         <span className={`suggestion-category ${colorClass}`}>
