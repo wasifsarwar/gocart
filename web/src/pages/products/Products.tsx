@@ -3,6 +3,7 @@ import { useState, useMemo } from 'react';
 import ProductList from "../../components/products/ProductList";
 import ProductSearch from '../../components/products/ProductSearch';
 import ProductSort from "../../components/products/ProductSort";
+import PriceRangeFilter from '../../components/products/PriceRangeFilter';
 import useProducts from "../../hooks/useProducts";
 
 import './Products.css'
@@ -20,6 +21,26 @@ const Products = () => {
 
     const [selectedCategory, setSelectedCategory] = useState<string>('');
 
+    // Calculate min and max prices from products
+    const { minPrice, maxPrice } = useMemo(() => {
+        if (products.length === 0) return { minPrice: 0, maxPrice: 1000 };
+        const prices = products.map(p => p.price);
+        return {
+            minPrice: Math.floor(Math.min(...prices)),
+            maxPrice: Math.ceil(Math.max(...prices))
+        };
+    }, [products]);
+
+    const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({
+        min: 0,
+        max: 10000
+    });
+
+    // Update price range when products change
+    useMemo(() => {
+        setPriceRange({ min: minPrice, max: maxPrice });
+    }, [minPrice, maxPrice]);
+
     const filteredProducts = useMemo(() => {
         let filtered = products.filter(
             product => product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -31,6 +52,11 @@ const Products = () => {
         if (selectedCategory) {
             filtered = filtered.filter(product => product.category === selectedCategory);
         }
+
+        // Apply price range filter
+        filtered = filtered.filter(product =>
+            product.price >= priceRange.min && product.price <= priceRange.max
+        );
 
         return filtered.sort((a, b) => {
             switch (sortBy) {
@@ -48,12 +74,17 @@ const Products = () => {
                     return 0;
             }
         });
-    }, [products, sortBy, searchTerm, selectedCategory]);
+    }, [products, sortBy, searchTerm, selectedCategory, priceRange]);
 
     const handleClear = () => {
         setSearchTerm('');
         setSortBy('name-asc');
         setSelectedCategory('');
+        setPriceRange({ min: minPrice, max: maxPrice });
+    }
+
+    const handlePriceChange = (min: number, max: number) => {
+        setPriceRange({ min, max });
     }
 
     return (
@@ -94,11 +125,21 @@ const Products = () => {
                             </div>
                         </div>
                     )}
+
+                    {products.length > 0 && (
+                        <PriceRangeFilter
+                            minPrice={minPrice}
+                            maxPrice={maxPrice}
+                            currentMin={priceRange.min}
+                            currentMax={priceRange.max}
+                            onPriceChange={handlePriceChange}
+                        />
+                    )}
                 </div>
 
                 <div className="results-meta">
                     <span aria-live="polite">{filteredProducts.length} results found</span>
-                    {(searchTerm !== '' || sortBy !== 'name-asc' || selectedCategory !== '') && (
+                    {(searchTerm !== '' || sortBy !== 'name-asc' || selectedCategory !== '' || priceRange.min !== minPrice || priceRange.max !== maxPrice) && (
                         <button onClick={handleClear} className="clear-filters-btn">
                             Clear Filters
                         </button>
