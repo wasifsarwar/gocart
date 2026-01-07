@@ -37,8 +37,10 @@ const PriceRangeFilter: React.FC<PriceRangeFilterProps> = ({
     };
 
     // Calculate the percentage positions for the range fill
-    const minPercent = ((currentMin - minPrice) / (maxPrice - minPrice)) * 100;
-    const maxPercent = ((currentMax - minPrice) / (maxPrice - minPrice)) * 100;
+    // Handle edge case where all products have the same price (avoid division by zero)
+    const priceRange = maxPrice - minPrice;
+    const minPercent = priceRange === 0 ? 0 : ((currentMin - minPrice) / priceRange) * 100;
+    const maxPercent = priceRange === 0 ? 100 : ((currentMax - minPrice) / priceRange) * 100;
 
     return (
         <div className="price-range-filter">
