@@ -179,6 +179,17 @@ func (h *ProductHandler) UploadProductImage(w http.ResponseWriter, r *http.Reque
 	}
 	defer dst.Close()
 
+	// Track whether upload completed successfully to clean up orphaned files
+	uploadSuccess := false
+	defer func() {
+		if !uploadSuccess {
+			// Remove the file if any operation after creation failed
+			if removeErr := os.Remove(dstPath); removeErr != nil {
+				log.Printf("Failed to clean up orphaned file %s: %v", dstPath, removeErr)
+			}
+		}
+	}()
+
 	if _, err := io.Copy(dst, file); err != nil {
 		http.Error(w, "Failed to write image", http.StatusInternalServerError)
 		return
@@ -190,6 +201,9 @@ func (h *ProductHandler) UploadProductImage(w http.ResponseWriter, r *http.Reque
 		http.Error(w, "Failed to update product image", http.StatusInternalServerError)
 		return
 	}
+
+	// Mark upload as successful so defer doesn't remove the file
+	uploadSuccess = true
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
