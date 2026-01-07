@@ -185,23 +185,34 @@
   font-weight: 500;
 }
 
-.pagination-controls {
+.pager-controls {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 1rem;
   margin: 1rem 0 0.5rem 0;
   flex-wrap: wrap;
 }
 
-.pagination-controls-bottom {
-  margin: 2rem 0 0.5rem 0;
+.pager-controls-top {
+  margin: 1rem 0 0.5rem 0;
 }
 
 .page-size {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.page-size-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem 0 0.5rem 0;
+}
+
+.page-size-centered {
+  justify-content: center;
 }
 
 .page-size-label {

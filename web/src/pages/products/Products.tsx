@@ -294,30 +294,8 @@ const Products = () => {
                     </div>
                 )}
 
-                <div className="product-list-container">
-                    <ProductList products={paginatedProducts} loading={loading} onQuickView={setQuickViewProduct} />
-                </div>
-
                 {!loading && filteredProducts.length > 0 && (
-                    <div className="pagination-controls pagination-controls-bottom" aria-label="Product pagination">
-                        <div className="page-size">
-                            <label htmlFor="pageSize" className="page-size-label">Show</label>
-                            <select
-                                id="pageSize"
-                                value={pageSize}
-                                onChange={(e) => setPageSize((Number(e.target.value) as 5 | 10 | 15 | 25 | 50) || 15)}
-                                className="page-size-select"
-                                aria-label="Items per page"
-                            >
-                                <option value={5}>5</option>
-                                <option value={10}>10</option>
-                                <option value={15}>15</option>
-                                <option value={25}>25</option>
-                                <option value={50}>50</option>
-                            </select>
-                            <span className="page-size-label">per page</span>
-                        </div>
-
+                    <div className="pager-controls pager-controls-top" aria-label="Product pagination">
                         <div className="pager">
                             <button
                                 type="button"
@@ -360,6 +338,32 @@ const Products = () => {
                             >
                                 Last
                             </button>
+                        </div>
+                    </div>
+                )}
+
+                <div className="product-list-container">
+                    <ProductList products={paginatedProducts} loading={loading} onQuickView={setQuickViewProduct} />
+                </div>
+
+                {!loading && filteredProducts.length > 0 && (
+                    <div className="page-size-controls page-size-controls-bottom" aria-label="Items per page">
+                        <div className="page-size page-size-centered">
+                            <label htmlFor="pageSize" className="page-size-label">Show</label>
+                            <select
+                                id="pageSize"
+                                value={pageSize}
+                                onChange={(e) => setPageSize((Number(e.target.value) as 5 | 10 | 15 | 25 | 50) || 15)}
+                                className="page-size-select"
+                                aria-label="Items per page"
+                            >
+                                <option value={5}>5</option>
+                                <option value={10}>10</option>
+                                <option value={15}>15</option>
+                                <option value={25}>25</option>
+                                <option value={50}>50</option>
+                            </select>
+                            <span className="page-size-label">per page</span>
                         </div>
                     </div>
                 )}
