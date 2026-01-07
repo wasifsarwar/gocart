@@ -20,7 +20,7 @@ const Products = () => {
     const { recentlyViewed, clearRecentlyViewed } = useRecentlyViewedProducts();
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('name-asc'); //default sort state value
-    const [pageSize, setPageSize] = useState<10 | 15>(15);
+    const [pageSize, setPageSize] = useState<5 | 10 | 15 | 25 | 50>(15);
     const [currentPage, setCurrentPage] = useState(1);
     const [activeTab, setActiveTab] = useState<'all' | 'favorites' | 'recent'>('all');
     const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
@@ -294,19 +294,26 @@ const Products = () => {
                     </div>
                 )}
 
+                <div className="product-list-container">
+                    <ProductList products={paginatedProducts} loading={loading} onQuickView={setQuickViewProduct} />
+                </div>
+
                 {!loading && filteredProducts.length > 0 && (
-                    <div className="pagination-controls" aria-label="Product pagination">
+                    <div className="pagination-controls pagination-controls-bottom" aria-label="Product pagination">
                         <div className="page-size">
                             <label htmlFor="pageSize" className="page-size-label">Show</label>
                             <select
                                 id="pageSize"
                                 value={pageSize}
-                                onChange={(e) => setPageSize((Number(e.target.value) as 10 | 15) || 15)}
+                                onChange={(e) => setPageSize((Number(e.target.value) as 5 | 10 | 15 | 25 | 50) || 15)}
                                 className="page-size-select"
                                 aria-label="Items per page"
                             >
+                                <option value={5}>5</option>
                                 <option value={10}>10</option>
                                 <option value={15}>15</option>
+                                <option value={25}>25</option>
+                                <option value={50}>50</option>
                             </select>
                             <span className="page-size-label">per page</span>
                         </div>
@@ -356,10 +363,6 @@ const Products = () => {
                         </div>
                     </div>
                 )}
-
-                <div className="product-list-container">
-                    <ProductList products={paginatedProducts} loading={loading} onQuickView={setQuickViewProduct} />
-                </div>
             </section>
 
             {quickViewProduct && (

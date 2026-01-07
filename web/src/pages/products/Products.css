@@ -194,6 +194,10 @@
   flex-wrap: wrap;
 }
 
+.pagination-controls-bottom {
+  margin: 2rem 0 0.5rem 0;
+}
+
 .page-size {
   display: flex;
   align-items: center;
