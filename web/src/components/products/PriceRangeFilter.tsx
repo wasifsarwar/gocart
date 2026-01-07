@@ -36,15 +36,28 @@ const PriceRangeFilter: React.FC<PriceRangeFilterProps> = ({
         }
     };
 
+    // Calculate the percentage positions for the range fill
+    const minPercent = ((currentMin - minPrice) / (maxPrice - minPrice)) * 100;
+    const maxPercent = ((currentMax - minPrice) / (maxPrice - minPrice)) * 100;
+
     return (
         <div className="price-range-filter">
-            <label className="price-filter-label">Price Range</label>
-            <div className="price-display">
-                <span>{usdFormatter.format(currentMin)}</span>
-                <span className="separator">-</span>
-                <span>{usdFormatter.format(currentMax)}</span>
+            <div className="price-range-header">
+                <label className="price-filter-label">Price Range</label>
+                <div className="price-display">
+                    {usdFormatter.format(currentMin)} - {usdFormatter.format(currentMax)}
+                </div>
             </div>
             <div className="price-sliders">
+                <div className="slider-track">
+                    <div
+                        className="slider-range"
+                        style={{
+                            left: `${minPercent}%`,
+                            right: `${100 - maxPercent}%`
+                        }}
+                    />
+                </div>
                 <input
                     type="range"
                     min={minPrice}
