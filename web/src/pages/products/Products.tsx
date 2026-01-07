@@ -25,17 +25,27 @@ const Products = () => {
     // Calculate min and max prices from products
     const { minPrice, maxPrice } = useMemo(() => {
         if (products.length === 0) return { minPrice: 0, maxPrice: 1000 };
-        const prices = products.map(p => p.price);
+
+        // Use reduce instead of spread operator to avoid stack overflow with large arrays
+        let min = products[0].price;
+        let max = products[0].price;
+
+        for (let i = 1; i < products.length; i++) {
+            const price = products[i].price;
+            if (price < min) min = price;
+            if (price > max) max = price;
+        }
+
         return {
-            minPrice: Math.floor(Math.min(...prices)),
-            maxPrice: Math.ceil(Math.max(...prices))
+            minPrice: Math.floor(min),
+            maxPrice: Math.ceil(max)
         };
     }, [products]);
 
-    const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({
+    const [priceRange, setPriceRange] = useState<{ min: number; max: number }>(() => ({
         min: 0,
         max: 1000
-    });
+    }));
 
     // Update price range when products change
     useEffect(() => {
@@ -54,10 +64,14 @@ const Products = () => {
             filtered = filtered.filter(product => product.category === selectedCategory);
         }
 
-        // Apply price range filter
-        filtered = filtered.filter(product =>
-            product.price >= priceRange.min && product.price <= priceRange.max
-        );
+        // Apply price range filter only if user has adjusted it
+        // Skip filtering if priceRange matches the full range (not user-adjusted)
+        const isPriceFilterActive = priceRange.min !== minPrice || priceRange.max !== maxPrice;
+        if (isPriceFilterActive) {
+            filtered = filtered.filter(product =>
+                product.price >= priceRange.min && product.price <= priceRange.max
+            );
+        }
 
         return filtered.sort((a, b) => {
             switch (sortBy) {
@@ -75,7 +89,7 @@ const Products = () => {
                     return 0;
             }
         });
-    }, [products, sortBy, searchTerm, selectedCategory, priceRange]);
+    }, [products, sortBy, searchTerm, selectedCategory, priceRange, minPrice, maxPrice]);
 
     const handleClear = () => {
         setSearchTerm('');
