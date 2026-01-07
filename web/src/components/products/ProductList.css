@@ -34,7 +34,46 @@
     background-color: #f1f5f9;
     color: #94a3b8;
     font-size: 3rem;
+}
+
+.product-image-wrapper {
     position: relative;
+}
+
+.favorite-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid #e2e8f0;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #64748b;
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+
+.favorite-btn:hover {
+    transform: translateY(-1px);
+    border-color: #cbd5e1;
+    box-shadow: var(--shadow-sm);
+}
+
+.favorite-btn.favorited {
+    color: #ef4444;
+    border-color: #fecaca;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.favorite-btn:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
 }
 
 .product-image-placeholder.blue { background-color: #eff6ff; color: #3b82f6; }

@@ -1,9 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Product from "../../types/product";
-import { FaShoppingBag } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaShoppingBag } from "react-icons/fa";
 import { IconType } from "react-icons";
 import { useCart } from "../../context/CartContext";
+import { useFavorites } from "../../context/FavoritesContext";
 
 interface ProductCardProps {
     product: Product
@@ -22,6 +23,7 @@ const Icon = ({ icon: IconComponent, className }: { icon: IconType; className?: 
 
 const ProductCard = ({ product }: ProductCardProps) => {
     const { addToCart } = useCart();
+    const { isFavorite, toggleFavorite } = useFavorites();
 
     const getCategoryColor = (category: string) => {
         const colors: { [key: string]: string } = {
@@ -44,13 +46,26 @@ const ProductCard = ({ product }: ProductCardProps) => {
         // Optional: Add visual feedback here (toast notification, etc.)
     };
 
+    const favorited = isFavorite(product.productID);
+
     return (
         <div className="product-card">
-            <Link to={`/products/${product.productID}`} className="product-link">
-                <div className={`product-image-placeholder ${colorClass}`}>
-                    <Icon icon={FaShoppingBag} />
-                </div>
-            </Link>
+            <div className="product-image-wrapper">
+                <Link to={`/products/${product.productID}`} className="product-link" aria-label={`View ${product.name}`}>
+                    <div className={`product-image-placeholder ${colorClass}`}>
+                        <Icon icon={FaShoppingBag} />
+                    </div>
+                </Link>
+                <button
+                    type="button"
+                    className={`favorite-btn ${favorited ? 'favorited' : ''}`}
+                    onClick={() => toggleFavorite(product.productID)}
+                    aria-label={favorited ? `Remove ${product.name} from favorites` : `Add ${product.name} to favorites`}
+                    title={favorited ? 'Remove from favorites' : 'Add to favorites'}
+                >
+                    <Icon icon={favorited ? FaHeart : FaRegHeart} />
+                </button>
+            </div>
             <div className="product-content">
                 <div className="product-header">
                     <span className={`category-badge ${colorClass}`}>
