@@ -38,8 +38,7 @@ const ProductDetails = () => {
         setError(null);
         setProduct(null);
 
-        // Use AbortController to cancel fetch if component unmounts or id changes
-        const abortController = new AbortController();
+        // Guard against setting state after unmount / route changes
         let isCancelled = false;
 
         const fetchProduct = async () => {
@@ -71,10 +70,9 @@ const ProductDetails = () => {
 
         fetchProduct();
 
-        // Cleanup function to cancel stale requests
+        // Cleanup function to prevent stale state updates
         return () => {
             isCancelled = true;
-            abortController.abort();
         };
     }, [id]);
 

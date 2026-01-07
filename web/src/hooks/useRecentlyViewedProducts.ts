@@ -4,6 +4,30 @@ import Product from '../types/product';
 const STORAGE_KEY = 'gocart.recentlyViewedProducts.v1';
 const MAX_ITEMS = 8;
 
+function safeGetItem(key: string): string | null {
+    try {
+        return localStorage.getItem(key);
+    } catch {
+        return null;
+    }
+}
+
+function safeSetItem(key: string, value: string) {
+    try {
+        localStorage.setItem(key, value);
+    } catch {
+        // Ignore storage write failures (e.g. disabled storage, quota exceeded)
+    }
+}
+
+function safeRemoveItem(key: string) {
+    try {
+        localStorage.removeItem(key);
+    } catch {
+        // Ignore storage removal failures
+    }
+}
+
 function safeParseProducts(raw: string | null): Product[] {
     if (!raw) return [];
     try {
@@ -27,11 +51,11 @@ function safeParseProducts(raw: string | null): Product[] {
 }
 
 function readRecentlyViewed(): Product[] {
-    return safeParseProducts(localStorage.getItem(STORAGE_KEY));
+    return safeParseProducts(safeGetItem(STORAGE_KEY));
 }
 
 function writeRecentlyViewed(products: Product[]) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+    safeSetItem(STORAGE_KEY, JSON.stringify(products));
 }
 
 function addToRecentlyViewed(product: Product): Product[] {
@@ -60,7 +84,7 @@ export default function useRecentlyViewedProducts() {
     }, []);
 
     const clearRecentlyViewed = useCallback(() => {
-        localStorage.removeItem(STORAGE_KEY);
+        safeRemoveItem(STORAGE_KEY);
         setRecentlyViewed([]);
     }, []);
 
