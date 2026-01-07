@@ -61,13 +61,11 @@ export const FavoritesProvider: React.FC<{ children: ReactNode }> = ({ children 
 
     const toggleFavorite = useCallback((productId: string) => {
         setFavoriteIds((prev) => {
-            const nextSet = new Set(prev);
-            if (nextSet.has(productId)) {
-                nextSet.delete(productId);
-            } else {
-                nextSet.add(productId);
+            // Keep a stable "most recently favorited first" ordering.
+            if (prev.includes(productId)) {
+                return prev.filter((id) => id !== productId);
             }
-            return Array.from(nextSet);
+            return [productId, ...prev];
         });
     }, []);
 

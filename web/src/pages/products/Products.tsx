@@ -5,6 +5,7 @@ import ProductSearch from '../../components/products/ProductSearch';
 import ProductSort from "../../components/products/ProductSort";
 import PriceRangeFilter from '../../components/products/PriceRangeFilter';
 import ActiveFilterTags from '../../components/products/ActiveFilterTags';
+import FavoritesProducts from '../../components/products/FavoritesProducts';
 import RecentlyViewedProducts from '../../components/products/RecentlyViewedProducts';
 import useProducts from "../../hooks/useProducts";
 
@@ -208,6 +209,7 @@ const Products = () => {
                     onClearAll={handleClear}
                 />
 
+                <FavoritesProducts products={products} />
                 <RecentlyViewedProducts />
 
                 {error && (
