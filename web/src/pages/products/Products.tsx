@@ -15,6 +15,8 @@ const Products = () => {
     const { products, loading, error, refetch } = useProducts();
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('name-asc'); //default sort state value
+    const [pageSize, setPageSize] = useState<10 | 15>(15);
+    const [currentPage, setCurrentPage] = useState(1);
 
     // Get unique categories for filtering
     const categories = useMemo(() => {
@@ -104,12 +106,18 @@ const Products = () => {
         });
     }, [products, sortBy, searchTerm, selectedCategory, priceRange, isPriceRangeDirty]);
 
+    // Reset pagination when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, sortBy, selectedCategory, isPriceRangeDirty, priceRange, pageSize]);
+
     const handleClear = () => {
         setSearchTerm('');
         setSortBy('name-asc');
         setSelectedCategory('');
         setIsPriceRangeDirty(false);
         setPriceRange({ min: minPrice, max: maxPrice });
+        setCurrentPage(1);
     }
 
     const handlePriceChange = (min: number, max: number) => {
@@ -127,6 +135,13 @@ const Products = () => {
     const handleRemoveSort = () => setSortBy('name-asc');
 
     const effectivePriceRange = isPriceRangeDirty ? priceRange : { min: minPrice, max: maxPrice };
+
+    const totalPages = Math.max(1, Math.ceil(filteredProducts.length / pageSize));
+    const safeCurrentPage = Math.min(currentPage, totalPages);
+    const paginatedProducts = useMemo(() => {
+        const start = (safeCurrentPage - 1) * pageSize;
+        return filteredProducts.slice(start, start + pageSize);
+    }, [filteredProducts, safeCurrentPage, pageSize]);
 
     return (
         <div className="products-page page-container">
@@ -195,10 +210,6 @@ const Products = () => {
 
                 <RecentlyViewedProducts />
 
-                <div className="results-meta">
-                    <span aria-live="polite">{filteredProducts.length} results found</span>
-                </div>
-
                 {error && (
                     <div role="alert" className="alert alert-error">
                         <span>{error}</span>
@@ -206,8 +217,71 @@ const Products = () => {
                     </div>
                 )}
 
+                {!loading && filteredProducts.length > 0 && (
+                    <div className="pagination-controls" aria-label="Product pagination">
+                        <div className="page-size">
+                            <label htmlFor="pageSize" className="page-size-label">Show</label>
+                            <select
+                                id="pageSize"
+                                value={pageSize}
+                                onChange={(e) => setPageSize((Number(e.target.value) as 10 | 15) || 15)}
+                                className="page-size-select"
+                                aria-label="Items per page"
+                            >
+                                <option value={10}>10</option>
+                                <option value={15}>15</option>
+                            </select>
+                            <span className="page-size-label">per page</span>
+                        </div>
+
+                        <div className="pager">
+                            <button
+                                type="button"
+                                className="pager-btn"
+                                onClick={() => setCurrentPage(1)}
+                                disabled={safeCurrentPage === 1}
+                                aria-label="First page"
+                            >
+                                First
+                            </button>
+                            <button
+                                type="button"
+                                className="pager-btn"
+                                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                disabled={safeCurrentPage === 1}
+                                aria-label="Previous page"
+                            >
+                                Prev
+                            </button>
+
+                            <span className="pager-status" aria-live="polite">
+                                Page {safeCurrentPage} of {totalPages}
+                            </span>
+
+                            <button
+                                type="button"
+                                className="pager-btn"
+                                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                                disabled={safeCurrentPage === totalPages}
+                                aria-label="Next page"
+                            >
+                                Next
+                            </button>
+                            <button
+                                type="button"
+                                className="pager-btn"
+                                onClick={() => setCurrentPage(totalPages)}
+                                disabled={safeCurrentPage === totalPages}
+                                aria-label="Last page"
+                            >
+                                Last
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 <div className="product-list-container">
-                    <ProductList products={filteredProducts} loading={loading} />
+                    <ProductList products={paginatedProducts} loading={loading} />
                 </div>
             </section>
 
