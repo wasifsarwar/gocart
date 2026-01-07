@@ -8,6 +8,8 @@ import ActiveFilterTags from '../../components/products/ActiveFilterTags';
 import useProducts from "../../hooks/useProducts";
 import { useFavorites } from '../../context/FavoritesContext';
 import useRecentlyViewedProducts from '../../hooks/useRecentlyViewedProducts';
+import ProductQuickViewModal from '../../components/products/ProductQuickViewModal';
+import Product from '../../types/product';
 
 import './Products.css'
 
@@ -21,6 +23,7 @@ const Products = () => {
     const [pageSize, setPageSize] = useState<10 | 15>(15);
     const [currentPage, setCurrentPage] = useState(1);
     const [activeTab, setActiveTab] = useState<'all' | 'favorites' | 'recent'>('all');
+    const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
     const tabProducts = useMemo(() => {
         if (activeTab === 'all') return products;
@@ -123,6 +126,11 @@ const Products = () => {
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, sortBy, selectedCategory, isPriceRangeDirty, priceRange, pageSize, activeTab]);
+
+    // Close modal when switching tabs
+    useEffect(() => {
+        setQuickViewProduct(null);
+    }, [activeTab]);
 
     const handleClear = () => {
         setSearchTerm('');
@@ -350,9 +358,16 @@ const Products = () => {
                 )}
 
                 <div className="product-list-container">
-                    <ProductList products={paginatedProducts} loading={loading} />
+                    <ProductList products={paginatedProducts} loading={loading} onQuickView={setQuickViewProduct} />
                 </div>
             </section>
+
+            {quickViewProduct && (
+                <ProductQuickViewModal
+                    product={quickViewProduct}
+                    onClose={() => setQuickViewProduct(null)}
+                />
+            )}
 
         </div >
     );

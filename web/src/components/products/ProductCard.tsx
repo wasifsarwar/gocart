@@ -1,13 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Product from "../../types/product";
-import { FaHeart, FaRegHeart, FaShoppingBag } from "react-icons/fa";
+import { FaEye, FaHeart, FaRegHeart, FaShoppingBag } from "react-icons/fa";
 import { IconType } from "react-icons";
 import { useCart } from "../../context/CartContext";
 import { useFavorites } from "../../context/FavoritesContext";
 
 interface ProductCardProps {
-    product: Product
+    product: Product;
+    onQuickView?: (product: Product) => void;
 }
 
 const usdFormatter = new Intl.NumberFormat('en-us', {
@@ -21,7 +22,7 @@ const Icon = ({ icon: IconComponent, className }: { icon: IconType; className?: 
     return <Component className={className} />;
 };
 
-const ProductCard = ({ product }: ProductCardProps) => {
+const ProductCard = ({ product, onQuickView }: ProductCardProps) => {
     const { addToCart } = useCart();
     const { isFavorite, toggleFavorite } = useFavorites();
 
@@ -56,6 +57,18 @@ const ProductCard = ({ product }: ProductCardProps) => {
                         <Icon icon={FaShoppingBag} />
                     </div>
                 </Link>
+                {onQuickView && (
+                    <button
+                        type="button"
+                        className="quick-view-btn"
+                        onClick={() => onQuickView(product)}
+                        aria-label={`Quick view ${product.name}`}
+                        title="Quick view"
+                    >
+                        <Icon icon={FaEye} />
+                        <span className="quick-view-text">Quick view</span>
+                    </button>
+                )}
                 <button
                     type="button"
                     className={`favorite-btn ${favorited ? 'favorited' : ''}`}
