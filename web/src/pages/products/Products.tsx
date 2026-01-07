@@ -4,6 +4,7 @@ import ProductList from "../../components/products/ProductList";
 import ProductSearch from '../../components/products/ProductSearch';
 import ProductSort from "../../components/products/ProductSort";
 import PriceRangeFilter from '../../components/products/PriceRangeFilter';
+import ActiveFilterTags from '../../components/products/ActiveFilterTags';
 import useProducts from "../../hooks/useProducts";
 
 import './Products.css'
@@ -87,6 +88,12 @@ const Products = () => {
         setPriceRange({ min, max });
     }
 
+    // Individual filter removal handlers
+    const handleRemoveSearch = () => setSearchTerm('');
+    const handleRemoveCategory = () => setSelectedCategory('');
+    const handleRemovePriceRange = () => setPriceRange({ min: minPrice, max: maxPrice });
+    const handleRemoveSort = () => setSortBy('name-asc');
+
     return (
         <div className="products-page page-container">
             <div className="products-header">
@@ -136,6 +143,20 @@ const Products = () => {
                         />
                     )}
                 </div>
+
+                <ActiveFilterTags
+                    searchTerm={searchTerm}
+                    selectedCategory={selectedCategory}
+                    priceRange={priceRange}
+                    minPrice={minPrice}
+                    maxPrice={maxPrice}
+                    sortBy={sortBy}
+                    onRemoveSearch={handleRemoveSearch}
+                    onRemoveCategory={handleRemoveCategory}
+                    onRemovePriceRange={handleRemovePriceRange}
+                    onRemoveSort={handleRemoveSort}
+                    onClearAll={handleClear}
+                />
 
                 <div className="results-meta">
                     <span aria-live="polite">{filteredProducts.length} results found</span>
