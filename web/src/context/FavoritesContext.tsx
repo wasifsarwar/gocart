@@ -71,7 +71,6 @@ export const FavoritesProvider: React.FC<{ children: ReactNode }> = ({ children 
 
     const clearFavorites = useCallback(() => {
         setFavoriteIds([]);
-        safeSetItem(STORAGE_KEY, JSON.stringify([]));
     }, []);
 
     return (

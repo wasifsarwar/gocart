@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { toast } from 'react-hot-toast';
 import Product from '../types/product';
 
@@ -49,14 +49,26 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const savedCart = safeGetItem('cart');
         return safeParseCart(savedCart);
     });
+    const pendingToastRef = useRef<string | null>(null);
 
     useEffect(() => {
         safeSetItem('cart', JSON.stringify(items));
     }, [items]);
 
+    useEffect(() => {
+        if (pendingToastRef.current) {
+            toast.success(pendingToastRef.current);
+            pendingToastRef.current = null;
+        }
+    }, [items]);
+
     const addToCart = (product: Product) => {
-        const exists = items.some(item => item.productID === product.productID);
         setItems(prevItems => {
+            const exists = prevItems.some(item => item.productID === product.productID);
+            pendingToastRef.current = exists
+                ? `Updated quantity for ${product.name}`
+                : `${product.name} added to cart`;
+
             const existingItem = prevItems.find(item => item.productID === product.productID);
             if (existingItem) {
                 return prevItems.map(item =>
@@ -67,7 +79,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
             return [...prevItems, { ...product, quantity: 1 }];
         });
-        toast.success(exists ? `Updated quantity for ${product.name}` : `${product.name} added to cart`);
     };
 
     const removeFromCart = (productId: string) => {

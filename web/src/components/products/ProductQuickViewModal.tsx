@@ -30,6 +30,14 @@ const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({ product, 
     const favorited = isFavorite(product.productID);
 
     useEffect(() => {
+        const prevOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = prevOverflow;
+        };
+    }, []);
+
+    useEffect(() => {
         const onKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape') onClose();
         };
