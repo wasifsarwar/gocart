@@ -160,11 +160,6 @@ const Products = () => {
 
                 <div className="results-meta">
                     <span aria-live="polite">{filteredProducts.length} results found</span>
-                    {(searchTerm !== '' || sortBy !== 'name-asc' || selectedCategory !== '' || priceRange.min !== minPrice || priceRange.max !== maxPrice) && (
-                        <button onClick={handleClear} className="clear-filters-btn">
-                            Clear Filters
-                        </button>
-                    )}
                 </div>
 
                 {error && (
