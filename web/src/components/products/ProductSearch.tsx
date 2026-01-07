@@ -200,6 +200,18 @@ const ProductSearch = ({ onSearch, placeHolder, value, products = [] }: ProductS
 
     const showDropdown = showSuggestions && suggestions.length > 0 && isFocused;
 
+    // Debug logging
+    useEffect(() => {
+        console.log('ProductSearch Debug:', {
+            localValue,
+            showSuggestions,
+            isFocused,
+            suggestionsCount: suggestions.length,
+            showDropdown,
+            productsCount: products.length
+        });
+    }, [localValue, showSuggestions, isFocused, suggestions.length, showDropdown, products.length]);
+
     return (
         <div className={`product-search ${isFocused ? 'focused' : ''}`}>
             <div className="search-container">
@@ -241,6 +253,7 @@ const ProductSearch = ({ onSearch, placeHolder, value, products = [] }: ProductS
                     id="search-suggestions"
                     className="search-suggestions"
                     role="listbox"
+                    style={{ background: 'yellow', border: '5px solid red' }}
                 >
                     {suggestions.map((suggestion, index) => {
                         const colorClass = getCategoryColor(suggestion.product.category);
