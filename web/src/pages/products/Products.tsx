@@ -5,37 +5,47 @@ import ProductSearch from '../../components/products/ProductSearch';
 import ProductSort from "../../components/products/ProductSort";
 import PriceRangeFilter from '../../components/products/PriceRangeFilter';
 import ActiveFilterTags from '../../components/products/ActiveFilterTags';
-import FavoritesProducts from '../../components/products/FavoritesProducts';
 import RecentlyViewedProducts from '../../components/products/RecentlyViewedProducts';
 import useProducts from "../../hooks/useProducts";
+import { useFavorites } from '../../context/FavoritesContext';
 
 import './Products.css'
 
 
 const Products = () => {
     const { products, loading, error, refetch } = useProducts();
+    const { favoriteIds } = useFavorites();
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('name-asc'); //default sort state value
     const [pageSize, setPageSize] = useState<10 | 15>(15);
     const [currentPage, setCurrentPage] = useState(1);
+    const [activeTab, setActiveTab] = useState<'all' | 'favorites'>('all');
+
+    const tabProducts = useMemo(() => {
+        if (activeTab === 'all') return products;
+        if (products.length === 0 || favoriteIds.length === 0) return [];
+        const byId = new Map(products.map((p) => [p.productID, p] as const));
+        // Preserve favorites ordering (most recently favorited first)
+        return favoriteIds.map((id) => byId.get(id)).filter(Boolean) as typeof products;
+    }, [activeTab, products, favoriteIds]);
 
     // Get unique categories for filtering
     const categories = useMemo(() => {
-        return Array.from(new Set(products.map(product => product.category))).sort();
-    }, [products]);
+        return Array.from(new Set(tabProducts.map(product => product.category))).sort();
+    }, [tabProducts]);
 
     const [selectedCategory, setSelectedCategory] = useState<string>('');
 
     // Calculate min and max prices from products
     const { minPrice, maxPrice } = useMemo(() => {
-        if (products.length === 0) return { minPrice: 0, maxPrice: 1000 };
+        if (tabProducts.length === 0) return { minPrice: 0, maxPrice: 1000 };
 
         // Use reduce instead of spread operator to avoid stack overflow with large arrays
-        let min = products[0].price;
-        let max = products[0].price;
+        let min = tabProducts[0].price;
+        let max = tabProducts[0].price;
 
-        for (let i = 1; i < products.length; i++) {
-            const price = products[i].price;
+        for (let i = 1; i < tabProducts.length; i++) {
+            const price = tabProducts[i].price;
             if (price < min) min = price;
             if (price > max) max = price;
         }
@@ -70,7 +80,7 @@ const Products = () => {
     }, [minPrice, maxPrice, isPriceRangeDirty]);
 
     const filteredProducts = useMemo(() => {
-        let filtered = products.filter(
+        let filtered = tabProducts.filter(
             product => product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 product.category.toLowerCase().includes(searchTerm.toLowerCase())
@@ -105,12 +115,12 @@ const Products = () => {
                     return 0;
             }
         });
-    }, [products, sortBy, searchTerm, selectedCategory, priceRange, isPriceRangeDirty]);
+    }, [tabProducts, sortBy, searchTerm, selectedCategory, priceRange, isPriceRangeDirty]);
 
     // Reset pagination when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchTerm, sortBy, selectedCategory, isPriceRangeDirty, priceRange, pageSize]);
+    }, [searchTerm, sortBy, selectedCategory, isPriceRangeDirty, priceRange, pageSize, activeTab]);
 
     const handleClear = () => {
         setSearchTerm('');
@@ -154,6 +164,27 @@ const Products = () => {
             </div>
 
             <section className="products-content">
+                <div className="products-tabs" role="tablist" aria-label="Products tabs">
+                    <button
+                        type="button"
+                        role="tab"
+                        aria-selected={activeTab === 'all'}
+                        className={`products-tab ${activeTab === 'all' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('all')}
+                    >
+                        All products
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        aria-selected={activeTab === 'favorites'}
+                        className={`products-tab ${activeTab === 'favorites' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('favorites')}
+                    >
+                        Favorites
+                    </button>
+                </div>
+
                 <div className="products-controls">
                     <div className="search-sort-row">
                         <ProductSearch onSearch={setSearchTerm} value={searchTerm} placeHolder="Search products..." />
@@ -183,7 +214,7 @@ const Products = () => {
                         </div>
                     )}
 
-                    {products.length > 0 && (
+                    {tabProducts.length > 0 && (
                         <PriceRangeFilter
                             minPrice={minPrice}
                             maxPrice={maxPrice}
@@ -209,13 +240,19 @@ const Products = () => {
                     onClearAll={handleClear}
                 />
 
-                <FavoritesProducts products={products} />
-                <RecentlyViewedProducts />
+                {activeTab === 'all' && <RecentlyViewedProducts />}
 
                 {error && (
                     <div role="alert" className="alert alert-error">
                         <span>{error}</span>
                         <button onClick={refetch}>Retry</button>
+                    </div>
+                )}
+
+                {activeTab === 'favorites' && !loading && tabProducts.length === 0 && (
+                    <div className="empty-state favorites-empty">
+                        <h3>No favorites yet</h3>
+                        <p>Tap the heart icon on a product to save it here.</p>
                     </div>
                 )}
 

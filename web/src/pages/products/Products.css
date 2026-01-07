@@ -42,6 +42,45 @@
   margin-bottom: 2rem;
 }
 
+.products-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.products-tab {
+  padding: 0.6rem 0.9rem;
+  border: 1px solid transparent;
+  border-bottom: 2px solid transparent;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.products-tab:hover {
+  color: var(--text-primary);
+  background: #f8fafc;
+}
+
+.products-tab.active {
+  color: var(--primary-color);
+  background: white;
+  border-color: #e2e8f0;
+  border-bottom-color: white;
+}
+
+.favorites-empty {
+  margin-top: 1rem;
+  padding: 2rem;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-lg);
+  background: white;
+}
+
 .search-sort-row {
   display: flex;
   justify-content: space-between;
