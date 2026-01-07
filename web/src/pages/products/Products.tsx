@@ -33,7 +33,7 @@ const Products = () => {
 
     const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({
         min: 0,
-        max: 10000
+        max: 1000
     });
 
     // Update price range when products change
