@@ -5,9 +5,9 @@ import ProductSearch from '../../components/products/ProductSearch';
 import ProductSort from "../../components/products/ProductSort";
 import PriceRangeFilter from '../../components/products/PriceRangeFilter';
 import ActiveFilterTags from '../../components/products/ActiveFilterTags';
-import RecentlyViewedProducts from '../../components/products/RecentlyViewedProducts';
 import useProducts from "../../hooks/useProducts";
 import { useFavorites } from '../../context/FavoritesContext';
+import useRecentlyViewedProducts from '../../hooks/useRecentlyViewedProducts';
 
 import './Products.css'
 
@@ -15,19 +15,21 @@ import './Products.css'
 const Products = () => {
     const { products, loading, error, refetch } = useProducts();
     const { favoriteIds } = useFavorites();
+    const { recentlyViewed, clearRecentlyViewed } = useRecentlyViewedProducts();
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('name-asc'); //default sort state value
     const [pageSize, setPageSize] = useState<10 | 15>(15);
     const [currentPage, setCurrentPage] = useState(1);
-    const [activeTab, setActiveTab] = useState<'all' | 'favorites'>('all');
+    const [activeTab, setActiveTab] = useState<'all' | 'favorites' | 'recent'>('all');
 
     const tabProducts = useMemo(() => {
         if (activeTab === 'all') return products;
+        if (activeTab === 'recent') return recentlyViewed;
         if (products.length === 0 || favoriteIds.length === 0) return [];
         const byId = new Map(products.map((p) => [p.productID, p] as const));
         // Preserve favorites ordering (most recently favorited first)
         return favoriteIds.map((id) => byId.get(id)).filter(Boolean) as typeof products;
-    }, [activeTab, products, favoriteIds]);
+    }, [activeTab, products, favoriteIds, recentlyViewed]);
 
     // Get unique categories for filtering
     const categories = useMemo(() => {
@@ -183,9 +185,32 @@ const Products = () => {
                     >
                         Favorites
                     </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        aria-selected={activeTab === 'recent'}
+                        className={`products-tab ${activeTab === 'recent' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('recent')}
+                    >
+                        Recently viewed
+                    </button>
                 </div>
 
                 <div className="products-controls">
+                    {activeTab === 'recent' && (
+                        <div className="tab-toolbar">
+                            <div className="tab-toolbar-title">Recently viewed</div>
+                            <button
+                                type="button"
+                                className="tab-toolbar-action"
+                                onClick={clearRecentlyViewed}
+                                disabled={recentlyViewed.length === 0}
+                            >
+                                Clear
+                            </button>
+                        </div>
+                    )}
+
                     <div className="search-sort-row">
                         <ProductSearch onSearch={setSearchTerm} value={searchTerm} placeHolder="Search products..." />
                         <ProductSort onSort={setSortBy} currentSort={sortBy} />
@@ -240,8 +265,6 @@ const Products = () => {
                     onClearAll={handleClear}
                 />
 
-                {activeTab === 'all' && <RecentlyViewedProducts />}
-
                 {error && (
                     <div role="alert" className="alert alert-error">
                         <span>{error}</span>
@@ -253,6 +276,13 @@ const Products = () => {
                     <div className="empty-state favorites-empty">
                         <h3>No favorites yet</h3>
                         <p>Tap the heart icon on a product to save it here.</p>
+                    </div>
+                )}
+
+                {activeTab === 'recent' && !loading && tabProducts.length === 0 && (
+                    <div className="empty-state recent-empty">
+                        <h3>No recently viewed products</h3>
+                        <p>Open a product to start building your recently viewed list.</p>
                     </div>
                 )}
 
