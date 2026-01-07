@@ -76,6 +76,15 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.product-image-large-real {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 12px;
+    object-fit: cover;
+    display: block;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 .product-icon-large {
     font-size: 8rem;
     color: rgba(255, 255, 255, 0.9);

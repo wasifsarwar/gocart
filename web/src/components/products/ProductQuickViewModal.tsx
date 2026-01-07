@@ -5,6 +5,7 @@ import { IconType } from 'react-icons';
 import Product from '../../types/product';
 import { useCart } from '../../context/CartContext';
 import { useFavorites } from '../../context/FavoritesContext';
+import { resolveImageUrl } from '../../utils/resolveImageUrl';
 import './ProductQuickViewModal.css';
 
 // Wrapper to fix TS2786 error with React 19 types
@@ -28,6 +29,7 @@ const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({ product, 
     const { isFavorite, toggleFavorite } = useFavorites();
 
     const favorited = isFavorite(product.productID);
+    const imageSrc = resolveImageUrl(product.imageUrl);
 
     useEffect(() => {
         const prevOverflow = document.body.style.overflow;
@@ -57,6 +59,9 @@ const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({ product, 
                 </div>
 
                 <div className="qv-body">
+                    {imageSrc && (
+                        <img className="qv-image" src={imageSrc} alt={product.name} loading="lazy" />
+                    )}
                     <div className="qv-meta">
                         <span className="qv-category">{product.category}</span>
                         <span className="qv-price">{usdFormatter.format(product.price)}</span>

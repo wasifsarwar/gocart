@@ -6,6 +6,7 @@ export interface ApiProduct {
     description: string;
     price: number;
     category: string;
+    image_url?: string;
 }
 
 export const productService = {

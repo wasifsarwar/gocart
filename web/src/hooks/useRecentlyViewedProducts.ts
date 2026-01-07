@@ -42,7 +42,8 @@ function safeParseProducts(raw: string | null): Product[] {
                 name: String(p.name ?? ''),
                 description: String(p.description ?? ''),
                 price: Number(p.price ?? 0),
-                category: String(p.category ?? '')
+                category: String(p.category ?? ''),
+                imageUrl: typeof p.imageUrl === 'string' ? p.imageUrl : undefined
             }))
             .filter((p) => p.productID && p.name);
     } catch {

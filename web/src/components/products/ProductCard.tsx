@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Product from "../../types/product";
 import { FaEye, FaHeart, FaRegHeart, FaShoppingBag } from "react-icons/fa";
 import { IconType } from "react-icons";
 import { useCart } from "../../context/CartContext";
 import { useFavorites } from "../../context/FavoritesContext";
+import { resolveImageUrl } from "../../utils/resolveImageUrl";
 
 interface ProductCardProps {
     product: Product;
@@ -25,6 +26,7 @@ const Icon = ({ icon: IconComponent, className }: { icon: IconType; className?: 
 const ProductCard = ({ product, onQuickView }: ProductCardProps) => {
     const { addToCart } = useCart();
     const { isFavorite, toggleFavorite } = useFavorites();
+    const [imageError, setImageError] = useState(false);
 
     const getCategoryColor = (category: string) => {
         const colors: { [key: string]: string } = {
@@ -48,14 +50,25 @@ const ProductCard = ({ product, onQuickView }: ProductCardProps) => {
     };
 
     const favorited = isFavorite(product.productID);
+    const imgSrc = useMemo(() => resolveImageUrl(product.imageUrl), [product.imageUrl]);
 
     return (
         <div className="product-card">
             <div className="product-image-wrapper">
                 <Link to={`/products/${product.productID}`} className="product-link" aria-label={`View ${product.name}`}>
-                    <div className={`product-image-placeholder ${colorClass}`}>
-                        <Icon icon={FaShoppingBag} />
-                    </div>
+                    {imgSrc && !imageError ? (
+                        <img
+                            src={imgSrc}
+                            alt={product.name}
+                            className="product-image-real"
+                            loading="lazy"
+                            onError={() => setImageError(true)}
+                        />
+                    ) : (
+                        <div className={`product-image-placeholder ${colorClass}`}>
+                            <Icon icon={FaShoppingBag} />
+                        </div>
+                    )}
                 </Link>
                 {onQuickView && (
                     <button

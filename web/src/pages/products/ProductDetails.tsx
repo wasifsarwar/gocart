@@ -8,6 +8,7 @@ import useProducts from '../../hooks/useProducts';
 import useRecentlyViewedProducts from '../../hooks/useRecentlyViewedProducts';
 import Product from '../../types/product';
 import RecentlyViewedProducts from '../../components/products/RecentlyViewedProducts';
+import { resolveImageUrl } from '../../utils/resolveImageUrl';
 import './ProductDetails.css';
 
 // Wrapper to fix TS2786 error with React 19 types
@@ -84,7 +85,8 @@ const ProductDetails = () => {
             name: product.name,
             description: product.description,
             price: product.price,
-            category: product.category
+            category: product.category,
+            imageUrl: product.image_url
         });
     }, [product, addViewedProduct]);
 
@@ -95,7 +97,8 @@ const ProductDetails = () => {
                 name: product.name,
                 description: product.description,
                 price: product.price,
-                category: product.category
+                category: product.category,
+                imageUrl: product.image_url
             };
             addToCart(cartProduct);
         }
@@ -145,6 +148,7 @@ const ProductDetails = () => {
     }
 
     const colorClass = getCategoryColor(product.category);
+    const imageSrc = resolveImageUrl(product.image_url);
 
     return (
         <div className="product-details-page page-container">
@@ -162,9 +166,18 @@ const ProductDetails = () => {
 
             <div className="product-details-container">
                 <div className="product-image-section">
-                    <div className={`product-image-large ${colorClass}`}>
-                        <Icon icon={FaShoppingBag} className="product-icon-large" />
-                    </div>
+                    {imageSrc ? (
+                        <img
+                            src={imageSrc}
+                            alt={product.name}
+                            className="product-image-large-real"
+                            loading="lazy"
+                        />
+                    ) : (
+                        <div className={`product-image-large ${colorClass}`}>
+                            <Icon icon={FaShoppingBag} className="product-icon-large" />
+                        </div>
+                    )}
                 </div>
 
                 <div className="product-info-section">
