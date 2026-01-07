@@ -148,17 +148,6 @@ const ProductDetails = () => {
                         <p className="product-description">{product.description}</p>
                     </div>
 
-                    <div className="product-meta">
-                        <div className="meta-item">
-                            <span className="meta-label">Product ID:</span>
-                            <span className="meta-value">{product.product_id}</span>
-                        </div>
-                        <div className="meta-item">
-                            <span className="meta-label">Category:</span>
-                            <span className="meta-value">{product.category}</span>
-                        </div>
-                    </div>
-
                     <div className="product-actions">
                         <button onClick={handleAddToCart} className="add-to-cart-btn-large">
                             <Icon icon={FaShoppingCart} />
