@@ -12,6 +12,7 @@ const Icon = ({ icon: IconComponent, className }: { icon: IconType; className?: 
 interface ActiveFilterTagsProps {
     searchTerm: string;
     selectedCategory: string;
+    isPriceFilterActive: boolean;
     priceRange: { min: number; max: number };
     minPrice: number;
     maxPrice: number;
@@ -26,6 +27,7 @@ interface ActiveFilterTagsProps {
 const ActiveFilterTags: React.FC<ActiveFilterTagsProps> = ({
     searchTerm,
     selectedCategory,
+    isPriceFilterActive,
     priceRange,
     minPrice,
     maxPrice,
@@ -44,7 +46,7 @@ const ActiveFilterTags: React.FC<ActiveFilterTagsProps> = ({
 
     const hasSearchFilter = searchTerm !== '';
     const hasCategoryFilter = selectedCategory !== '';
-    const hasPriceFilter = priceRange.min !== minPrice || priceRange.max !== maxPrice;
+    const hasPriceFilter = isPriceFilterActive;
     const hasSortFilter = sortBy !== 'name-asc';
 
     const hasAnyFilter = hasSearchFilter || hasCategoryFilter || hasPriceFilter || hasSortFilter;

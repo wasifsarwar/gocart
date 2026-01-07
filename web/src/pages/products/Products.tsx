@@ -46,11 +46,24 @@ const Products = () => {
         min: 0,
         max: 1000
     }));
+    const [isPriceRangeDirty, setIsPriceRangeDirty] = useState(false);
 
     // Update price range when products change
     useEffect(() => {
-        setPriceRange({ min: minPrice, max: maxPrice });
-    }, [minPrice, maxPrice]);
+        // If the user hasn't adjusted the slider, always track the full computed range.
+        // This avoids a one-render mismatch (and flicker) when product prices exceed the initial defaults.
+        if (!isPriceRangeDirty) {
+            setPriceRange({ min: minPrice, max: maxPrice });
+            return;
+        }
+
+        // If the user *has* adjusted it, clamp the stored range to the latest bounds.
+        setPriceRange((prev) => {
+            const nextMin = Math.max(minPrice, Math.min(prev.min, maxPrice));
+            const nextMax = Math.min(maxPrice, Math.max(prev.max, minPrice));
+            return { min: nextMin, max: nextMax };
+        });
+    }, [minPrice, maxPrice, isPriceRangeDirty]);
 
     const filteredProducts = useMemo(() => {
         let filtered = products.filter(
@@ -64,10 +77,9 @@ const Products = () => {
             filtered = filtered.filter(product => product.category === selectedCategory);
         }
 
-        // Apply price range filter only if user has adjusted it
-        // Skip filtering if priceRange matches the full range (not user-adjusted)
-        const isPriceFilterActive = priceRange.min !== minPrice || priceRange.max !== maxPrice;
-        if (isPriceFilterActive) {
+        // Apply price range filter only if user has adjusted it.
+        // (Do not infer "active" by comparing to min/max; priceRange state is synced in an effect.)
+        if (isPriceRangeDirty) {
             filtered = filtered.filter(product =>
                 product.price >= priceRange.min && product.price <= priceRange.max
             );
@@ -89,24 +101,31 @@ const Products = () => {
                     return 0;
             }
         });
-    }, [products, sortBy, searchTerm, selectedCategory, priceRange, minPrice, maxPrice]);
+    }, [products, sortBy, searchTerm, selectedCategory, priceRange, isPriceRangeDirty]);
 
     const handleClear = () => {
         setSearchTerm('');
         setSortBy('name-asc');
         setSelectedCategory('');
+        setIsPriceRangeDirty(false);
         setPriceRange({ min: minPrice, max: maxPrice });
     }
 
     const handlePriceChange = (min: number, max: number) => {
+        setIsPriceRangeDirty(true);
         setPriceRange({ min, max });
     }
 
     // Individual filter removal handlers
     const handleRemoveSearch = () => setSearchTerm('');
     const handleRemoveCategory = () => setSelectedCategory('');
-    const handleRemovePriceRange = () => setPriceRange({ min: minPrice, max: maxPrice });
+    const handleRemovePriceRange = () => {
+        setIsPriceRangeDirty(false);
+        setPriceRange({ min: minPrice, max: maxPrice });
+    };
     const handleRemoveSort = () => setSortBy('name-asc');
+
+    const effectivePriceRange = isPriceRangeDirty ? priceRange : { min: minPrice, max: maxPrice };
 
     return (
         <div className="products-page page-container">
@@ -151,8 +170,8 @@ const Products = () => {
                         <PriceRangeFilter
                             minPrice={minPrice}
                             maxPrice={maxPrice}
-                            currentMin={priceRange.min}
-                            currentMax={priceRange.max}
+                            currentMin={effectivePriceRange.min}
+                            currentMax={effectivePriceRange.max}
                             onPriceChange={handlePriceChange}
                         />
                     )}
@@ -161,7 +180,8 @@ const Products = () => {
                 <ActiveFilterTags
                     searchTerm={searchTerm}
                     selectedCategory={selectedCategory}
-                    priceRange={priceRange}
+                    isPriceFilterActive={isPriceRangeDirty}
+                    priceRange={effectivePriceRange}
                     minPrice={minPrice}
                     maxPrice={maxPrice}
                     sortBy={sortBy}
