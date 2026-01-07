@@ -54,7 +54,7 @@ const Products = () => {
             minPrice: Math.floor(min),
             maxPrice: Math.ceil(max)
         };
-    }, [products]);
+    }, [tabProducts]);
 
     const [priceRange, setPriceRange] = useState<{ min: number; max: number }>(() => ({
         min: 0,
