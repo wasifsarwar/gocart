@@ -220,7 +220,12 @@ const Products = () => {
                     )}
 
                     <div className="search-sort-row">
-                        <ProductSearch onSearch={setSearchTerm} value={searchTerm} placeHolder="Search products..." />
+                        <ProductSearch
+                            onSearch={setSearchTerm}
+                            value={searchTerm}
+                            placeHolder="Search products..."
+                            products={tabProducts}
+                        />
                         <ProductSort onSort={setSortBy} currentSort={sortBy} />
                     </div>
 
