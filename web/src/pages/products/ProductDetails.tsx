@@ -216,7 +216,19 @@ const ProductDetails = () => {
                                 className="related-product-card"
                             >
                                 <div className={`related-product-image ${getCategoryColor(relatedProduct.category)}`}>
-                                    <Icon icon={FaShoppingBag} />
+                                    {relatedProduct.imageUrl && (
+                                        <img
+                                            className="related-product-image-real"
+                                            src={resolveImageUrl(relatedProduct.imageUrl) ?? undefined}
+                                            alt={relatedProduct.name}
+                                            loading="lazy"
+                                            onError={(e) => {
+                                                // Fallback to icon if image fails to load
+                                                (e.currentTarget as HTMLImageElement).style.display = 'none';
+                                            }}
+                                        />
+                                    )}
+                                    <Icon icon={FaShoppingBag} className="related-product-icon-fallback" />
                                 </div>
                                 <div className="related-product-info">
                                     <h3>{relatedProduct.name}</h3>
