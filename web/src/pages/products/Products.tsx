@@ -134,9 +134,10 @@ const Products = () => {
         setCurrentPage(1);
     }, [searchTerm, sortBy, selectedCategory, isPriceRangeDirty, priceRange, pageSize, activeTab]);
 
-    // Close modal when switching tabs
+    // Close modal and reset category filter when switching tabs
     useEffect(() => {
         setQuickViewProduct(null);
+        setSelectedCategory('');
     }, [activeTab]);
 
     const handleClear = () => {
