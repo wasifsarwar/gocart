@@ -39,6 +39,15 @@ const ProductSearch = ({ onSearch, placeHolder, value, products = [] }: ProductS
         setLocalValue(value || '');
     }, [value]);
 
+    // Cleanup blur timeout on unmount
+    useEffect(() => {
+        return () => {
+            if (blurTimeoutRef.current) {
+                window.clearTimeout(blurTimeoutRef.current);
+            }
+        };
+    }, []);
+
     // Generate suggestions based on local search term (not the filtered term)
     const suggestions = useMemo((): SearchSuggestion[] => {
         if (!localValue || localValue.trim().length < 2 || products.length === 0) {
