@@ -178,11 +178,12 @@ func (h *ProductHandler) UploadProductImage(w http.ResponseWriter, r *http.Reque
 		http.Error(w, "Failed to save image", http.StatusInternalServerError)
 		return
 	}
-	defer dst.Close()
 
 	// Track whether upload completed successfully to clean up orphaned files
 	uploadSuccess := false
 	defer func() {
+		// Close the file first (important for Windows)
+		dst.Close()
 		if !uploadSuccess {
 			// Remove the file if any operation after creation failed
 			if removeErr := os.Remove(dstPath); removeErr != nil {
