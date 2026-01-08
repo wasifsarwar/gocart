@@ -134,10 +134,11 @@ const Products = () => {
         setCurrentPage(1);
     }, [searchTerm, sortBy, selectedCategory, isPriceRangeDirty, priceRange, pageSize, activeTab]);
 
-    // Close modal and reset category filter when switching tabs
+    // Close modal and reset filters when switching tabs
     useEffect(() => {
         setQuickViewProduct(null);
         setSelectedCategory('');
+        setIsPriceRangeDirty(false);
     }, [activeTab]);
 
     const handleClear = () => {
@@ -285,6 +286,12 @@ const Products = () => {
                     onRemoveSort={handleRemoveSort}
                     onClearAll={handleClear}
                 />
+
+                {!loading && filteredProducts.length > 0 && (
+                    <div className="results-meta" aria-live="polite" aria-atomic="true">
+                        {filteredProducts.length} {filteredProducts.length === 1 ? 'result' : 'results'} found
+                    </div>
+                )}
 
                 {error && (
                     <div role="alert" className="alert alert-error">
