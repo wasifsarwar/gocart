@@ -1,0 +1,38 @@
+.recently-viewed-section {
+    margin: 1.5rem 0 2rem 0;
+}
+
+.recently-viewed-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.recently-viewed-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+
+.recently-viewed-clear {
+    background: transparent;
+    border: none;
+    color: var(--primary-color);
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+}
+
+.recently-viewed-clear:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+/* Override ProductList default spacing for this section */
+.recently-viewed-grid {
+    margin-top: 1rem;
+}
+

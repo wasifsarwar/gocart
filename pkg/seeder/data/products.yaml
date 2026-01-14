@@ -4,297 +4,347 @@ products:
     description: "Titanium flagship with A17 Pro chip and pro camera system"
     price: 999.99
     category: "Smartphones"
+    image_url: "https://picsum.photos/id/180/800/600"
 
   - product_id: "prod-smart-002"
     name: "Samsung Galaxy S24 Ultra"
     description: "6.8-inch AMOLED display, quad camera array, and S Pen support"
     price: 1199.00
     category: "Smartphones"
+    image_url: "https://picsum.photos/id/160/800/600"
 
   - product_id: "prod-smart-003"
     name: "Google Pixel 9 Pro"
     description: "Tensor G4 powered phone with advanced AI photography features"
     price: 1099.00
     category: "Smartphones"
+    image_url: "https://picsum.photos/id/119/800/600"
 
   - product_id: "prod-smart-004"
     name: "OnePlus 12"
     description: "Fast-charging Android flagship with 120Hz LTPO display"
     price: 899.00
     category: "Smartphones"
+    image_url: "https://picsum.photos/id/201/800/600"
 
   - product_id: "prod-smart-005"
     name: "Nothing Phone 2"
     description: "Transparent design, Glyph lighting, and smooth 120Hz experience"
     price: 649.00
     category: "Smartphones"
+    image_url: "https://picsum.photos/id/175/800/600"
 
   - product_id: "prod-laptop-001"
     name: "MacBook Pro 16-inch"
     description: "M3 Max laptop with 32GB RAM and Liquid Retina XDR display"
     price: 2499.99
     category: "Laptops"
+    image_url: "https://picsum.photos/id/0/800/600"
 
   - product_id: "prod-laptop-002"
     name: "Dell XPS 15"
     description: "OLED creative workstation with Intel Core Ultra processor"
     price: 2199.00
     category: "Laptops"
+    image_url: "https://picsum.photos/id/1/800/600"
 
   - product_id: "prod-laptop-003"
     name: "Lenovo ThinkPad X1 Carbon"
     description: "Ultralight business laptop with enterprise security features"
     price: 1899.00
     category: "Laptops"
+    image_url: "https://picsum.photos/id/2/800/600"
 
   - product_id: "prod-laptop-004"
     name: "HP Spectre x360"
     description: "2-in-1 convertible with 13th gen Intel chip and pen support"
     price: 1599.00
     category: "Laptops"
+    image_url: "https://picsum.photos/id/3/800/600"
 
   - product_id: "prod-laptop-005"
     name: "ASUS ROG Zephyrus G16"
     description: "Slim gaming laptop with RTX 4070 graphics and QHD+ display"
     price: 2099.00
     category: "Laptops"
+    image_url: "https://picsum.photos/id/4/800/600"
 
   - product_id: "prod-tv-001"
     name: "LG C4 OLED 65-inch"
     description: "Self-lit OLED TV with Dolby Vision and 120Hz gaming support"
     price: 2499.00
     category: "Televisions"
+    image_url: "https://picsum.photos/id/10/800/600"
 
   - product_id: "prod-tv-002"
     name: "Samsung Neo QLED 8K"
     description: "Quantum Matrix Mini-LED TV with neural 8K upscaling"
     price: 3499.00
     category: "Televisions"
+    image_url: "https://picsum.photos/id/11/800/600"
 
   - product_id: "prod-tv-003"
     name: "Sony Bravia XR A95L"
     description: "QD-OLED panel with XR Triluminos Pro color processing"
     price: 3299.00
     category: "Televisions"
+    image_url: "https://picsum.photos/id/12/800/600"
 
   - product_id: "prod-tv-004"
     name: "TCL 6-Series Mini-LED"
     description: "Budget-friendly 4K HDR TV with full-array local dimming"
     price: 899.00
     category: "Televisions"
+    image_url: "https://picsum.photos/id/13/800/600"
 
   - product_id: "prod-tv-005"
     name: "Hisense U8N QLED"
     description: "Peak brightness up to 2000 nits for stunning HDR movies"
     price: 1299.00
     category: "Televisions"
+    image_url: "https://picsum.photos/id/14/800/600"
 
   - product_id: "prod-audio-001"
     name: "AirPods Pro (2nd gen)"
     description: "ANC earbuds with Adaptive Audio and MagSafe charging"
     price: 249.99
     category: "Audio"
+    image_url: "https://picsum.photos/id/20/800/600"
 
   - product_id: "prod-audio-002"
     name: "Sony WH-1000XM5"
     description: "Over-ear ANC headphones with 30-hour battery life"
     price: 399.99
     category: "Audio"
+    image_url: "https://picsum.photos/id/21/800/600"
 
   - product_id: "prod-audio-003"
     name: "Bose SoundLink Flex"
     description: "Portable Bluetooth speaker with PositionIQ tuning"
     price: 149.00
     category: "Audio"
+    image_url: "https://picsum.photos/id/22/800/600"
 
   - product_id: "prod-audio-004"
     name: "Sonos Beam Gen 2"
     description: "Compact Dolby Atmos soundbar for living-room setups"
     price: 499.00
     category: "Audio"
+    image_url: "https://picsum.photos/id/23/800/600"
 
   - product_id: "prod-audio-005"
     name: "JBL Charge 6"
     description: "Waterproof speaker with power bank and punchy bass"
     price: 179.00
     category: "Audio"
+    image_url: "https://picsum.photos/id/24/800/600"
 
   - product_id: "prod-wear-001"
     name: "Apple Watch Series 10"
     description: "Always-on display, heart health alerts, and crash detection"
     price: 499.00
     category: "Wearables"
+    image_url: "https://picsum.photos/id/30/800/600"
 
   - product_id: "prod-wear-002"
     name: "Samsung Galaxy Watch 7"
     description: "BioActive sensor with advanced sleep coaching"
     price: 399.00
     category: "Wearables"
+    image_url: "https://picsum.photos/id/31/800/600"
 
   - product_id: "prod-wear-003"
     name: "Garmin Fenix 8"
     description: "Multi-sport GPS watch with solar charging lens"
     price: 799.00
     category: "Wearables"
+    image_url: "https://picsum.photos/id/32/800/600"
 
   - product_id: "prod-wear-004"
     name: "Fitbit Sense 3"
     description: "Stress management sensors and 6-day battery life"
     price: 329.00
     category: "Wearables"
+    image_url: "https://picsum.photos/id/33/800/600"
 
   - product_id: "prod-wear-005"
     name: "Oura Ring Horizon"
     description: "Minimal wellness tracker with readiness and sleep insights"
     price: 349.00
     category: "Wearables"
+    image_url: "https://picsum.photos/id/34/800/600"
 
   - product_id: "prod-home-001"
     name: "Dyson V15 Detect"
     description: "Cordless vacuum with laser dust detection and LCD display"
     price: 749.99
     category: "Home Appliances"
+    image_url: "https://picsum.photos/id/40/800/600"
 
   - product_id: "prod-home-002"
     name: "Instant Pot Duo Plus"
     description: "9-in-1 smart pressure cooker for quick family meals"
     price: 149.00
     category: "Home Appliances"
+    image_url: "https://picsum.photos/id/41/800/600"
 
   - product_id: "prod-home-003"
     name: "iRobot Roomba j9+"
     description: "Self-emptying robot vacuum with Dirt Detective navigation"
     price: 1099.00
     category: "Home Appliances"
+    image_url: "https://picsum.photos/id/42/800/600"
 
   - product_id: "prod-home-004"
     name: "Breville Barista Pro"
     description: "Stainless steel espresso machine with built-in grinder"
     price: 849.00
     category: "Home Appliances"
+    image_url: "https://picsum.photos/id/43/800/600"
 
   - product_id: "prod-home-005"
     name: "LG PuriCare Air Purifier"
     description: "360-degree HEPA filtration with smart monitoring"
     price: 399.00
     category: "Home Appliances"
+    image_url: "https://picsum.photos/id/44/800/600"
 
   - product_id: "prod-game-001"
     name: "PlayStation 5 Slim"
     description: "Next-gen console with DualSense controller"
     price: 499.00
     category: "Gaming"
+    image_url: "https://picsum.photos/id/50/800/600"
 
   - product_id: "prod-game-002"
     name: "Xbox Series X"
     description: "4K 120FPS console with 1TB SSD"
     price: 499.00
     category: "Gaming"
+    image_url: "https://picsum.photos/id/51/800/600"
 
   - product_id: "prod-game-003"
     name: "Nintendo Switch OLED"
     description: "Hybrid console with 7-inch OLED and improved audio"
     price: 349.00
     category: "Gaming"
+    image_url: "https://picsum.photos/id/52/800/600"
 
   - product_id: "prod-game-004"
     name: "Steam Deck OLED"
     description: "Handheld PC gaming device with HDR display"
     price: 649.00
     category: "Gaming"
+    image_url: "https://picsum.photos/id/53/800/600"
 
   - product_id: "prod-game-005"
     name: "Razer Wolverine V3"
     description: "Customizable wired controller with remappable buttons"
     price: 199.00
     category: "Gaming"
+    image_url: "https://picsum.photos/id/54/800/600"
 
   - product_id: "prod-fashion-001"
     name: "Levi's 511 Slim Jeans"
     description: "Classic stretch denim for everyday wear"
     price: 89.00
     category: "Fashion"
+    image_url: "https://picsum.photos/id/60/800/600"
 
   - product_id: "prod-fashion-002"
     name: "Nike Air Max 270"
     description: "Lifestyle sneakers with visible Air cushioning"
     price: 149.99
     category: "Fashion"
+    image_url: "https://picsum.photos/id/61/800/600"
 
   - product_id: "prod-fashion-003"
     name: "Lululemon ABC Jogger"
     description: "Warpstreme joggers with secure zip pockets"
     price: 128.00
     category: "Fashion"
+    image_url: "https://picsum.photos/id/62/800/600"
 
   - product_id: "prod-fashion-004"
     name: "Patagonia Nano Puff Jacket"
     description: "Lightweight insulated jacket made from recycled materials"
     price: 249.00
     category: "Fashion"
+    image_url: "https://picsum.photos/id/63/800/600"
 
   - product_id: "prod-fashion-005"
     name: "Everlane Organic Cotton Tee"
     description: "Premium mid-weight tee with classic fit"
     price: 40.00
     category: "Fashion"
+    image_url: "https://picsum.photos/id/64/800/600"
 
   - product_id: "prod-beauty-001"
     name: "Dyson Airwrap Complete"
     description: "Multi-styler for curling, smoothing, and drying"
     price: 599.00
     category: "Beauty & Personal Care"
+    image_url: "https://picsum.photos/id/70/800/600"
 
   - product_id: "prod-beauty-002"
     name: "Olaplex No. 3 Hair Perfector"
     description: "Weekly bond-building treatment for damaged hair"
     price: 30.00
     category: "Beauty & Personal Care"
+    image_url: "https://picsum.photos/id/71/800/600"
 
   - product_id: "prod-beauty-003"
     name: "La Roche-Posay Anthelios SPF 60"
     description: "Lightweight facial sunscreen for sensitive skin"
     price: 38.00
     category: "Beauty & Personal Care"
+    image_url: "https://picsum.photos/id/72/800/600"
 
   - product_id: "prod-beauty-004"
     name: "Drunk Elephant Protini Cream"
     description: "Peptide-rich moisturizer for daily hydration"
     price: 68.00
     category: "Beauty & Personal Care"
+    image_url: "https://picsum.photos/id/73/800/600"
 
   - product_id: "prod-beauty-005"
     name: "Philips Sonicare DiamondClean"
     description: "Rechargeable electric toothbrush with glass charger"
     price: 299.00
     category: "Beauty & Personal Care"
+    image_url: "https://picsum.photos/id/74/800/600"
 
   - product_id: "prod-sport-001"
     name: "Yeti Tundra 45 Cooler"
     description: "BearFoot non-slip cooler with PermaFrost insulation"
     price: 325.00
     category: "Sports & Outdoors"
+    image_url: "https://picsum.photos/id/80/800/600"
 
   - product_id: "prod-sport-002"
     name: "Hydro Flask 32 oz"
     description: "Double-wall vacuum insulated water bottle"
     price: 44.95
     category: "Sports & Outdoors"
+    image_url: "https://picsum.photos/id/81/800/600"
 
   - product_id: "prod-sport-003"
     name: "Trek FX 3 Disc Hybrid Bike"
     description: "Versatile fitness bike with hydraulic disc brakes"
     price: 1199.00
     category: "Sports & Outdoors"
+    image_url: "https://picsum.photos/id/82/800/600"
 
   - product_id: "prod-sport-004"
     name: "Theragun Prime"
     description: "Percussive therapy device for muscle recovery"
     price: 299.00
     category: "Sports & Outdoors"
+    image_url: "https://picsum.photos/id/83/800/600"
 
   - product_id: "prod-sport-005"
     name: "Coleman Skydome Tent"
     description: "6-person tent with quick setup and panoramic windows"
     price: 249.00
     category: "Sports & Outdoors"
+    image_url: "https://picsum.photos/id/84/800/600"

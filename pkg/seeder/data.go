@@ -21,6 +21,7 @@ type ProductData struct {
 	Description string  `yaml:"description"`
 	Price       float64 `yaml:"price"`
 	Category    string  `yaml:"category"`
+	ImageURL    string  `yaml:"image_url"`
 }
 
 type UserData struct {
@@ -84,17 +85,63 @@ func (s *SeedData) loadProductsFromYAML() ([]productModels.Product, error) {
 	// Convert YAML data to product models
 	var products []productModels.Product
 	for _, productData := range productsYAML.Products {
+		imageURL := productData.ImageURL
+		if imageURL == "" {
+			// Deterministic, lightweight images without storing binaries in the repo.
+			// Can be replaced by uploaded images later via /products/{id}/image.
+			imageURL = fmt.Sprintf("https://picsum.photos/seed/%s/600/400", slugify(productData.Name))
+		}
 		product := productModels.Product{
 			ProductID:   productData.ProductID,
 			Name:        productData.Name,
 			Description: productData.Description,
 			Price:       productData.Price,
 			Category:    productData.Category,
+			ImageURL:    imageURL,
 		}
 		products = append(products, product)
 	}
 
 	return products, nil
+}
+
+func slugify(s string) string {
+	// Very small slugify helper to keep seed URLs stable.
+	out := make([]rune, 0, len(s))
+	for _, r := range s {
+		switch {
+		case r >= 'a' && r <= 'z':
+			out = append(out, r)
+		case r >= 'A' && r <= 'Z':
+			out = append(out, r+('a'-'A'))
+		case r >= '0' && r <= '9':
+			out = append(out, r)
+		case r == ' ' || r == '-' || r == '_' || r == '.':
+			out = append(out, '-')
+		}
+	}
+	// Trim repeated dashes (simple)
+	clean := make([]rune, 0, len(out))
+	lastDash := false
+	for _, r := range out {
+		if r == '-' {
+			if lastDash {
+				continue
+			}
+			lastDash = true
+			clean = append(clean, r)
+			continue
+		}
+		lastDash = false
+		clean = append(clean, r)
+	}
+	if len(clean) > 0 && clean[0] == '-' {
+		clean = clean[1:]
+	}
+	if len(clean) > 0 && clean[len(clean)-1] == '-' {
+		clean = clean[:len(clean)-1]
+	}
+	return string(clean)
 }
 
 // SeedProducts creates sample products from YAML file

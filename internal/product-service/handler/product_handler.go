@@ -3,10 +3,14 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	productModels "gocart/internal/product-service/models"
 	productRepository "gocart/internal/product-service/repository"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -103,7 +107,6 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(result)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Product updated successfully"})
 }
 
 func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
@@ -118,4 +121,104 @@ func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// UploadProductImage accepts multipart/form-data with field name "image".
+// It stores the file under ./uploads/products and updates product.image_url to /uploads/products/<filename>.
+func (h *ProductHandler) UploadProductImage(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	// Ensure product exists
+	product, err := h.repo.GetProductById(id)
+	if err != nil {
+		log.Printf("Error fetching product with id: %v and error: %v", id, err)
+		http.Error(w, fmt.Sprintf("Product with id %v not found.", id), http.StatusNotFound)
+		return
+	}
+	oldImageURL := product.ImageURL
+
+	// Limit upload size (5MB)
+	r.Body = http.MaxBytesReader(w, r.Body, 5<<20)
+	if err := r.ParseMultipartForm(6 << 20); err != nil {
+		http.Error(w, "Invalid multipart form data", http.StatusBadRequest)
+		return
+	}
+
+	file, header, err := r.FormFile("image")
+	if err != nil {
+		http.Error(w, "Missing image file (field name: image)", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	// Infer extension (fallback to original filename ext)
+	ext := strings.ToLower(filepath.Ext(header.Filename))
+	if ext == "" {
+		ext = ".jpg"
+	}
+	switch ext {
+	case ".jpg", ".jpeg", ".png", ".webp", ".gif":
+	default:
+		http.Error(w, "Unsupported image type. Use jpg, png, webp, or gif.", http.StatusBadRequest)
+		return
+	}
+
+	dir := filepath.Join("uploads", "products")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		http.Error(w, "Failed to create upload directory", http.StatusInternalServerError)
+		return
+	}
+
+	filename := fmt.Sprintf("%s-%s%s", id, uuid.New().String(), ext)
+	dstPath := filepath.Join(dir, filename)
+
+	dst, err := os.Create(dstPath)
+	if err != nil {
+		http.Error(w, "Failed to save image", http.StatusInternalServerError)
+		return
+	}
+
+	// Track whether upload completed successfully to clean up orphaned files
+	uploadSuccess := false
+	defer func() {
+		// Close the file first (important for Windows)
+		dst.Close()
+		if !uploadSuccess {
+			// Remove the file if any operation after creation failed
+			if removeErr := os.Remove(dstPath); removeErr != nil {
+				log.Printf("Failed to clean up orphaned file %s: %v", dstPath, removeErr)
+			}
+		}
+	}()
+
+	if _, err := io.Copy(dst, file); err != nil {
+		http.Error(w, "Failed to write image", http.StatusInternalServerError)
+		return
+	}
+
+	newImageURL := "/uploads/products/" + filename
+	product.ImageURL = newImageURL
+	updated, err := h.repo.UpdateProduct(product)
+	if err != nil {
+		http.Error(w, "Failed to update product image", http.StatusInternalServerError)
+		return
+	}
+
+	// Mark upload as successful so defer doesn't remove the file
+	uploadSuccess = true
+
+	// Best-effort cleanup: delete the previous uploaded image (only if it was a local upload).
+	// Don't delete external seed URLs (picsum) or non-local paths.
+	if oldImageURL != "" && oldImageURL != newImageURL && strings.HasPrefix(oldImageURL, "/uploads/products/") {
+		oldFilename := filepath.Base(oldImageURL)
+		oldPath := filepath.Join("uploads", "products", oldFilename)
+		if err := os.Remove(oldPath); err != nil && !os.IsNotExist(err) {
+			log.Printf("Failed to remove old product image %s: %v", oldPath, err)
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(updated)
 }

@@ -114,3 +114,7 @@ components:
         category:
           type: string
           example: "Electronics"
+        image_url:
+          type: string
+          description: URL (absolute or relative) to the product image
+          example: "https://picsum.photos/seed/sample-product/600/400"

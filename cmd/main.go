@@ -50,6 +50,9 @@ func main() {
 		w.Write([]byte("Healthy"))
 	}).Methods("GET")
 
+	// Serve uploaded files (e.g. product images)
+	mainRouter.PathPrefix("/uploads/").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads"))))
+
 	// Initialize database connection
 	_, err := db.Connect(db.DefaultConfig())
 	if err != nil {

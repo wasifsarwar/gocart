@@ -32,6 +32,7 @@ func (s *Server) setupRoutes() {
 	s.router.HandleFunc("/products/{id}", s.handler.GetProductById).Methods("GET")
 	s.router.HandleFunc("/products/{id}", s.handler.UpdateProduct).Methods("PUT")
 	s.router.HandleFunc("/products/{id}", s.handler.DeleteProduct).Methods("DELETE")
+	s.router.HandleFunc("/products/{id}/image", s.handler.UploadProductImage).Methods("POST")
 }
 
 // Implement the generated interface methods

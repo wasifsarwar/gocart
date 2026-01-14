@@ -13,6 +13,7 @@ const useProducts = () => {
         description: apiProduct.description,
         price: apiProduct.price,
         category: apiProduct.category,
+        imageUrl: apiProduct.image_url,
 
     });
 

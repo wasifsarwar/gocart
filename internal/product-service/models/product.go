@@ -6,4 +6,5 @@ type Product struct {
 	Description string  `json:"description"`
 	Price       float64 `gorm:"not null"   json:"price"`
 	Category    string  `json:"category"`
+	ImageURL    string  `json:"image_url"`
 }

@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import Product from "../../types/product";
-import { FaShoppingBag } from "react-icons/fa";
+import { FaEye, FaHeart, FaRegHeart, FaShoppingBag } from "react-icons/fa";
 import { IconType } from "react-icons";
 import { useCart } from "../../context/CartContext";
+import { useFavorites } from "../../context/FavoritesContext";
+import { resolveImageUrl } from "../../utils/resolveImageUrl";
 
 interface ProductCardProps {
-    product: Product
+    product: Product;
+    onQuickView?: (product: Product) => void;
 }
 
 const usdFormatter = new Intl.NumberFormat('en-us', {
@@ -19,8 +23,10 @@ const Icon = ({ icon: IconComponent, className }: { icon: IconType; className?: 
     return <Component className={className} />;
 };
 
-const ProductCard = ({ product }: ProductCardProps) => {
+const ProductCard = ({ product, onQuickView }: ProductCardProps) => {
     const { addToCart } = useCart();
+    const { isFavorite, toggleFavorite } = useFavorites();
+    const [imageError, setImageError] = useState(false);
 
     const getCategoryColor = (category: string) => {
         const colors: { [key: string]: string } = {
@@ -43,10 +49,48 @@ const ProductCard = ({ product }: ProductCardProps) => {
         // Optional: Add visual feedback here (toast notification, etc.)
     };
 
+    const favorited = isFavorite(product.productID);
+    const imgSrc = useMemo(() => resolveImageUrl(product.imageUrl), [product.imageUrl]);
+
     return (
         <div className="product-card">
-            <div className={`product-image-placeholder ${colorClass}`}>
-                <Icon icon={FaShoppingBag} />
+            <div className="product-image-wrapper">
+                <Link to={`/products/${product.productID}`} className="product-link" aria-label={`View ${product.name}`}>
+                    {imgSrc && !imageError ? (
+                        <img
+                            src={imgSrc}
+                            alt={product.name}
+                            className="product-image-real"
+                            loading="lazy"
+                            onError={() => setImageError(true)}
+                        />
+                    ) : (
+                        <div className={`product-image-placeholder ${colorClass}`}>
+                            <Icon icon={FaShoppingBag} />
+                        </div>
+                    )}
+                </Link>
+                {onQuickView && (
+                    <button
+                        type="button"
+                        className="quick-view-btn"
+                        onClick={() => onQuickView(product)}
+                        aria-label={`Quick view ${product.name}`}
+                        title="Quick view"
+                    >
+                        <Icon icon={FaEye} />
+                        <span className="quick-view-text">Quick view</span>
+                    </button>
+                )}
+                <button
+                    type="button"
+                    className={`favorite-btn ${favorited ? 'favorited' : ''}`}
+                    onClick={() => toggleFavorite(product.productID)}
+                    aria-label={favorited ? `Remove ${product.name} from favorites` : `Add ${product.name} to favorites`}
+                    title={favorited ? 'Remove from favorites' : 'Add to favorites'}
+                >
+                    <Icon icon={favorited ? FaHeart : FaRegHeart} />
+                </button>
             </div>
             <div className="product-content">
                 <div className="product-header">
@@ -55,7 +99,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
                     </span>
                     <span className="product-price">{usdFormatter.format(product.price)}</span>
                 </div>
-                <h3 className="product-name">{product.name}</h3>
+                <Link to={`/products/${product.productID}`} className="product-name-link">
+                    <h3 className="product-name">{product.name}</h3>
+                </Link>
                 <p className="product-description">{product.description}</p>
                 <button className="add-to-cart-btn" onClick={handleAddToCart}>
                     Add to Cart

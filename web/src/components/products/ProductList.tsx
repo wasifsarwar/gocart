@@ -5,9 +5,10 @@ import './ProductList.css';
 interface ProductListProps {
     products: Product[];
     loading: boolean;
+    onQuickView?: (product: Product) => void;
 }
 
-const ProductList = ({ products, loading }: ProductListProps) => {
+const ProductList = ({ products, loading, onQuickView }: ProductListProps) => {
 
     const skeletonCards = Array.from({ length: 8 });
 
@@ -43,7 +44,7 @@ const ProductList = ({ products, loading }: ProductListProps) => {
     return (
         <div className="product-grid">
             {products.map(product => (
-                <ProductCard key={product.productID} product={product} />
+                <ProductCard key={product.productID} product={product} onQuickView={onQuickView} />
             ))}
         </div>
     );
