@@ -49,25 +49,28 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const savedCart = safeGetItem('cart');
         return safeParseCart(savedCart);
     });
-    const pendingToastRef = useRef<string | null>(null);
+    const pendingToastsRef = useRef<string[]>([]);
 
     useEffect(() => {
         safeSetItem('cart', JSON.stringify(items));
     }, [items]);
 
     useEffect(() => {
-        if (pendingToastRef.current) {
-            toast.success(pendingToastRef.current);
-            pendingToastRef.current = null;
+        if (pendingToastsRef.current.length > 0) {
+            pendingToastsRef.current.forEach(message => {
+                toast.success(message);
+            });
+            pendingToastsRef.current = [];
         }
     }, [items]);
 
     const addToCart = (product: Product) => {
         setItems(prevItems => {
             const exists = prevItems.some(item => item.productID === product.productID);
-            pendingToastRef.current = exists
+            const message = exists
                 ? `Updated quantity for ${product.name}`
                 : `${product.name} added to cart`;
+            pendingToastsRef.current.push(message);
 
             const existingItem = prevItems.find(item => item.productID === product.productID);
             if (existingItem) {
